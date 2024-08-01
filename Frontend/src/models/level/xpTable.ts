@@ -11,7 +11,15 @@ export class XpTable {
         }
     }
 
-    public get(level: number): number {
+    public getXp(level: number): number {
         return this.xpTable[level - 1];
+    }
+
+    public getLevel(xp: number): number {
+        let level = 1;
+        while (level < this.xpTable.length && xp >= this.xpTable[level]) {
+            level++;
+        }
+        return level;
     }
 }
