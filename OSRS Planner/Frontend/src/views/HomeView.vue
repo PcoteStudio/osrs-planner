@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    Body
   </main>
 </template>
+
+<style scoped>
+main {
+  background: red;
+}
+</style>
