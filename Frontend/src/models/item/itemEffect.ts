@@ -32,7 +32,7 @@ export class ItemEffect extends Effect {
                 playerState.addWarning(playerState.inventory.moveItem(this.itemId, this.quantity));
                 break;
             case ItemContainers.Equipment:
-                playerState.equipment.swapSlot(item.equipmentSlot, item.id);
+                playerState.equipment.swapSlot(item.equipmentSlot, item);
                 break;
             default:
                 break;

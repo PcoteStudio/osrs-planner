@@ -1,4 +1,4 @@
-import { EquipmentSlots } from "./equipmentSlots";
+import type { EquipmentSlotTypes } from "./equipmentSlot";
 
 const itemsDb: { [id: number]: Item } = {};
 
@@ -8,7 +8,7 @@ export class Item {
     bankable: boolean;
     stackable: boolean;
     notable: boolean;
-    equipmentSlot: EquipmentSlots;
+    equipmentSlot: EquipmentSlotTypes;
     value: number;
     imageUrl: string;
     wikiUrl: string;

@@ -1,21 +1,16 @@
-import type { EquipmentSlots } from "./equipmentSlots";
+import type { EquipmentSlotTypes } from "./equipmentSlot";
 import { Item } from "./item";
 
 export class Equipment {
-    slots: { [slot in EquipmentSlots as string]?: number } = {};
+    slots: { [slot in EquipmentSlotTypes as string]?: Item } = {};
 
-    getId(slot: EquipmentSlots): number | undefined {
+    get(slot: EquipmentSlotTypes): Item | undefined {
         return this.slots[slot];
     }
 
-    getItem(slot: EquipmentSlots): Item | undefined {
-        const itemId = this.slots[slot];
-        return itemId !== undefined ? Item.get(itemId) : undefined;
-    }
-
-    swapSlot(slot: EquipmentSlots, itemId: number | undefined) {
-        const previousItemId = this.slots[slot];
-        this.slots[slot] = itemId;
-        return previousItemId;
+    swapSlot(slot: EquipmentSlotTypes, item: Item | undefined): Item | undefined {
+        const previousItem = this.slots[slot];
+        this.slots[slot] = item;
+        return previousItem;
     }
 }
