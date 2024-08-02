@@ -17,7 +17,7 @@ const state = useGlobalStore();
 
 const isPlaceholder = ref(false);
 
-const item = state.equipmentSlots[props.type]?.item;
+const item = state.currentPlayerState.equipment.slots[props.type]?.item;
 
 let slotImage = computed(() => {
   if(item?.imageUrl) {

@@ -6,7 +6,7 @@ import {EquipmentSlotTypes} from "@/models/item/equipmentSlot";
 
 const state = useGlobalStore();
 
-const test = state.equipmentSlots[EquipmentSlotTypes.Head].item = new Item();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
+const test = state.currentPlayerState.equipment.slots[EquipmentSlotTypes.Head].item = new Item();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
 test.imageUrl = "https://oldschool.runescape.wiki/images/Torva_full_helm.png?96920";
 
 </script>

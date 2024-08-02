@@ -1,22 +1,21 @@
 import {defineStore} from 'pinia';
-import {EquipmentSlot, EquipmentSlotTypes} from "@/models/item/equipmentSlot";
+import {Route} from "@/models/route";
+import {PlayerState} from "@/models/playerState";
+import {Equipment} from "@/models/item/equipment";
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
-        const equipmentSlots : EquipmentSlot[] = [];
-        for (const key in EquipmentSlotTypes) {
-            equipmentSlots[key] = new EquipmentSlot();
-            equipmentSlots[key].equipmentSlotType = EquipmentSlotTypes[key as keyof typeof EquipmentSlotTypes];
-        }
+        const playerState = new PlayerState();
+        playerState.equipment = new Equipment();
+
+        const currentRoute = new Route();
+        currentRoute.playerState = playerState;
+
 
         return {
-            equipmentSlots: equipmentSlots,
-            count: 0
+            currentRoute: currentRoute,
+            currentPlayerState: playerState,
         };
     },
-    actions: {
-        increment() {
-            this.count++;
-        },
-    },
+    actions: {},
 });

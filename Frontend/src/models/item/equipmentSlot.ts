@@ -14,7 +14,7 @@ import type {Item} from "@/models/item/item";
 
 export class EquipmentSlot {
     equipmentSlotType: EquipmentSlotTypes;
-    item: Item;
+    item: Item | undefined;
 }
 
 export enum EquipmentSlotTypes {
