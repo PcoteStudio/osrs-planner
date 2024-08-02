@@ -12,4 +12,5 @@ export enum EquipmentSlots {
     Hands,
     Feet,
     Ring,
+    Extra,
 }
