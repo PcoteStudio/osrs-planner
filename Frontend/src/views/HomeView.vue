@@ -3,12 +3,12 @@
 
 <template>
   <main>
-    Body
+    Body<br>
   </main>
 </template>
 
 <style scoped>
 main {
-  background: red;
+  background: darkblue;
 }
 </style>
