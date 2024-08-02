@@ -1,23 +1,21 @@
 <script lang="ts">
-import {type Component, defineComponent, h, ref} from 'vue'
-import { NIcon } from 'naive-ui'
-import type { MenuOption } from 'naive-ui'
+import {type Component, defineComponent, h, ref} from 'vue';
+import { NIcon } from 'naive-ui';
+import type { MenuOption } from 'naive-ui';
 import {useI18n} from "vue-i18n";
 import {
   ChevronDown,
   Home as HomeIcon,
   Bookmark as BookmarkIcon,
   Info as InfoIcon
-} from '@vicons/fa'
+} from '@vicons/fa';
 import {RouterLink} from "vue-router";
-import Header from "@/components/Header.vue";
 
 function renderIcon(icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) })
+  return () => h(NIcon, null, { default: () => h(icon) });
 }
 
 export default defineComponent({
-  components: {Header},
   setup() {
     const i18n = useI18n();
 
@@ -70,17 +68,17 @@ export default defineComponent({
             { default: () => i18n.t('about.title') }
         ),
       },
-    ]
+    ];
 
     return {
       menuOptions,
       collapsed: ref(false),
       expandIcon() {
-        return h(NIcon, null, { default: () => h(ChevronDown) })
+        return h(NIcon, null, { default: () => h(ChevronDown) });
       }
-    }
+    };
   }
-})
+});
 </script>
 
 <template>

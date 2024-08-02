@@ -1,37 +1,37 @@
-import './assets/main.css'
-import 'vfonts/Lato.css'
-import 'vfonts/FiraCode.css'
+import './assets/main.css';
+import 'vfonts/Lato.css';
+import 'vfonts/FiraCode.css';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { createI18n } from 'vue-i18n'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { fas } from '@fortawesome/free-solid-svg-icons'
-import { far } from '@fortawesome/free-regular-svg-icons'
-import { fab } from '@fortawesome/free-brands-svg-icons'
-import localeEn from './locales/en.json'
-import naive from 'naive-ui'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import { createI18n } from 'vue-i18n';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import localeEn from './locales/en.json';
+import naive from 'naive-ui';
 
-import App from './App.vue'
-import router from './router'
+import App from './App.vue';
+import router from './router';
 
-library.add(fas, far, fab)
+library.add(fas, far, fab);
 
 const i18n = createI18n({
     legacy: false,
     locale: 'en',
     messages: {
-        en: localeEn
-    }
-})
+        en: localeEn,
+    },
+});
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.component('font-awesome-icon', FontAwesomeIcon)
-app.use(createPinia())
-app.use(router)
-app.use(i18n)
-app.use(naive)
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.use(createPinia());
+app.use(router);
+app.use(i18n);
+app.use(naive);
 
-app.mount('#app')
+app.mount('#app');
