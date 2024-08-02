@@ -3,7 +3,7 @@ import { PlayerState } from "../playerState";
 import { StateWarning } from "../stateWarning";
 
 export class InventoryEffect extends Effect {
-    constructor(private itemId: number, private quantity: number, private clearAll: boolean) {
+    constructor(public itemId: number, public quantity: number, public clearAll: boolean) {
         super();
     }
 

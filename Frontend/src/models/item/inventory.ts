@@ -4,25 +4,24 @@ import { Item } from "./item";
 export class Inventory {
     items: { [id: number]: number } = {};
 
-    constructor(private availableSlots: number = 28) { }
+    constructor(public availableSlots: number = 28) { }
 
     /**
      * Move items into or out of the inventory.
      * @param itemId ID of the item moved.
      * @param quantity Number of item inserted if positive or removed if negative.
-     * @returns Detailed warning or `undefined` if the move can be done.
+     * @returns Detailed warning or `undefined` if the move is valid.
      */
-    moveItem(itemId: number, quantity: number): StateWarning {
+    moveItem(itemId: number, quantity: number): InventoryMissingItemWarning | InventoryLimitExceededWarning {
         const currentQuantity = this.items[itemId];
         const newQuantity = currentQuantity ? currentQuantity + quantity : quantity;
         this.items[itemId] = newQuantity;
-        if (newQuantity == 0) {
+        if (newQuantity == 0)
             delete this.items[itemId];
-        } else if (newQuantity < 0) {
+        else if (newQuantity < 0)
             return new InventoryMissingItemWarning(Item.get(itemId), quantity, newQuantity);
-        } else if (this.usedSlots() > this.availableSlots) {
+        else if (this.usedSlots() > this.availableSlots)
             return new InventoryLimitExceededWarning(Item.get(itemId), quantity, this.availableSlots, this.usedSlots());
-        }
         return undefined;
     }
 
@@ -41,7 +40,7 @@ export class Inventory {
     usedSlots(): number {
         let usedSlot = 0;
         for (const [itemId, quantity] of Object.entries(this.items)) {
-            if (quantity < 0) continue;
+            if (quantity <= 0) continue;
             if (Item.get(Number(itemId)).stackable) usedSlot++;
             else usedSlot += quantity;
         }
