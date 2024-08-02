@@ -18,8 +18,8 @@ library.add(fas, far, fab);
 const i18n = createI18n({
     locale: 'en',
     messages: {
-        en: localeEn
-    }
+        en: localeEn,
+    },
 });
 
 const app = createApp(App);
