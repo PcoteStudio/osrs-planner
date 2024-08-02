@@ -1,0 +1,15 @@
+export enum EquipmentSlots {
+    Head,
+    Cape,
+    Neck,
+    Ammunition,
+    ExtraAmmo,
+    Weapon,
+    Shield,
+    TwoHandedItems,
+    Body,
+    Legs,
+    Hands,
+    Feet,
+    Ring,
+}

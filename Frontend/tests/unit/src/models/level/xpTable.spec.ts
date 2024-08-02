@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { XpTable } from '../../../../src/models/level/xpTable';
+import { XpTable } from '../../../../../src/models/skill/xpTable';
 
 describe('xpTable', () => {
     const xpTable99 = new XpTable(99);
