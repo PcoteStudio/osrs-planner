@@ -61,4 +61,4 @@ export const getPlaceholderSrc = (slotType: EquipmentSlotTypes) => {
         case EquipmentSlotTypes.Ring:
             return ringImg;
     }
-}
+};

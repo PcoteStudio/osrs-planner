@@ -27,12 +27,12 @@ let slotImage = computed(() => {
 
   isPlaceholder.value = true;
   return getPlaceholderSrc(props.type);
-})
+});
 
 const replaceWithPlaceholder = (e: any) => {
   isPlaceholder.value = true;
   e.target.src = getPlaceholderSrc(props.type);
-}
+};
 </script>
 
 <template>
