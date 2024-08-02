@@ -1,46 +1,42 @@
 <script setup lang="ts">
 import EquipmentSlot from "@/components/EquipmentSlot.vue";
-import {EquipmentSlots} from "@/models/item/equipmentSlots";
-import {ref, reactive} from "vue";
 import {Item} from "@/models/item/item";
+import {useGlobalStore} from "@/stores/globalStore";
+import {EquipmentSlotTypes} from "@/models/item/equipmentSlot";
 
-const showExtraAmmo = ref(true);
-const headItem = reactive(new Item());
-const capeItem = reactive(new Item());
-capeItem.imageUrl = "https://oldschool.runescape.wiki/images/Dizana%27s_quiver_%28uncharged%29.png?a28c8";
+const state = useGlobalStore();
+
+const test = state.equipmentSlots[EquipmentSlotTypes.Head].item = new Item();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
+test.imageUrl = "https://oldschool.runescape.wiki/images/Torva_full_helm.png?96920";
 
 </script>
 
 <template>
 <div class="inventory">
   <div class="row center">
-    <EquipmentSlot :type="EquipmentSlots.Extra" :isVisible="false" />
-    <EquipmentSlot :type="EquipmentSlots.Head" :item="headItem" />
-    <EquipmentSlot :type="EquipmentSlots.ExtraAmmo" :isVisible="showExtraAmmo"/>
+    <EquipmentSlot :type="EquipmentSlotTypes.Extra" :isVisible="false" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Head" />
+    <EquipmentSlot :type="EquipmentSlotTypes.ExtraAmmo" />
   </div>
   <div class="row center">
-    <EquipmentSlot :type="EquipmentSlots.Cape" :item="capeItem" />
-    <EquipmentSlot :type="EquipmentSlots.Neck" />
-    <EquipmentSlot :type="EquipmentSlots.Ammunition" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Cape" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Neck" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Ammunition" />
   </div>
   <div class="row">
-    <EquipmentSlot :type="EquipmentSlots.Weapon" />
-    <EquipmentSlot :type="EquipmentSlots.Body" />
-    <EquipmentSlot :type="EquipmentSlots.Shield" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Weapon" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Body" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Shield" />
   </div>
   <div class="row center">
-    <EquipmentSlot :type="EquipmentSlots.Legs" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Legs" />
   </div>
   <div class="row">
-    <EquipmentSlot :type="EquipmentSlots.Hands" />
-    <EquipmentSlot :type="EquipmentSlots.Feet" />
-    <EquipmentSlot :type="EquipmentSlots.Ring" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Hands" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Feet" />
+    <EquipmentSlot :type="EquipmentSlotTypes.Ring" />
   </div>
 </div>
-<n-space>
-  <n-switch v-model:value="showExtraAmmo" />
-  <n-input v-model:value="headItem.imageUrl" type="text" placeholder="Basic Input" />
-</n-space>
 </template>
 
 <style scoped>

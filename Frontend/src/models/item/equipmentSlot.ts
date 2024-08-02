@@ -10,8 +10,14 @@ import legsImg from "@/assets/images/icons/legs.webp";
 import handsImg from "@/assets/images/icons/hands.webp";
 import feetImg from "@/assets/images/icons/feet.webp";
 import ringImg from "@/assets/images/icons/ring.webp";
+import type {Item} from "@/models/item/item";
 
-export enum EquipmentSlots {
+export class EquipmentSlot {
+    equipmentSlotType: EquipmentSlotTypes;
+    item: Item;
+}
+
+export enum EquipmentSlotTypes {
     Head,
     Cape,
     Neck,
@@ -28,31 +34,31 @@ export enum EquipmentSlots {
     Extra,
 }
 
-export const getPlaceholderSrc = (slotType: EquipmentSlots) => {
+export const getPlaceholderSrc = (slotType: EquipmentSlotTypes) => {
     switch (slotType) {
-        case EquipmentSlots.Head:
+        case EquipmentSlotTypes.Head:
             return headImg;
-        case EquipmentSlots.Cape:
+        case EquipmentSlotTypes.Cape:
             return capeImg;
-        case EquipmentSlots.Neck:
+        case EquipmentSlotTypes.Neck:
             return neckImg;
-        case EquipmentSlots.Ammunition:
+        case EquipmentSlotTypes.Ammunition:
             return ammunitionImg;
-        case EquipmentSlots.ExtraAmmo:
+        case EquipmentSlotTypes.ExtraAmmo:
             return extraAmmoImg;
-        case EquipmentSlots.Weapon:
+        case EquipmentSlotTypes.Weapon:
             return weaponImg;
-        case EquipmentSlots.Shield:
+        case EquipmentSlotTypes.Shield:
             return shieldImg;
-        case EquipmentSlots.Body:
+        case EquipmentSlotTypes.Body:
             return bodyImg;
-        case EquipmentSlots.Legs:
+        case EquipmentSlotTypes.Legs:
             return legsImg;
-        case EquipmentSlots.Hands:
+        case EquipmentSlotTypes.Hands:
             return handsImg;
-        case EquipmentSlots.Feet:
+        case EquipmentSlotTypes.Feet:
             return feetImg;
-        case EquipmentSlots.Ring:
+        case EquipmentSlotTypes.Ring:
             return ringImg;
     }
 }

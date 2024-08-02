@@ -1,25 +1,28 @@
 <script setup lang="ts">
 
-import {EquipmentSlots, getPlaceholderSrc} from "@/models/item/equipmentSlots";
-import type {Item} from "@/models/item/item";
 import {computed, ref} from "vue";
+import {EquipmentSlotTypes, getPlaceholderSrc} from "@/models/item/equipmentSlot";
+import {useGlobalStore} from "@/stores/globalStore";
 
 const props = withDefaults(defineProps<{
   isVisible?: boolean;
   disabled?: boolean;
-  type: EquipmentSlots;
-  item?: Item;
+  type: EquipmentSlotTypes;
 }>(), {
   disabled: false,
   isVisible: true,
 });
 
-let isPlaceholder = ref(false);
+const state = useGlobalStore();
+
+const isPlaceholder = ref(false);
+
+const item = state.equipmentSlots[props.type]?.item;
 
 let slotImage = computed(() => {
-  if(props.item?.imageUrl) {
+  if(item?.imageUrl) {
     isPlaceholder.value = false;
-    return props.item?.imageUrl;
+    return item.imageUrl;
   }
 
   isPlaceholder.value = true;
@@ -40,12 +43,12 @@ const replaceWithPlaceholder = (e: any) => {
           <img :src="slotImage"
                v-if="slotImage"
                :class="{placeholder: isPlaceholder}"
-               :alt="EquipmentSlots[props.type]"
+               :alt="EquipmentSlotTypes[props.type]"
                @error="replaceWithPlaceholder"
           />
         </div>
       </template>
-      {{ EquipmentSlots[props.type] }}
+      {{ EquipmentSlotTypes[props.type] }}
     </n-tooltip>
   </div>
 </template>
