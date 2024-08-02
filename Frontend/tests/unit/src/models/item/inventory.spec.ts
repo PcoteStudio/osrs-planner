@@ -57,6 +57,14 @@ describe('Inventory', () => {
         });
     });
 
+    describe('clear', () => {
+        it('should remove all items from the inventory', () => {
+            inventory.moveItem(unstackableItemId, inventorySize);
+            inventory.clear();
+            expect(inventory.usedSlots()).toEqual(0);
+        });
+    });
+
     describe('usedSlots', () => {
         it('should return 0 for a new inventory', () => {
             expect(inventory.usedSlots()).toEqual(0);

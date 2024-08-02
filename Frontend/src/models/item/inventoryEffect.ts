@@ -1,8 +1,17 @@
 import { Effect } from "../effect";
 import { PlayerState } from "../playerState";
+import { StateWarning } from "../stateWarning";
 
 export class InventoryEffect extends Effect {
-    public apply(playerState: PlayerState): PlayerState {
-        throw new Error("Method not implemented.");
+    constructor(private itemId: number, private quantity: number, private clearAll: boolean) {
+        super();
+    }
+
+    public apply(playerState: PlayerState): StateWarning {
+        if (this.clearAll) {
+            playerState.inventory.clear();
+            return undefined;
+        }
+        return playerState.inventory.moveItem(this.itemId, this.quantity);
     }
 }

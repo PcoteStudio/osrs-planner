@@ -27,6 +27,14 @@ export class Inventory {
     }
 
     /**
+     * Remove all items from the inventory.
+     */
+    clear(): void {
+        for (const itemId in this.items)
+            delete this.items[itemId];
+    }
+
+    /**
      * Calculates the number of slots used by the items in the inventory.
      * @returns The number of used slots.
      */

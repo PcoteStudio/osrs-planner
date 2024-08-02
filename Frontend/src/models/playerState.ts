@@ -1,7 +1,9 @@
+import { Inventory } from "./item/inventory";
 import { Skills } from "./skill/skills";
 
 export class PlayerState {
     skills: { [skill in Skills]?: number } = {};
+    inventory: Inventory = new Inventory(28);
 
     constructor() {
         // TODO Load from JSON
