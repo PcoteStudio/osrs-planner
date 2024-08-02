@@ -1,4 +1,4 @@
-import { NightwatchCustomAssertions, NightwatchCustomCommands } from 'OSRS Planner/Frontend/nightwatch/nightwatch';
+// import { NightwatchCustomAssertions, NightwatchCustomCommands } from 'OSRS Planner/Frontend/nightwatch/nightwatch';
 
 declare module 'OSRS Planner/Frontend/nightwatch/nightwatch' {
   interface NightwatchCustomAssertions {

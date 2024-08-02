@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   disabled: false,
   isVisible: true,
-})
+});
 
 let isPlaceholder = ref(false);
 

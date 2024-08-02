@@ -12,7 +12,7 @@ export class Bank {
      * @param quantity Number of item inserted if positive or removed if negative.
      * @returns Detailed warning or `undefined` if the move is valid.
      */
-    moveItem(itemId: number, quantity: number): BankMissingItemWarning {
+    moveItem(itemId: number, quantity: number): BankMissingItemWarning | undefined {
         const currentQuantity = this.items[itemId];
         const newQuantity = currentQuantity ? currentQuantity + quantity : quantity;
         this.items[itemId] = newQuantity;

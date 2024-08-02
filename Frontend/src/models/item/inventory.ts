@@ -12,7 +12,7 @@ export class Inventory {
      * @param quantity Number of item inserted if positive or removed if negative.
      * @returns Detailed warning or `undefined` if the move is valid.
      */
-    moveItem(itemId: number, quantity: number): InventoryMissingItemWarning | InventoryLimitExceededWarning {
+    moveItem(itemId: number, quantity: number): InventoryMissingItemWarning | InventoryLimitExceededWarning | undefined {
         const currentQuantity = this.items[itemId];
         const newQuantity = currentQuantity ? currentQuantity + quantity : quantity;
         this.items[itemId] = newQuantity;
