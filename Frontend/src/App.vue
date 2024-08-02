@@ -11,8 +11,18 @@ import {
 } from '@vicons/fa';
 import {RouterLink} from "vue-router";
 
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) });
+function renderIcon(src?: string | Component) {
+  if (typeof src === 'string') {
+    return () => h('img', {
+      src,
+      width: '25px',
+      height: '25px'
+    });
+  } else if (src) {
+    return () => h(NIcon, null, { default: () => h(src) });
+  } else {
+
+  }
 }
 
 export default defineComponent({
@@ -34,7 +44,7 @@ export default defineComponent({
       },
       {
         key: 'quests',
-        icon: renderIcon(BookmarkIcon),
+        icon: renderIcon('https://oldschool.runescape.wiki/images/Quests.png?f5120'),
         label:  i18n.t('quests'),
         children: [
           {
@@ -53,7 +63,7 @@ export default defineComponent({
       },
       {
         key: 'items',
-        icon: renderIcon(BookmarkIcon),
+        icon: renderIcon("https://oldschool.runescape.wiki/images/Inventory.png?d4795"),
         label: i18n.t('items'),
       },
       {
