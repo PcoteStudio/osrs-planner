@@ -1,70 +1,34 @@
 <script setup lang="ts">
 
-import {EquipmentSlots} from "@/models/item/equipmentSlots";
-import headImg from "@/assets/images/icons/head.webp";
-import capeImg from "@/assets/images/icons/cape.webp";
-import neckImg from "@/assets/images/icons/neck.webp";
-import ammunitionImg from "@/assets/images/icons/ammo.webp";
-import extraAmmoImg from "@/assets/images/icons/ammo.webp";
-import weaponImg from "@/assets/images/icons/weapon.webp";
-import shieldImg from "@/assets/images/icons/shield.webp";
-import bodyImg from "@/assets/images/icons/body.webp";
-import legsImg from "@/assets/images/icons/legs.webp";
-import handsImg from "@/assets/images/icons/hands.webp";
-import feetImg from "@/assets/images/icons/feet.webp";
-import ringImg from "@/assets/images/icons/ring.webp";
+import {EquipmentSlots, getPlaceholderSrc} from "@/models/item/equipmentSlots";
+import type {Item} from "@/models/item/item";
+import {computed, ref} from "vue";
 
 const props = withDefaults(defineProps<{
   isVisible?: boolean;
   disabled?: boolean;
   type: EquipmentSlots;
+  item?: Item;
 }>(), {
   disabled: false,
   isVisible: true,
 })
 
-let isEmpty = true;
+let isPlaceholder = ref(false);
 
-let itemImage = "";
-switch (props.type) {
-  case EquipmentSlots.Head:
-    itemImage = headImg;
-    break;
-  case EquipmentSlots.Cape:
-    itemImage = "https://oldschool.runescape.wiki/images/Dizana%27s_quiver_%28uncharged%29.png?a28c8";
-    isEmpty = false;
-    //itemImage = capeImg;
-    break;
-  case EquipmentSlots.Neck:
-    itemImage = neckImg;
-    break;
-  case EquipmentSlots.Ammunition:
-    itemImage = ammunitionImg;
-    break;
-  case EquipmentSlots.ExtraAmmo:
-    itemImage = extraAmmoImg;
-    break;
-  case EquipmentSlots.Weapon:
-    itemImage = weaponImg;
-    break;
-  case EquipmentSlots.Shield:
-    itemImage = shieldImg;
-    break;
-  case EquipmentSlots.Body:
-    itemImage = bodyImg;
-    break;
-  case EquipmentSlots.Legs:
-    itemImage = legsImg;
-    break;
-  case EquipmentSlots.Hands:
-    itemImage = handsImg;
-    break;
-  case EquipmentSlots.Feet:
-    itemImage = feetImg;
-    break;
-  case EquipmentSlots.Ring:
-    itemImage = ringImg;
-    break;
+let slotImage = computed(() => {
+  if(props.item?.imageUrl) {
+    isPlaceholder.value = false;
+    return props.item?.imageUrl;
+  }
+
+  isPlaceholder.value = true;
+  return getPlaceholderSrc(props.type);
+})
+
+const replaceWithPlaceholder = (e: any) => {
+  isPlaceholder.value = true;
+  e.target.src = getPlaceholderSrc(props.type);
 }
 </script>
 
@@ -73,7 +37,12 @@ switch (props.type) {
     <n-tooltip trigger="hover" placement="bottom" :delay="500" :keep-alive-on-hover="false">
       <template #trigger>
         <div class="content">
-          <img v-if="itemImage" :src="itemImage" :class="{placeholder: isEmpty}" :alt="EquipmentSlots[props.type]" />
+          <img :src="slotImage"
+               v-if="slotImage"
+               :class="{placeholder: isPlaceholder}"
+               :alt="EquipmentSlots[props.type]"
+               @error="replaceWithPlaceholder"
+          />
         </div>
       </template>
       {{ EquipmentSlots[props.type] }}
