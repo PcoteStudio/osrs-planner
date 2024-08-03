@@ -10,6 +10,11 @@ export class Step {
     previous: Step | undefined;
     next: Step | undefined;
 
+    constructor(depth: number, description: string) {
+        this.depth = depth;
+        this.description = description;
+    }
+
     applyEffects(playerState: PlayerState) {
         for (const effect of this.effects) {
             effect.apply(playerState);

@@ -4,38 +4,46 @@ import { Item } from './item';
 import { ItemContainers } from './itemContainers';
 
 export class ItemEffect extends Effect {
-    constructor(public source: ItemContainers, public destination: ItemContainers, public itemId: number, public quantity: number) {
+    constructor(public source: ItemContainers, public destination: ItemContainers, public item: Item, public quantity: number) {
         super();
     }
 
     // TODO Clear container feature
     public apply(playerState: PlayerState) {
-        const item = Item.get(this.itemId);
         switch (this.source) {
             case ItemContainers.Bank:
-                playerState.addWarning(playerState.bank.moveItem(this.itemId, -this.quantity));
+                playerState.addWarning(playerState.bank.moveItem(this.item.id, -this.quantity));
                 break;
             case ItemContainers.Inventory:
-                playerState.addWarning(playerState.inventory.moveItem(this.itemId, -this.quantity));
+                playerState.addWarning(playerState.inventory.moveItem(this.item.id, -this.quantity));
                 break;
             case ItemContainers.Equipment:
-                playerState.equipment.swapSlot(item.equipmentSlot, undefined);
+                playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
                 break;
             default:
                 break;
         }
         switch (this.destination) {
             case ItemContainers.Bank:
-                playerState.addWarning(playerState.bank.moveItem(this.itemId, this.quantity));
+                playerState.addWarning(playerState.bank.moveItem(this.item.id, this.quantity));
                 break;
             case ItemContainers.Inventory:
-                playerState.addWarning(playerState.inventory.moveItem(this.itemId, this.quantity));
+                playerState.addWarning(playerState.inventory.moveItem(this.item.id, this.quantity));
                 break;
             case ItemContainers.Equipment:
-                playerState.equipment.swapSlot(item.equipmentSlot, item);
+                playerState.equipment.swapSlot(this.item.equipmentSlot, this.item);
                 break;
             default:
                 break;
         }
+    }
+
+    public toString(): string[] {
+        const effects: string[] = [];
+        if (this.source !== ItemContainers.World)
+            effects.push(`${ItemContainers[this.source]}: -${this.quantity} ${this.item}`);
+        if (this.source !== ItemContainers.World)
+            effects.push(`${ItemContainers[this.destination]}: +${this.quantity} ${this.item}`);
+        return effects;
     }
 }

@@ -4,7 +4,7 @@ import { StateWarning } from '../stateWarning';
 import { Skills } from './skills';
 
 export class SkillEffect extends Effect {
-    constructor(private skill: Skills, private experience: number) {
+    constructor(public skill: Skills, public experience: number) {
         super();
     }
 
@@ -12,5 +12,9 @@ export class SkillEffect extends Effect {
         const currentXp = playerState.skills[this.skill] ?? 0;
         playerState.skills[this.skill] = currentXp + this.experience;
         return undefined;
+    }
+
+    public toString(): string[] {
+        return [`${Skills[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
     }
 }
