@@ -73,5 +73,21 @@ describe('Route', () => {
             expect(firstStep.previous).toBe(undefined);
             expect(firstStep.next).toBe(newStep);
         });
+
+        it('should correctly order the children in the parent', () => {
+            const topStep = new StepModel(0, 'A');
+            route.addStep(undefined, topStep);
+            const firstChild = new StepModel(1, 'A-1');
+            route.addStep(topStep, firstChild);
+            const thirdChild = new StepModel(1, 'A-3');
+            route.addStep(firstChild, thirdChild);
+            const secondChild = new StepModel(1, 'A-2');
+            route.addStep(firstChild, secondChild);
+
+            expect(topStep.children.length).toEqual(3);
+            expect(topStep.children[0].description).toEqual(firstChild.description);
+            expect(topStep.children[1].description).toEqual(secondChild.description);
+            expect(topStep.children[2].description).toEqual(thirdChild.description);
+        });
     });
 });

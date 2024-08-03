@@ -54,6 +54,19 @@ export class RouteModel {
             this.lastStep = newStep;
         else // New step is not last
             newStep.next.previous = newStep;
+
+        // Put at the right position in the parent's children list
+        if (newStep.depth > 0 && newStep.previous) {
+            let brothersMet = 0;
+            let step: StepModel | undefined = newStep.previous;
+            while (step?.depth || 0 >= newStep.depth) {
+                if (step?.depth == newStep.depth)
+                    brothersMet++;
+                step = step?.previous;
+            }
+            if (step)
+                step.children.splice(brothersMet, 0, newStep);
+        }
     }
 
     /**

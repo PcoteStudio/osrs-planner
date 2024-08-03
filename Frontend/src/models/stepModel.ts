@@ -9,6 +9,7 @@ export class StepModel {
     effects: EffectModel[] = [];
     previous: StepModel | undefined;
     next: StepModel | undefined;
+    children: StepModel[] = [];
 
     constructor(depth: number, description: string) {
         this.depth = depth;
