@@ -1,5 +1,5 @@
-import { Item } from "./item";
-import { EquipmentSlotTypes, EquipmentSlot } from "@/models/item/equipmentSlot";
+import { Item } from './item';
+import { EquipmentSlotTypes, EquipmentSlot } from '@/models/item/equipmentSlot';
 
 export class Equipment {
     slots: EquipmentSlot[] = [];

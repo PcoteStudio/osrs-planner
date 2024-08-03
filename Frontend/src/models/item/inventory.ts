@@ -1,5 +1,5 @@
-import { StateWarning } from "../stateWarning";
-import { Item } from "./item";
+import { StateWarning } from '../stateWarning';
+import { Item } from './item';
 
 export class Inventory {
     items: { [id: number]: number } = {};
@@ -56,7 +56,7 @@ export class InventoryLimitExceededWarning extends StateWarning {
         usedSlots: number,
     ) {
         super(
-            "InventoryLimitExceededWarning",
+            'InventoryLimitExceededWarning',
             `Inventory limit has been exceeded (${usedSlots}/${availableSlots}) by inserting ${quantityInserted} ${lastItemInserted.name}.`,
         );
     }
@@ -69,7 +69,7 @@ export class InventoryMissingItemWarning extends StateWarning {
         quantityMissing: number,
     ) {
         super(
-            "InventoryMissingItemWarning",
+            'InventoryMissingItemWarning',
             `${quantityWithdrawn} ${itemWithdrawn.name} were withdrawn from the inventory, but only ${quantityWithdrawn - quantityMissing} were available.`,
         );
     }

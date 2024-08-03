@@ -1,7 +1,7 @@
-import { Effect } from "../effect";
-import { PlayerState } from "../playerState";
-import { Item } from "./item";
-import { ItemContainers } from "./itemContainers";
+import { Effect } from '../effect';
+import { PlayerState } from '../playerState';
+import { Item } from './item';
+import { ItemContainers } from './itemContainers';
 
 export class ItemEffect extends Effect {
     constructor(public source: ItemContainers, public destination: ItemContainers, public itemId: number, public quantity: number) {

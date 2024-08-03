@@ -1,7 +1,7 @@
-import { Effect } from "../effect";
-import { PlayerState } from "../playerState";
-import { StateWarning } from "../stateWarning";
-import { Skills } from "./skills";
+import { Effect } from '../effect';
+import { PlayerState } from '../playerState';
+import { StateWarning } from '../stateWarning';
+import { Skills } from './skills';
 
 export class SkillEffect extends Effect {
     constructor(private skill: Skills, private experience: number) {

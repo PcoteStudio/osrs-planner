@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Inventory from "@/components/Equipment.vue";
+import Inventory from '@/components/Equipment.vue';
 </script>
 
 <template>

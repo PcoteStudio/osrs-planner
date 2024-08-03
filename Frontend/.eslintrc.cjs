@@ -3,7 +3,10 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
   root: true,
-  'extends': [
+  plugins: [
+    '@stylistic/js'
+  ],
+  extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-typescript',
@@ -13,7 +16,8 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
-    "comma-dangle": ["error", "only-multiline"],
-    semi: ["error", "always"],
+    'comma-dangle': ['error', 'only-multiline'],
+    semi: ['error', 'always'],
+    '@stylistic/js/quotes': ['error', 'single']
   },
 };

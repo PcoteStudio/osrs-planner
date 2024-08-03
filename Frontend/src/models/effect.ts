@@ -1,4 +1,4 @@
-import { PlayerState } from "./playerState";
+import { PlayerState } from './playerState';
 
 export abstract class Effect {
     public abstract apply(playerState: PlayerState): void;

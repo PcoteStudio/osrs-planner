@@ -2,14 +2,14 @@
 import {type Component, defineComponent, h, ref} from 'vue';
 import { NIcon } from 'naive-ui';
 import type { MenuOption } from 'naive-ui';
-import {useI18n} from "vue-i18n";
+import {useI18n} from 'vue-i18n';
 import {
   ChevronDown,
   Home as HomeIcon,
   Bookmark as BookmarkIcon,
   Info as InfoIcon
 } from '@vicons/fa';
-import {RouterLink} from "vue-router";
+import {RouterLink} from 'vue-router';
 
 function renderIcon(src?: string | Component) {
   if (typeof src === 'string') {
@@ -63,7 +63,7 @@ export default defineComponent({
       },
       {
         key: 'items',
-        icon: renderIcon("https://oldschool.runescape.wiki/images/Inventory.png?d4795"),
+        icon: renderIcon('https://oldschool.runescape.wiki/images/Inventory.png?d4795'),
         label: i18n.t('items'),
       },
       {

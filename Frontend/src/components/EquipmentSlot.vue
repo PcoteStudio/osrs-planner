@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import {computed, ref} from "vue";
-import {EquipmentSlotTypes, getPlaceholderSrc} from "@/models/item/equipmentSlot";
-import {useGlobalStore} from "@/stores/globalStore";
+import {computed, ref} from 'vue';
+import {EquipmentSlotTypes, getPlaceholderSrc} from '@/models/item/equipmentSlot';
+import {useGlobalStore} from '@/stores/globalStore';
 
 const props = withDefaults(defineProps<{
   isVisible?: boolean;

@@ -1,6 +1,6 @@
-import { PlayerState } from "../playerState";
-import { Requirement } from "../requirement";
-import { Skills } from "./skills";
+import { PlayerState } from '../playerState';
+import { Requirement } from '../requirement';
+import { Skills } from './skills';
 
 export class SkillRequirement extends Requirement {
     constructor(private skill: Skills, private experience: number) {

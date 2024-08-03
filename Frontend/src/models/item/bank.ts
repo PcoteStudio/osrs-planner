@@ -1,5 +1,5 @@
-import { StateWarning } from "../stateWarning";
-import { Item } from "./item";
+import { StateWarning } from '../stateWarning';
+import { Item } from './item';
 
 export class Bank {
     items: { [id: number]: number } = {};
@@ -52,7 +52,7 @@ export class BankMissingItemWarning extends StateWarning {
         quantityMissing: number,
     ) {
         super(
-            "BankMissingItemWarning",
+            'BankMissingItemWarning',
             `${quantityWithdrawn} ${itemWithdrawn.name} were withdrawn from the bank, but only ${quantityWithdrawn - quantityMissing} were available.`,
         );
     }

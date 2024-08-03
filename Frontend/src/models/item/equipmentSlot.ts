@@ -1,16 +1,16 @@
-import headImg from "@/assets/images/icons/head.webp";
-import capeImg from "@/assets/images/icons/cape.webp";
-import neckImg from "@/assets/images/icons/neck.webp";
-import ammunitionImg from "@/assets/images/icons/ammo.webp";
-import extraAmmoImg from "@/assets/images/icons/ammo.webp";
-import weaponImg from "@/assets/images/icons/weapon.webp";
-import shieldImg from "@/assets/images/icons/shield.webp";
-import bodyImg from "@/assets/images/icons/body.webp";
-import legsImg from "@/assets/images/icons/legs.webp";
-import handsImg from "@/assets/images/icons/hands.webp";
-import feetImg from "@/assets/images/icons/feet.webp";
-import ringImg from "@/assets/images/icons/ring.webp";
-import type {Item} from "@/models/item/item";
+import headImg from '@/assets/images/icons/head.webp';
+import capeImg from '@/assets/images/icons/cape.webp';
+import neckImg from '@/assets/images/icons/neck.webp';
+import ammunitionImg from '@/assets/images/icons/ammo.webp';
+import extraAmmoImg from '@/assets/images/icons/ammo.webp';
+import weaponImg from '@/assets/images/icons/weapon.webp';
+import shieldImg from '@/assets/images/icons/shield.webp';
+import bodyImg from '@/assets/images/icons/body.webp';
+import legsImg from '@/assets/images/icons/legs.webp';
+import handsImg from '@/assets/images/icons/hands.webp';
+import feetImg from '@/assets/images/icons/feet.webp';
+import ringImg from '@/assets/images/icons/ring.webp';
+import type {Item} from '@/models/item/item';
 
 export class EquipmentSlot {
     equipmentSlotType: EquipmentSlotTypes;

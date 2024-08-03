@@ -1,8 +1,8 @@
-import { Bank } from "./item/bank";
-import { Equipment } from "./item/equipment";
-import { Inventory } from "./item/inventory";
-import { Skills } from "./skill/skills";
-import { StateWarning } from "./stateWarning";
+import { Bank } from './item/bank';
+import { Equipment } from './item/equipment';
+import { Inventory } from './item/inventory';
+import { Skills } from './skill/skills';
+import { StateWarning } from './stateWarning';
 
 export class PlayerState {
     skills: { [skill in Skills as string]?: number } = {};
@@ -24,6 +24,6 @@ export class PlayerState {
     }
 
     clone(): PlayerState {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
 }

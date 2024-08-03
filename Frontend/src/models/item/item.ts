@@ -1,4 +1,4 @@
-import type { EquipmentSlotTypes } from "./equipmentSlot";
+import type { EquipmentSlotTypes } from './equipmentSlot';
 
 const itemsDb: { [id: number]: Item } = {};
 
