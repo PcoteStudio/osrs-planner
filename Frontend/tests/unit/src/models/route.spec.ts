@@ -10,7 +10,7 @@ describe('Route', () => {
 
     describe('addStep', () => {
         it('should correctly add a step in an empty route', () => {
-            const newStep = new Step();
+            const newStep = new Step(0, '');
             route.addStep(undefined, newStep);
 
             expect(route.firstStep).toBe(newStep);
@@ -23,9 +23,9 @@ describe('Route', () => {
         });
 
         it('should correctly add a step after the only other step of a route', () => {
-            const firstStep = new Step();
+            const firstStep = new Step(0, '');
             route.addStep(undefined, firstStep);
-            const newStep = new Step();
+            const newStep = new Step(0, '');
             route.addStep(firstStep, newStep);
 
             expect(route.firstStep).toBe(firstStep);
@@ -39,9 +39,9 @@ describe('Route', () => {
         });
 
         it('should correctly add a step before the only other step of a route', () => {
-            const lastStep = new Step();
+            const lastStep = new Step(0, '');
             route.addStep(undefined, lastStep);
-            const newStep = new Step();
+            const newStep = new Step(0, '');
             route.addStep(undefined, newStep);
 
             expect(route.firstStep).toBe(newStep);
@@ -55,11 +55,11 @@ describe('Route', () => {
         });
 
         it('should correctly add a step in between the only 2 other steps of a route', () => {
-            const firstStep = new Step();
+            const firstStep = new Step(0, '');
             route.addStep(undefined, firstStep);
-            const lastStep = new Step();
+            const lastStep = new Step(0, '');
             route.addStep(firstStep, lastStep);
-            const newStep = new Step();
+            const newStep = new Step(0, '');
             route.addStep(firstStep, newStep);
 
             expect(route.firstStep).toBe(firstStep);
