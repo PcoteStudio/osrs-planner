@@ -8,6 +8,6 @@ export class SkillRequirement extends Requirement {
     }
 
     public isMet(playerState: PlayerState): boolean {
-        return playerState.skills[this.skill] >= this.experience;
+        return (playerState.skills[this.skill] ?? 0) >= this.experience;
     }
 }

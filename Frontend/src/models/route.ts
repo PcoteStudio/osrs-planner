@@ -17,6 +17,7 @@ export class Route {
         } else {    // New step is not first
             const existingStep = previousStep.next;
             previousStep.next = newStep;
+            newStep.previous = previousStep;
             newStep.next = existingStep;
         }
 
