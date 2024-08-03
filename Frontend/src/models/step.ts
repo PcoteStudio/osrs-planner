@@ -1,8 +1,8 @@
-import { randomUUID, type UUID } from "crypto";
+import { nanoid } from 'nanoid';
 import type { Effect } from "./effect";
 
 export class Step {
-    id: UUID = randomUUID();
+    id: string = nanoid();
     depth: number = 0;
     description: string = '';
     effect: Effect | undefined;

@@ -1,16 +1,14 @@
 import { Item } from "./item";
-import {EquipmentSlotTypes, EquipmentSlot} from "@/models/item/equipmentSlot";
+import { EquipmentSlotTypes, EquipmentSlot } from "@/models/item/equipmentSlot";
 
 export class Equipment {
     slots: EquipmentSlot[] = [];
 
     constructor() {
-        const slots : EquipmentSlot[] = [];
         for (const key in EquipmentSlotTypes) {
-            slots[key] = new EquipmentSlot();
-            slots[key].equipmentSlotType = EquipmentSlotTypes[key as keyof typeof EquipmentSlotTypes];
+            this.slots[key] = new EquipmentSlot();
+            this.slots[key].equipmentSlotType = EquipmentSlotTypes[key as keyof typeof EquipmentSlotTypes];
         }
-        this.slots = slots;
     }
 
     get(slot: EquipmentSlotTypes): Item | undefined {

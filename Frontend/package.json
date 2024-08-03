@@ -22,6 +22,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "naive-ui": "^2.39.0",
+    "nanoid": "^5.0.7",
     "pinia": "^2.1.7",
     "vfonts": "^0.0.3",
     "vue": "^3.4.29",
