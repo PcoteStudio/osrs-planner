@@ -1,13 +1,13 @@
-import { PlayerState } from './playerState';
-import { Step } from './step';
+import { PlayerStateModel } from './playerStateModel';
+import { StepModel } from './stepModel';
 
-export class Route {
-    playerState: PlayerState = new PlayerState();
-    firstStep: Step | undefined;
-    currentStep: Step | undefined; // Current step is considered already executed
-    lastStep: Step | undefined;
+export class RouteModel {
+    playerState: PlayerStateModel = new PlayerStateModel();
+    firstStep: StepModel | undefined;
+    currentStep: StepModel | undefined; // Current step is considered already executed
+    lastStep: StepModel | undefined;
 
-    addStep(previousStep: Step | undefined, newStep: Step) {
+    addStep(previousStep: StepModel | undefined, newStep: StepModel) {
         if (newStep === undefined) return;
 
         if (!previousStep) { // New step is first
@@ -46,7 +46,7 @@ export class Route {
      * Applies the next steps until the specified step is applied or until the last step.
      * @param step Once this step is executed, will return.
      */
-    stepUntil(step: Step) {
+    stepUntil(step: StepModel) {
         let wasStepExecuted = true;
         while (step.id !== this.currentStep?.id && wasStepExecuted) {
             wasStepExecuted = this.stepOnce();

@@ -1,7 +1,7 @@
-import { StateWarning } from '../stateWarning';
-import { Item } from './item';
+import { StateWarningModel } from '../stateWarningModel';
+import { ItemModel } from './itemModel';
 
-export class Bank {
+export class BankModel {
     items: { [id: number]: number } = {};
 
     constructor() { }
@@ -19,7 +19,7 @@ export class Bank {
         if (newQuantity == 0)
             delete this.items[itemId];
         else if (newQuantity < 0)
-            return new BankMissingItemWarning(Item.get(itemId), quantity, newQuantity);
+            return new BankMissingItemWarning(ItemModel.get(itemId), quantity, newQuantity);
         return undefined;
     }
 
@@ -45,9 +45,9 @@ export class Bank {
     }
 }
 
-export class BankMissingItemWarning extends StateWarning {
+export class BankMissingItemWarning extends StateWarningModel {
     constructor(
-        itemWithdrawn: Item,
+        itemWithdrawn: ItemModel,
         quantityWithdrawn: number,
         quantityMissing: number,
     ) {

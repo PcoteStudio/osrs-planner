@@ -1,4 +1,4 @@
-export enum ItemContainers {
+export enum ItemContainersModel {
     Bank,
     Inventory,
     Equipment,

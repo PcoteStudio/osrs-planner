@@ -1,4 +1,4 @@
-export enum Skills {
+export enum SkillsModel {
     Agility,
     Attack,
     Construction,

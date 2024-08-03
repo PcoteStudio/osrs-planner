@@ -10,11 +10,11 @@ import legsImg from '@/assets/images/icons/legs.webp';
 import handsImg from '@/assets/images/icons/hands.webp';
 import feetImg from '@/assets/images/icons/feet.webp';
 import ringImg from '@/assets/images/icons/ring.webp';
-import type {Item} from '@/models/item/item';
+import type {ItemModel} from '@/models/item/itemModel';
 
-export class EquipmentSlot {
+export class EquipmentSlotModel {
     equipmentSlotType: EquipmentSlotTypes;
-    item: Item | undefined;
+    item: ItemModel | undefined;
 }
 
 export enum EquipmentSlotTypes {

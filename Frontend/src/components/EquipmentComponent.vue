@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import EquipmentSlot from '@/components/EquipmentSlot.vue';
-import {Item} from '@/models/item/item';
+import EquipmentSlot from '@/components/EquipmentSlotComponent.vue';
+import {ItemModel} from '@/models/item/itemModel';
 import {useGlobalStore} from '@/stores/globalStore';
-import {EquipmentSlotTypes} from '@/models/item/equipmentSlot';
+import {EquipmentSlotTypes} from '@/models/item/equipmentSlotModel';
 
 const state = useGlobalStore();
 
-const test = state.currentPlayerState.equipment.slots[EquipmentSlotTypes.Head].item = new Item();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
+const test = state.currentPlayerState.equipment.slots[EquipmentSlotTypes.Head].item = new ItemModel();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
 test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?96920';
 
 </script>
@@ -41,12 +41,13 @@ test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?969
 
 <style scoped>
 .inventory {
-  background-color: #181818;
+  background-color: var(--default-bg);
   display: flex;
   flex-direction: column;
   gap: 3%;
-  flex-grow: 1;
+  flex-grow: 0;
   height: 40%;
+  min-height: 250px;
   aspect-ratio: 3 / 4;
   padding: 1rem;
 }

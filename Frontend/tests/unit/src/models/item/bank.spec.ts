@@ -1,23 +1,23 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { Bank, BankMissingItemWarning } from '../../../../../src/models/item/bank';
-import { Item } from '../../../../../src/models/item/item';
+import { BankModel, BankMissingItemWarning } from '../../../../../src/models/item/bankModel';
+import { ItemModel } from '../../../../../src/models/item/itemModel';
 
 describe('Bank', () => {
-    let bank: Bank;
+    let bank: BankModel;
     const itemId = 42;
 
     beforeAll(() => {
-        const item = new Item();
+        const item = new ItemModel();
         item.id = itemId;
-        Item.set(item);
+        ItemModel.set(item);
     });
 
     afterAll(() => {
-        Item.clear();
+        ItemModel.clear();
     });
 
     beforeEach(() => {
-        bank = new Bank();
+        bank = new BankModel();
     });
 
     describe('moveItem', () => {

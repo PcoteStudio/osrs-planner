@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Inventory from '@/components/Equipment.vue';
+import Inventory from '@/components/EquipmentComponent.vue';
 </script>
 
 <template>
@@ -10,8 +10,13 @@ import Inventory from '@/components/Equipment.vue';
 
 <style scoped>
 main {
-  background: darkblue;
+  display: flex;
+  gap: 0.5rem;
+  background: black;
   width: 100%;
   height: 100%;
+  * {
+    border: darkred solid 1px;
+  }
 }
 </style>

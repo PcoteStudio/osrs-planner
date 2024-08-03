@@ -1,16 +1,16 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { Route } from '../../../../src/models/route';
-import { Step } from '../../../../src/models/step';
+import { RouteModel } from '../../../../src/models/routeModel';
+import { StepModel } from '../../../../src/models/stepModel';
 
 describe('Route', () => {
-    let route: Route;
+    let route: RouteModel;
     beforeEach(() => {
-        route = new Route();
+        route = new RouteModel();
     });
 
     describe('addStep', () => {
         it('should correctly add a step in an empty route', () => {
-            const newStep = new Step(0, '');
+            const newStep = new StepModel(0, '');
             route.addStep(undefined, newStep);
 
             expect(route.firstStep).toBe(newStep);
@@ -23,9 +23,9 @@ describe('Route', () => {
         });
 
         it('should correctly add a step after the only other step of a route', () => {
-            const firstStep = new Step(0, '');
+            const firstStep = new StepModel(0, '');
             route.addStep(undefined, firstStep);
-            const newStep = new Step(0, '');
+            const newStep = new StepModel(0, '');
             route.addStep(firstStep, newStep);
 
             expect(route.firstStep).toBe(firstStep);
@@ -39,9 +39,9 @@ describe('Route', () => {
         });
 
         it('should correctly add a step before the only other step of a route', () => {
-            const lastStep = new Step(0, '');
+            const lastStep = new StepModel(0, '');
             route.addStep(undefined, lastStep);
-            const newStep = new Step(0, '');
+            const newStep = new StepModel(0, '');
             route.addStep(undefined, newStep);
 
             expect(route.firstStep).toBe(newStep);
@@ -55,11 +55,11 @@ describe('Route', () => {
         });
 
         it('should correctly add a step in between the only 2 other steps of a route', () => {
-            const firstStep = new Step(0, '');
+            const firstStep = new StepModel(0, '');
             route.addStep(undefined, firstStep);
-            const lastStep = new Step(0, '');
+            const lastStep = new StepModel(0, '');
             route.addStep(firstStep, lastStep);
-            const newStep = new Step(0, '');
+            const newStep = new StepModel(0, '');
             route.addStep(firstStep, newStep);
 
             expect(route.firstStep).toBe(firstStep);

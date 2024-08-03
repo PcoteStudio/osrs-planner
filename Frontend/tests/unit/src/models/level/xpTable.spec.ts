@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { XpTable } from '../../../../../src/models/skill/xpTable';
+import { XpTableModel } from '../../../../../src/models/skill/xpTableModel';
 
 describe('xpTable', () => {
-    const xpTable99 = new XpTable(99);
-    const xpTable126 = new XpTable(126);
+    const xpTable99 = new XpTableModel(99);
+    const xpTable126 = new XpTableModel(126);
 
     describe('getXp', () => {
         it('should return the right xp value for level 1', () => {

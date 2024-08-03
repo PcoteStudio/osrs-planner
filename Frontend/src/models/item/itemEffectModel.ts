@@ -1,36 +1,36 @@
-import { Effect } from '../effect';
-import { PlayerState } from '../playerState';
-import { Item } from './item';
-import { ItemContainers } from './itemContainers';
+import { EffectModel } from '../effectModel';
+import { PlayerStateModel } from '../playerStateModel';
+import { ItemModel } from './itemModel';
+import { ItemContainersModel } from './itemContainersModel';
 
-export class ItemEffect extends Effect {
-    constructor(public source: ItemContainers, public destination: ItemContainers, public item: Item, public quantity: number) {
+export class ItemEffectModel extends EffectModel {
+    constructor(public source: ItemContainersModel, public destination: ItemContainersModel, public item: ItemModel, public quantity: number) {
         super();
     }
 
     // TODO Clear container feature
-    public apply(playerState: PlayerState) {
+    public apply(playerState: PlayerStateModel) {
         switch (this.source) {
-            case ItemContainers.Bank:
+            case ItemContainersModel.Bank:
                 playerState.addWarning(playerState.bank.moveItem(this.item.id, -this.quantity));
                 break;
-            case ItemContainers.Inventory:
+            case ItemContainersModel.Inventory:
                 playerState.addWarning(playerState.inventory.moveItem(this.item.id, -this.quantity));
                 break;
-            case ItemContainers.Equipment:
+            case ItemContainersModel.Equipment:
                 playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
                 break;
             default:
                 break;
         }
         switch (this.destination) {
-            case ItemContainers.Bank:
+            case ItemContainersModel.Bank:
                 playerState.addWarning(playerState.bank.moveItem(this.item.id, this.quantity));
                 break;
-            case ItemContainers.Inventory:
+            case ItemContainersModel.Inventory:
                 playerState.addWarning(playerState.inventory.moveItem(this.item.id, this.quantity));
                 break;
-            case ItemContainers.Equipment:
+            case ItemContainersModel.Equipment:
                 playerState.equipment.swapSlot(this.item.equipmentSlot, this.item);
                 break;
             default:
@@ -40,10 +40,10 @@ export class ItemEffect extends Effect {
 
     public toString(): string[] {
         const effects: string[] = [];
-        if (this.source !== ItemContainers.World)
-            effects.push(`${ItemContainers[this.source]}: -${this.quantity} ${this.item}`);
-        if (this.source !== ItemContainers.World)
-            effects.push(`${ItemContainers[this.destination]}: +${this.quantity} ${this.item}`);
+        if (this.source !== ItemContainersModel.World)
+            effects.push(`${ItemContainersModel[this.source]}: -${this.quantity} ${this.item}`);
+        if (this.source !== ItemContainersModel.World)
+            effects.push(`${ItemContainersModel[this.destination]}: +${this.quantity} ${this.item}`);
         return effects;
     }
 }
