@@ -1,4 +1,6 @@
 import { PlayerStateModel } from './playerStateModel';
+import { SkillEffectModel } from './skill/skillEffectModel';
+import { SkillsModel } from './skill/skillsModel';
 import { StepModel } from './stepModel';
 
 export class RouteModel {
@@ -6,6 +8,33 @@ export class RouteModel {
     firstStep: StepModel | undefined;
     currentStep: StepModel | undefined; // Current step is considered already executed
     lastStep: StepModel | undefined;
+
+    initializeSomeSteps() {
+        let step = new StepModel(0, 'I am a top step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Agility, 100));
+        this.addStep(undefined, step);
+        step = new StepModel(0, 'I am another top step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Herblore, 300));
+        this.addStep(this.lastStep, step);
+        step = new StepModel(1, 'I am a child step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Attack, 2000));
+        this.addStep(this.lastStep, step);
+        step = new StepModel(1, 'I am another child step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Defence, 1500));
+        this.addStep(this.lastStep, step);
+        step = new StepModel(2, 'I am a grand-child step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Fishing, 30000));
+        this.addStep(this.lastStep, step);
+        step = new StepModel(1, 'I am a just a child step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Mining, 2000));
+        this.addStep(this.lastStep, step);
+        step = new StepModel(0, 'I am a but a meager top step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Farming, 50000));
+        this.addStep(this.lastStep, step);
+        step = new StepModel(0, 'I am the last top step');
+        step.addEffect(new SkillEffectModel(SkillsModel.Smithing, 500));
+        this.addStep(this.lastStep, step);
+    }
 
     addStep(previousStep: StepModel | undefined, newStep: StepModel) {
         if (newStep === undefined) return;

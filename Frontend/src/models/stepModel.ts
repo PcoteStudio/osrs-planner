@@ -15,6 +15,10 @@ export class StepModel {
         this.description = description;
     }
 
+    addEffect(effect: EffectModel) {
+        if (effect) this.effects.push(effect);
+    }
+
     applyEffects(playerState: PlayerStateModel) {
         for (const effect of this.effects) {
             effect.apply(playerState);
