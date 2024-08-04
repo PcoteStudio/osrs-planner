@@ -1,11 +1,11 @@
 import { BankModel } from './item/bankModel';
 import { EquipmentModel } from './item/equipmentModel';
 import { InventoryModel } from './item/inventoryModel';
-import { SkillsModel } from './skill/skillsModel';
+import { SkillsEnum } from './skill/skillsEnum';
 import { StateWarningModel } from './stateWarningModel';
 
 export class PlayerStateModel {
-    skills: { [skill in SkillsModel as string]?: number } = {};
+    skills: { [skill in SkillsEnum as string]?: number } = {};
     inventory: InventoryModel = new InventoryModel(28);
     equipment: EquipmentModel = new EquipmentModel();
     bank: BankModel = new BankModel();
@@ -13,10 +13,10 @@ export class PlayerStateModel {
 
     constructor() {
         // TODO Load from JSON
-        Object.keys(SkillsModel).forEach((skill) => {
+        Object.keys(SkillsEnum).forEach((skill) => {
             this.skills[skill] = 1;
         });
-        this.skills[SkillsModel.Hitpoints] = 1154;
+        this.skills[SkillsEnum.Hitpoints] = 1154;
     }
 
     addWarning(warning: StateWarningModel | undefined) {

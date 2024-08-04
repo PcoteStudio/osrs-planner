@@ -1,10 +1,10 @@
 import { EffectModel } from '../effectModel';
 import { PlayerStateModel } from '../playerStateModel';
 import { StateWarningModel } from '../stateWarningModel';
-import { SkillsModel } from './skillsModel';
+import { SkillsEnum } from './skillsEnum';
 
 export class SkillEffectModel extends EffectModel {
-    constructor(public skill: SkillsModel, public experience: number) {
+    constructor(public skill: SkillsEnum, public experience: number) {
         super();
     }
 
@@ -15,6 +15,6 @@ export class SkillEffectModel extends EffectModel {
     }
 
     public toString(): string[] {
-        return [`${SkillsModel[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
+        return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
     }
 }

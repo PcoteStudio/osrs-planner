@@ -41,7 +41,7 @@ test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?969
 
 <style scoped>
 .inventory {
-  background-color: var(--default-bg);
+  background-color: var(--color-background-soft);
   display: flex;
   flex-direction: column;
   gap: 3%;

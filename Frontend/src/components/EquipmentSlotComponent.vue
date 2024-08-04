@@ -55,7 +55,7 @@ const replaceWithPlaceholder = (e: any) => {
 
 <style scoped>
 .slot {
-  background: #2c3e50;
+  background: var(--vt-c-indigo);
   position: relative;
   overflow: hidden;
   height: 100%;

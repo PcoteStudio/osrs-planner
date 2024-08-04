@@ -1,15 +1,12 @@
 import { nanoid } from 'nanoid';
-import type { EffectModel } from './effectModel';
 import type { PlayerStateModel } from './playerStateModel';
+import type {EffectModel} from "@/models/effectModel";
 
 export class StepModel {
     id: string = nanoid();
     depth: number = 0;
     description: string = '';
     effects: EffectModel[] = [];
-    previous: StepModel | undefined;
-    next: StepModel | undefined;
-    children: StepModel[] = [];
 
     constructor(depth: number, description: string) {
         this.depth = depth;

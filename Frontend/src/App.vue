@@ -1,6 +1,6 @@
 <script lang="ts">
 import {type Component, defineComponent, h, ref} from 'vue';
-import { NIcon } from 'naive-ui';
+import {darkTheme, NIcon} from 'naive-ui';
 import type { MenuOption } from 'naive-ui';
 import {useI18n} from 'vue-i18n';
 import {
@@ -26,6 +26,11 @@ function renderIcon(src?: string | Component) {
 }
 
 export default defineComponent({
+  computed: {
+    darkTheme() {
+      return darkTheme
+    }
+  },
   setup() {
     const i18n = useI18n();
 
@@ -92,6 +97,7 @@ export default defineComponent({
 </script>
 
 <template>
+  <n-config-provider :theme="darkTheme">
   <n-space vertical>
     <n-layout has-sider position="absolute">
       <header>
@@ -125,9 +131,15 @@ export default defineComponent({
       </n-layout>
     </n-layout>
   </n-space>
+  </n-config-provider>
 </template>
 
 <style scoped>
+header {
+  z-index: 10;
+  background-color: #18181c;
+}
+
 .logo {
   img {
     width: 4em;

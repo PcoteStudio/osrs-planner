@@ -1,9 +1,9 @@
 import { PlayerStateModel } from '../playerStateModel';
 import { RequirementModel } from '../requirementModel';
-import { SkillsModel } from './skillsModel';
+import { SkillsEnum } from './skillsEnum';
 
 export class SkillRequirementModel extends RequirementModel {
-    constructor(private skill: SkillsModel, private experience: number) {
+    constructor(private skill: SkillsEnum, private experience: number) {
         super();
     }
 
