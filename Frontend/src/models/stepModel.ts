@@ -4,13 +4,11 @@ import type { EffectModel } from '@/models/effectModel';
 
 export class StepModel {
     id: string = nanoid();
-    depth: number = 0;
     description: string = '';
     effects: EffectModel[] = [];
     completed: boolean = false;
 
-    constructor(depth: number, description: string) {
-        this.depth = depth;
+    constructor(description: string) {
         this.description = description;
     }
 

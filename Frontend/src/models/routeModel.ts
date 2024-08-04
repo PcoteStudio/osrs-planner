@@ -6,16 +6,11 @@ import { loremIpsum } from 'lorem-ipsum';
 
 export class RouteModel {
     playerState: PlayerStateModel = new PlayerStateModel();
-    steps: StepModel[] = [];
-    currentStepIndex: number | undefined; // Current step is considered already executed
-    get currentStep(): StepModel | undefined {
-        if (this.currentStepIndex === undefined)
-            return undefined;
-        return this.steps[this.currentStepIndex];
-    }
+    rootNode: StepTreeNode = { children: [] };
+    currentNode: StepTreeNode | undefined; // Current step is considered already executed
 
     initializeSomeSteps() {
-        let step = new StepModel(0, 'I am a top step ' + loremIpsum());
+        let step = new StepModel('I am a top step ' + loremIpsum());
         step.addEffect(new SkillEffectModel(SkillsEnum.Agility, 100));
         step.addEffect(new SkillEffectModel(SkillsEnum.Attack, 100));
         step.addEffect(new SkillEffectModel(SkillsEnum.Construction, 100));
@@ -39,67 +34,86 @@ export class RouteModel {
         step.addEffect(new SkillEffectModel(SkillsEnum.Strength, 100));
         step.addEffect(new SkillEffectModel(SkillsEnum.Thieving, 100));
         step.addEffect(new SkillEffectModel(SkillsEnum.Woodcutting, 100));
-        this.addStep(step);
-        step = new StepModel(0, 'I am another top step');
+        const node1 = this.addStep(step, this.rootNode);
+
+        step = new StepModel('I am another top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Herblore, 300));
-        this.addStep(step);
-        step = new StepModel(1, 'I am a child step ' + loremIpsum());
+        const node2 = this.addStep(step, node1);
+
+        step = new StepModel('I am a child step ' + loremIpsum());
         step.addEffect(new SkillEffectModel(SkillsEnum.Attack, 2000));
-        this.addStep(step);
-        step = new StepModel(1, 'I am another child step');
+        const node21 = this.addSubStep(step, node2);
+
+        step = new StepModel('I am another child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Defence, 1500));
-        this.addStep(step);
-        step = new StepModel(2, 'I am a grand-child step');
+        const node22 = this.addStep(step, node21);
+
+        step = new StepModel('I am a grand-child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Fishing, 30000));
-        this.addStep(step);
-        step = new StepModel(2, 'I am a grand-child step');
+        const node221 = this.addSubStep(step, node22);
+
+        step = new StepModel('I am a grand-child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Fishing, 30000));
-        this.addStep(step);
-        step = new StepModel(2, 'I am a grand-child step');
+        const node222 = this.addStep(step, node221);
+
+        step = new StepModel('I am a grand-child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Fishing, 30000));
-        this.addStep(step);
-        step = new StepModel(1, 'I am a just a child step');
+        this.addStep(step, node222);
+
+        step = new StepModel('I am a just a child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Mining, 2000));
-        this.addStep(step);
-        step = new StepModel(0, 'I am a but a meager top step');
+        this.addStep(step, node22);
+
+        step = new StepModel('I am a but a meager top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Farming, 50000));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
+        const node3 = this.addStep(step, node2);
+
+        step = new StepModel('I am the last top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
+        const node4 = this.addStep(step, node3);
+
+        step = new StepModel('I am the last top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
+        const node5 = this.addStep(step, node4);
+
+        step = new StepModel('I am the last top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
+        const node6 = this.addStep(step, node5);
+
+        step = new StepModel('I am the last top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
+        const node7 = this.addStep(step, node6);
+
+        step = new StepModel('I am the last top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
-        step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
-        step = new StepModel(0, 'I am the last top step');
-        step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
-        this.addStep(step);
+        this.addStep(step, node7);
     }
 
-    addStep(newStep: StepModel, previousStep?: StepModel | null) {
-        let insertIndex: number = -1;
-        if (previousStep) {
-            insertIndex = this.steps.indexOf(previousStep) + 1;
-        } else if (previousStep === null) { // Maybe use append/prepend method instead to add at the end or at the begining ?
-            insertIndex = 0;
-        }
-
-        if (insertIndex >= 0) {
-            this.steps.splice(insertIndex, 0, newStep);
+    addStep(newStep: StepModel, previousNode?: StepTreeNode): StepTreeNode {
+        const newNode: StepTreeNode = {
+            step: newStep,
+            children: [],
+        };
+        if (previousNode) {
+            if (!previousNode.parent) throw new Error('previousNode doesn\'t have a parent');
+            const previousNodeIndex = previousNode.parent.children.indexOf(previousNode);
+            previousNode.parent.children.splice(previousNodeIndex + 1, 0, newNode);
+            newNode.parent = previousNode.parent;
         } else {
-            this.steps.push(newStep);
+            this.rootNode.children.push(newNode);
+            newNode.parent = this.rootNode;
         }
+        return newNode;
+    }
+
+    addSubStep(newStep: StepModel, parentNode: StepTreeNode): StepTreeNode {
+        const newNode: StepTreeNode = {
+            step: newStep,
+            parent: parentNode,
+            children: [],
+        };
+        parentNode.children.splice(0, 0, newNode);
+        return newNode;
     }
 
     /**
@@ -107,15 +121,24 @@ export class RouteModel {
      * @returns `true` if a another step was executed or `false` otherwise.
      */
     stepOnce(): boolean {
-        if (this.currentStepIndex === undefined) {
-            this.currentStepIndex = 0;
+        if (!this.currentNode) { // Find and execute the first node
+            this.currentNode = this.rootNode;
+            while (this.currentNode.children) {
+                this.currentNode = this.currentNode?.children[0];
+            }
+        } else if (this.currentNode.parent) { // Execute the next node
+            const currentNodeIndex = this.currentNode.parent.children.indexOf(this.currentNode);
+            if (this.currentNode.parent.children.length > currentNodeIndex + 1) {
+                this.currentNode = this.currentNode.parent.children[currentNodeIndex + 1];
+            } else {
+                this.currentNode = this.currentNode.parent;
+            }
         }
-        if (this.currentStepIndex + 1 < this.steps.length) {
-            this.currentStepIndex++;
-            this.currentStep!.applyEffects(this.playerState);
+        if (this.currentNode.step) {
+            this.currentNode.step.applyEffects(this.playerState);
             return true;
         }
-        return false;
+        return false; // There is only a root node left to execute
     }
 
     /**
@@ -124,43 +147,21 @@ export class RouteModel {
      */
     stepUntil(step: StepModel) {
         let wasStepExecuted = true;
-        while (step.id !== this.currentStep?.id && wasStepExecuted) {
+        while (step.id !== this.currentNode?.step?.id && wasStepExecuted) {
             wasStepExecuted = this.stepOnce();
         }
     }
 
-    toTree(): StepTreeNode[] {
-        return this.toTreeRec(0, 0).nodes;
+    countSteps(fromNode: StepTreeNode): number {
+        let total = 0;
+        for (const node of fromNode.children)
+            total += 1 + this.countSteps(node);
+        return total;
     }
-
-    toTreeRec(start: number, depth: number): { position: number, nodes: StepTreeNode[] } {
-        const stepNodes: StepTreeNode[] = [];
-        let lastStepNode: StepTreeNode | undefined = undefined;
-        let i = start;
-        for (; i < this.steps.length; i++) {
-            const step = this.steps[i];
-            if (step.depth < depth) {
-                return { position: i - 1, nodes: stepNodes };
-            }
-            if (step.depth === depth) {
-                lastStepNode = { step, children: [] };
-                stepNodes.push(lastStepNode);
-            } else {
-                if (lastStepNode) {
-                    const { position, nodes } = this.toTreeRec(i, depth + 1);
-                    lastStepNode.children = nodes;
-                    i = position;
-                } else {
-                    throw new Error(`Trying to insert a node at depth ${step.depth} but no step was inserted before at depth ${step.depth - 1}`);
-                }
-            }
-        }
-        return { position: i, nodes: stepNodes };
-    }
-
 }
 
 export type StepTreeNode = {
-    step: StepModel
+    step?: StepModel;
+    parent?: StepTreeNode;
     children: StepTreeNode[];
 };
