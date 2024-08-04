@@ -6,7 +6,6 @@ import { useI18n } from 'vue-i18n';
 import {
   ChevronDown,
   Home as HomeIcon,
-  Bookmark as BookmarkIcon,
   Info as InfoIcon
 } from '@vicons/fa';
 import { RouterLink } from 'vue-router';
@@ -20,8 +19,6 @@ function renderIcon(src?: string | Component) {
     });
   } else if (src) {
     return () => h(NIcon, null, { default: () => h(src) });
-  } else {
-
   }
 }
 

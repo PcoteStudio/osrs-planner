@@ -4,7 +4,7 @@ import StepListComponent from '@/components/StepListComponent.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import type { StepTreeNode } from '@/models/routeModel';
 import { useGlobalStore } from '@/stores/globalStore';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
   index: string;
@@ -12,25 +12,33 @@ const props = defineProps<{
 }>();
 
 const state = useGlobalStore();
+
 const collapseSubStepList = ref(false);
+const showEffects = ref(false);
 
-const setCurrentStep = (step: StepModel) => {
-  state.setCurrentStep(step);
-};
+const setCurrentStep = (step: StepModel) => state.setCurrentStep(step);
+const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node);
 
-const setCompleted = (step: StepModel) => {
-  state.completeStep(step);
-};
+const isCurrentStep = computed(() => state.currentStep === props.node.step);
+const isFirstChild = computed(() =>  state.currentRoute.steps[0].id === props.node.step.id);
+const isLastChild = computed(() =>  state.currentRoute.steps[state.currentRoute.steps.length - 1].id === props.node.step.id);
+const isCompleted = computed(() => props.node.step.completed);
 
+watch(isCurrentStep, () => {
+  showEffects.value = isCurrentStep.value;
+});
+if (isCurrentStep.value) {
+  showEffects.value = true;
+}
 </script>
 
 <template>
   <div class="step">
     <div class="content" :class="{
-      'first-child': state.currentRoute.steps[0].id === node.step.id,
-      'last-child': state.currentRoute.steps[state.currentRoute.steps.length - 1].id === node.step.id,
-      'current': state.currentStep === node.step,
-      'completed': node.step.completed
+      'first-child': isFirstChild,
+      'last-child': isLastChild,
+      'current': isCurrentStep,
+      'completed': isCompleted
     }">
       <div class="tag" @click="setCurrentStep(props.node.step)">
         <div class="icon">
@@ -40,19 +48,37 @@ const setCompleted = (step: StepModel) => {
         </div>
       </div>
       <div class="label">
+        <div class="header">
+          <div class="actions">
+            <n-button secondary round
+                @click="showEffects = !showEffects"
+                :type="showEffects ? 'primary' : 'default'"
+            >
+              Effects
+            </n-button>
+            <n-button secondary circle
+                @click="toggleCompleted(node)"
+                :type="isCompleted ? 'success' : 'default'"
+            >
+              <font-awesome-icon icon="check" />
+            </n-button>
+          </div>
+        </div>
         <div class="body">
           {{ props.node.step.description }}
-          <br>
-          <n-button @click="setCompleted(node.step)">
-            Mark as Completed
-          </n-button>
         </div>
         <div class="footer">
-          <EffectBadgeComponent
-              v-for="effect in props.node.step.effects"
+          <div class="effects"
+               :style="{ display: showEffects ? 'flex' : 'none' }"
+          >
+            <EffectBadgeComponent
+              v-for="(effect, index) in props.node.step.effects"
+              :key="index"
               :effect="effect"
-          />
+            />
+          </div>
         </div>
+        <hr/>
       </div>
     </div>
     <div class="sub-step-list" v-if="props.node.children.length">
@@ -86,11 +112,42 @@ const setCompleted = (step: StepModel) => {
     width: 100%;
   }
 
-  .footer {
+  .label {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    justify-content: flex-end
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      justify-content: flex-end;
+
+      .actions {
+        display: flex;
+        gap: 0.3rem;
+        justify-content: flex-end;
+      }
+    }
+
+    .footer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .effects {
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 0.3rem;
+      }
+    }
+
+    hr {
+      margin: 0.5rem -0.5rem -0.5rem -1.75rem;
+      background-color: #303030;
+      height: 2px;
+      border: 0;
+    }
   }
 
   .tag {
@@ -150,7 +207,7 @@ const setCompleted = (step: StepModel) => {
 
   &.current {
     & > .tag > .icon {
-      outline-color: #09551a !important;
+      outline-color: deepskyblue !important;
     }
   }
 

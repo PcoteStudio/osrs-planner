@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { EquipmentSlotTypes, getPlaceholderSrc } from '@/models/item/equipmentSlotModel';
 import { useGlobalStore } from '@/stores/globalStore';
 
@@ -15,22 +15,19 @@ const props = withDefaults(defineProps<{
 
 const state = useGlobalStore();
 
-const isPlaceholder = ref(false);
 
 const item = state.currentPlayerState.equipment.slots[props.type]?.item;
 
+const isPlaceholder = computed(() => !item?.imageUrl);
 let slotImage = computed(() => {
   if(item?.imageUrl) {
-    isPlaceholder.value = false;
     return item.imageUrl;
   }
 
-  isPlaceholder.value = true;
   return getPlaceholderSrc(props.type);
 });
 
 const replaceWithPlaceholder = (e: any) => {
-  isPlaceholder.value = true;
   e.target.src = getPlaceholderSrc(props.type);
 };
 </script>

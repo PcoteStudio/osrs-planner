@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import StepComponent from '@/components/StepComponent.vue';
-import type { StepModel } from '@/models/stepModel';
 
 const props = defineProps<{
   nodes: Steptree[];
@@ -17,7 +16,7 @@ if (props.indexPrefix) {
 <template>
 <div class="task-list">
   <ol>
-    <li v-for="(node, index) in nodes">
+    <li :key="index" v-for="(node, index) in nodes">
       <StepComponent :index="prefix + (index + 1)" :node="node" />
     </li>
   </ol>
