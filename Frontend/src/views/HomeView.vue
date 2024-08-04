@@ -8,6 +8,9 @@ const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
 let nodes = state.currentRoute.toTree();
 
+//TODO: Current step is set to the 1st step for testing
+state.setCurrentStep(state.currentRoute.steps[0]);
+
 </script>
 
 <template>

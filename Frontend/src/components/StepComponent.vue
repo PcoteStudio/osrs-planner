@@ -14,24 +14,38 @@ const props = defineProps<{
 const state = useGlobalStore();
 const collapseSubStepList = ref(false);
 
+const setCurrentStep = (step: StepModel) => {
+  state.setCurrentStep(step);
+}
+
+const setCompleted = (step: StepModel) => {
+  state.completeStep(step);
+}
+
 </script>
 
 <template>
   <div class="step">
     <div class="content" :class="{
-      'first-child': state.currentRoute.steps[0].id == node.step.id,
-      'last-child': state.currentRoute.steps[state.currentRoute.steps.length - 1].id == node.step.id
+      'first-child': state.currentRoute.steps[0].id === node.step.id,
+      'last-child': state.currentRoute.steps[state.currentRoute.steps.length - 1].id === node.step.id,
+      'current': state.currentStep === node.step,
+      'completed': node.step.completed
     }">
-      <div class="tag">
+      <div class="tag" @click="setCurrentStep(props.node.step)">
         <div class="icon">
-          <a href="#" class="link" v-if="props.node.step.depth <= 1">
+          <span class="label" v-if="props.node.step.depth <= 1">
             {{ props.index }}
-          </a>
+          </span>
         </div>
       </div>
       <div class="label">
         <div class="body">
           {{ props.node.step.description }}
+          <br>
+          <n-button @click="setCompleted(node.step)">
+            Mark as Completed
+          </n-button>
         </div>
         <div class="footer">
           <EffectBadgeComponent
@@ -61,19 +75,104 @@ const collapseSubStepList = ref(false);
   </div>
 </template>
 <style scoped>
-.sub-step {
+.content {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem;
 
+  .body, .label {
+    width: 100%;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    justify-content: flex-end
+  }
+
+  .tag {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    aspect-ratio: 1/1;
+
+    .icon {
+      background-color: #242424;
+      outline: #303030 solid 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+
+      .label {
+        color: white;
+        text-decoration: none;
+        font-weight: bolder;
+        text-align: center;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--vt-c-indigo);
+        outline-color: var(--vt-c-text-dark-2);
+      }
+    }
+  }
+
+  &:before, &:after {
+    content: "";
+    z-index: 1;
+    position: absolute;
+    left: calc((0.5rem + 3rem) / 2);
+    border: #303030 solid 1px;
+  }
+
+  &:before {
+    top: 0;
+    height: 10%;
+  }
+
+  &:after {
+    top: 10%;
+    height: 90%;
+  }
+
+  &.first-child:before, &.last-child:after{
+    display: none;
+  }
+
+  &.current {
+    & > .tag > .icon {
+      outline-color: #09551a !important;
+    }
+  }
+
+  &.completed {
+    & > .tag > .icon {
+      outline-color: #09551a;
+      background-color: #0f932c;
+    }
+  }
+}
+
+.sub-step {
   .content {
     background-color: #1a1a1a;
     .tag > .icon {
       font-size: smaller;
-       width: 75%;
-     }
+      width: 75%;
+    }
   }
 }
 
 .deep-step {
-
   .content{
     background-color: #111;
     .tag > .icon {
@@ -113,88 +212,5 @@ const collapseSubStepList = ref(false);
       }
     }
   }
-
 }
-
-.content {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  //outline: solid deepskyblue 1px;
-
-  .body, .label {
-    width: 100%;
-  }
-
-  .footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    justify-content: flex-end
-  }
-
-  .tag {
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    aspect-ratio: 1/1;
-
-    .icon {
-      background-color: #242424;
-      outline: #303030 solid 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
-
-      .link {
-        color: white;
-        text-decoration: none;
-        font-weight: bolder;
-      }
-
-      &.current {
-        outline-color: #09551a;
-      }
-
-      &.done {
-        outline-color: #09551a;
-        background-color: #0f932c;
-      }
-    }
-  }
-
-  &:before, &:after {
-    content: "";
-    z-index: 1;
-    position: absolute;
-    left: calc((0.5rem + 3rem) / 2);
-    border: #303030 solid 1px;
-  }
-
-  &:before {
-    top: 0;
-    height: 10%;
-  }
-
-  &:after {
-    top: 10%;
-    height: 90%;
-  }
-
-  &.first-child:before {
-    display: none;
-  }
-
-  &.last-child:after {
-    display: none;
-  }
-}
-
 </style>

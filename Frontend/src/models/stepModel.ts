@@ -7,6 +7,7 @@ export class StepModel {
     depth: number = 0;
     description: string = '';
     effects: EffectModel[] = [];
+    completed: boolean = false;
 
     constructor(depth: number, description: string) {
         this.depth = depth;
