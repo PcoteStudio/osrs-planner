@@ -19,10 +19,12 @@ const state = useGlobalStore();
       'first-child': state.currentRoute.steps[0].id == node.step.id,
       'last-child': state.currentRoute.steps[state.currentRoute.steps.length - 1].id == node.step.id
     }">
-      <div class="tag current">
-        <a href="#" class="link" v-if="props.node.step.depth <= 1">
-          {{ props.index }}
-        </a>
+      <div class="tag">
+        <div class="icon">
+          <a href="#" class="link" v-if="props.node.step.depth <= 1">
+            {{ props.index }}
+          </a>
+        </div>
       </div>
       <div class="label">
         <div class="body">
@@ -49,24 +51,18 @@ const state = useGlobalStore();
 </template>
 <style scoped>
 .sub-step {
-  padding-left: 0.25rem;
-
   .content {
-    .tag {
-      width: 2.5rem;
-    }
-
-    &:before, &:after {
-      left: calc((0.5rem + 2.5rem) / 2);
-    }
+    .tag > .icon {
+      font-size: smaller;
+       width: 75%;
+     }
   }
 }
 
 .deep-step {
-  .content {
-    .tag {
-      margin-left: 0.35rem;
-      width: 1.5rem;
+  .content{
+    .tag > .icon {
+      width: 50%;
     }
   }
 }
@@ -74,37 +70,45 @@ const state = useGlobalStore();
 .content {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.5rem;
   padding: 0.5rem;
   //outline: solid deepskyblue 1px;
 
   .tag {
     z-index: 2;
-    background-color: #242424;
-    font-weight: bolder;
-    color: white;
-    width: 3rem;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    outline: #303030 solid 3px;
+    width: 3rem;
+    aspect-ratio: 1/1;
 
-    .link {
-      color: white;
-      text-decoration: none;
+    .icon {
+      background-color: #242424;
+      outline: #303030 solid 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+
+      .link {
+        color: white;
+        text-decoration: none;
+        font-weight: bolder;
+      }
+
+      &.current {
+        outline-color: #09551a;
+      }
+
+      &.done {
+        outline-color: #09551a;
+        background-color: #0f932c;
+      }
     }
 
-    &.current {
-      outline-color: #09551a;
-    }
-
-    &.done {
-      outline-color: #09551a;
-      background-color: #0f932c;
-    }
   }
 
   &:before, &:after {
@@ -113,15 +117,16 @@ const state = useGlobalStore();
     position: absolute;
     left: calc((0.5rem + 3rem) / 2);
     border: #303030 solid 1px;
-    height: 50%;
   }
 
   &:before {
     top: 0;
+    height: 10%;
   }
 
   &:after {
-    top: 50%;
+    top: 10%;
+    height: 90%;
   }
 
   &.first-child:before {
@@ -133,6 +138,7 @@ const state = useGlobalStore();
   }
 
   .body, .label {
+    outline: solid deepskyblue 1px;
     width: 100%;
   }
 
