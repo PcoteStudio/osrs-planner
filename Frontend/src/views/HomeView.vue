@@ -6,16 +6,16 @@ import DebugComponent from "@/components/DebugComponent.vue";
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
-let nodes = state.currentRoute.toTree();
+let nodes = state.currentRoute.rootNode;
 
 //TODO: Current step is set to the 1st step for testing
-state.setCurrentStep(state.currentRoute.steps[0]);
+state.setCurrentStep(state.currentRoute.getCurrentStep());
 
 </script>
 
 <template>
   <main>
-    <StepList :nodes="nodes" id="stepsRoot" class="first-child" />
+    <StepList :nodes="nodes.children" id="stepsRoot" class="first-child" />
     <Inventory />
     <DebugComponent />
   </main>

@@ -33,6 +33,7 @@ if (props.indexPrefix) {
 .task-list {
   background-color: var(--color-background-soft);
   width: 100%;
+  flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
 

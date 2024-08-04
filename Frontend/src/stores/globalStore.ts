@@ -6,8 +6,7 @@ import type { Step } from '@/models/step';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
-        const playerState: PlayerState = new PlayerState();
-        const currentStep: Step | undefined = undefined;
+        const playerState : PlayerState = new PlayerState();
 
         const currentRoute = new Route();
         currentRoute.playerState = playerState;
@@ -16,14 +15,16 @@ export const useGlobalStore = defineStore('globalStore', {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
             currentWarnings: playerState.warnings,
-            currentStep: currentStep as Step | undefined,
         };
     },
     actions: {
         setCurrentStep(step: Step) {
-            this.currentStep = step;
+            this.currentRoute.setCurrentStep(step);
         },
         toggleCompleted(node: StepTreeNode) {
+            if (!node.step) {
+                throw new Error(`Error: node should have a step assigned to toggle the status: ${node}`);
+            }
             node.step.completed = !node.step.completed;
 
             function toggleChildren(parent: StepTreeNode, isCompleted: boolean) {
@@ -31,20 +32,20 @@ export const useGlobalStore = defineStore('globalStore', {
                     if (child.children.length > 0) {
                         toggleChildren(child, isCompleted);
                     }
+                    if (!child.step) {
+                        throw new Error(`Error: node should have a step assigned to toggle the status: ${node}`);
+                    }
                     child.step.completed = isCompleted;
                 }
             }
 
             toggleChildren(node, node.step.completed);
 
-            if (this.currentStep === node.step) {
+            // Set current step to the next step
+            if (this.currentRoute.getCurrentStep() === node.step) {
                 do {
                     this.currentRoute.stepOnce();
-                    if (!this.currentRoute.currentStepIndex) {
-                        throw new Error(`CurrentStepIndex is undefined in the currentRoute : ${this.currentRoute}`);
-                    }
-                    this.currentStep = this.currentRoute.steps[this.currentRoute.currentStepIndex];
-                } while (this.currentStep.completed);
+                } while (this.currentRoute.getCurrentStep()?.completed);
             }
         }
     },

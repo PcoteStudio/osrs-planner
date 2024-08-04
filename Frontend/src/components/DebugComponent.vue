@@ -8,6 +8,7 @@ const state = useGlobalStore();
 <template>
 <div class="debug">
   <pre>
+    {{ state.currentRoute.getCurrentStep() }}
     {{ state.currentRoute.getPlayerState() }}
   </pre>
 </div>

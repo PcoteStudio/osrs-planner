@@ -84,7 +84,7 @@ export default defineComponent({
 
     return {
       menuOptions,
-      collapsed: ref(false),
+      collapsed: ref(true),
       expandIcon() {
         return h(NIcon, null, { default: () => h(ChevronDown) });
       }
