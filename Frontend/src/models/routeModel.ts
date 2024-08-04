@@ -87,10 +87,12 @@ export class RouteModel {
         this.addStep(step);
     }
 
-    addStep(newStep: StepModel, previousStep?: StepModel) {
+    addStep(newStep: StepModel, previousStep?: StepModel | null) {
         let insertIndex: number = -1;
         if (previousStep) {
-            insertIndex = this.steps.indexOf(previousStep);
+            insertIndex = this.steps.indexOf(previousStep) + 1;
+        } else if (previousStep === null) { // Maybe use append/prepend method instead to add at the end or at the begining ?
+            insertIndex = 0;
         }
 
         if (insertIndex >= 0) {
