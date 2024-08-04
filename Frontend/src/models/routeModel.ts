@@ -147,9 +147,12 @@ export class RouteModel {
      * Applies the next steps until the specified step is applied or until the last step.
      * @param step Once this step is executed, will return.
      */
-    stepUntil(step: StepModel) {
+    setCurrentStep(step: StepModel | undefined) {
+        // TODO don't reprocess it all every time
+        this.playerState = new PlayerStateModel();
+        this.currentNode = undefined;
         let wasStepExecuted = true;
-        while (step.id !== this.currentNode?.step?.id && wasStepExecuted) {
+        while (step?.id !== this.getCurrentStep()?.id && wasStepExecuted) {
             wasStepExecuted = this.stepOnce();
         }
     }
@@ -167,6 +170,13 @@ export class RouteModel {
         return this.rootNode.children[0];
     }
 
+    getLastNode(): StepTreeNode {
+        let node = this.rootNode;
+        while (node.children.length)
+            node = node.children[this.rootNode.children.length - 1];
+        return node;
+    }
+
     getFirstStep(): StepModel | undefined {
         return this.getFirstNode().step;
     }
@@ -175,15 +185,12 @@ export class RouteModel {
         return this.currentNode?.step;
     }
 
-    getLastNode(): StepTreeNode {
-        let node = this.rootNode;
-        while (node.children.length)
-            node = node.children[this.rootNode.children.length - 1];
-        return node;
-    }
-
     getLastStep(): StepModel | undefined {
         return this.getLastNode().step;
+    }
+
+    getPlayerState(): PlayerStateModel {
+        return this.playerState;
     }
 }
 
