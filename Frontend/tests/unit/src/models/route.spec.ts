@@ -15,6 +15,7 @@ describe('Route', () => {
 
             expect(route.getStepCount(route.rootNode)).toEqual(1);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
+            expect(route.rootNode.children[0].depth).toEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
 
@@ -27,6 +28,8 @@ describe('Route', () => {
             expect(route.getStepCount(route.rootNode)).toEqual(2);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.rootNode.children[1].step?.description).toEqual('2');
+            expect(route.rootNode.children[0].depth).toEqual(0);
+            expect(route.rootNode.children[1].depth).toEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
 
@@ -38,6 +41,8 @@ describe('Route', () => {
             expect(route.getStepCount(route.rootNode)).toEqual(2);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.rootNode.children[1].step?.description).toEqual('2');
+            expect(route.rootNode.children[0].depth).toEqual(0);
+            expect(route.rootNode.children[1].depth).toEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
 
@@ -53,6 +58,9 @@ describe('Route', () => {
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.rootNode.children[1].step?.description).toEqual('2');
             expect(route.rootNode.children[2].step?.description).toEqual('3');
+            expect(route.rootNode.children[0].depth).toEqual(0);
+            expect(route.rootNode.children[1].depth).toEqual(0);
+            expect(route.rootNode.children[2].depth).toEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
     });
@@ -73,13 +81,21 @@ describe('Route', () => {
 
             expect(route.getStepCount(route.rootNode)).toEqual(11);
             expect(route.rootNode.children[0]?.step?.description).toEqual('1');
+            expect(route.rootNode.children[0]?.depth).toEqual(0);
             expect(route.rootNode.children[0]?.children[0]?.step?.description).toEqual('1.1');
             expect(route.rootNode.children[0]?.children[1]?.step?.description).toEqual('1.2');
+            expect(route.rootNode.children[0]?.children[0]?.depth).toEqual(1);
+            expect(route.rootNode.children[0]?.children[1]?.depth).toEqual(1);
             expect(route.rootNode.children[0]?.children[1]?.children[0]?.step?.description).toEqual('1.2.1');
             expect(route.rootNode.children[0]?.children[1]?.children[1]?.step?.description).toEqual('1.2.2');
             expect(route.rootNode.children[0]?.children[1]?.children[2]?.step?.description).toEqual('1.2.3');
+            expect(route.rootNode.children[0]?.children[1]?.children[0].depth).toEqual(2);
+            expect(route.rootNode.children[0]?.children[1]?.children[1].depth).toEqual(2);
+            expect(route.rootNode.children[0]?.children[1]?.children[2].depth).toEqual(2);
             expect(route.rootNode.children[0]?.children[2]?.step?.description).toEqual('1.3');
+            expect(route.rootNode.children[0]?.children[2]?.depth).toEqual(1);
             expect(route.rootNode.children[1]?.step?.description).toEqual('2');
+            expect(route.rootNode.children[1]?.depth).toEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
     });

@@ -6,7 +6,7 @@ import { loremIpsum } from 'lorem-ipsum';
 
 export class RouteModel {
     playerState: PlayerStateModel = new PlayerStateModel();
-    rootNode: StepTreeNode = { children: [] };
+    rootNode: StepTreeNode = { depth: -1, children: [] };
     currentNode: StepTreeNode | undefined; // Current step is considered already executed
 
     initializeSomeSteps() {
@@ -93,6 +93,7 @@ export class RouteModel {
 
     addStep(newStep: StepModel, previousNode?: StepTreeNode): StepTreeNode {
         const newNode: StepTreeNode = {
+            depth: previousNode?.parent ? previousNode?.parent?.depth + 1 : 0,
             step: newStep,
             children: [],
         };
@@ -105,11 +106,13 @@ export class RouteModel {
             this.rootNode.children.push(newNode);
             newNode.parent = this.rootNode;
         }
+        newNode.depth = newNode.parent.depth + 1;
         return newNode;
     }
 
     addSubStep(newStep: StepModel, parentNode: StepTreeNode): StepTreeNode {
         const newNode: StepTreeNode = {
+            depth: parentNode.depth + 1,
             step: newStep,
             parent: parentNode,
             children: [],
@@ -196,6 +199,7 @@ export class RouteModel {
 
 export type StepTreeNode = {
     step?: StepModel;
+    depth: number;
     parent?: StepTreeNode;
     children: StepTreeNode[];
 };
