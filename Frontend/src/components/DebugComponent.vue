@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useGlobalStore} from "@/stores/globalStore";
+import { useGlobalStore } from '@/stores/globalStore';
 
 const state = useGlobalStore();
 
@@ -8,6 +8,7 @@ const state = useGlobalStore();
 <template>
 <div class="debug">
   <pre>
+    Total level: {{ state.currentRoute.getPlayerState().getTotalLevel() }}
     {{ state.currentRoute.getCurrentStep() }}
     {{ state.currentRoute.getPlayerState() }}
   </pre>

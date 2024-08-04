@@ -2,6 +2,7 @@ import { Bank } from './item/bank';
 import { Equipment } from './item/equipment';
 import { Inventory } from './item/inventory';
 import { SkillsEnum } from './skill/skillsEnum';
+import { XpTable } from './skill/xpTable';
 import { StateWarning } from './stateWarning';
 
 export class PlayerState {
@@ -21,6 +22,13 @@ export class PlayerState {
 
     addWarning(warning: StateWarning | undefined) {
         if (warning instanceof StateWarning) this.warnings.push(warning);
+    }
+
+    getTotalLevel(): number {
+        const xpTable = new XpTable(99); // TODO move table to static util
+        return Object.entries(this.skills).reduce((total, [skill, experience]) => {
+            return total + xpTable.getLevel(experience || 0);
+        }, 0);
     }
 
     clone(): PlayerState {
