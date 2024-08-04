@@ -13,7 +13,7 @@ describe('Route', () => {
             const newStep = new StepModel('1');
             route.addStep(newStep);
 
-            expect(route.countSteps(route.rootNode)).toEqual(1);
+            expect(route.getStepCount(route.rootNode)).toEqual(1);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.currentNode).toBe(undefined);
         });
@@ -24,7 +24,7 @@ describe('Route', () => {
             const newStep = new StepModel('2');
             route.addStep(newStep, firstNode);
 
-            expect(route.countSteps(route.rootNode)).toEqual(2);
+            expect(route.getStepCount(route.rootNode)).toEqual(2);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.rootNode.children[1].step?.description).toEqual('2');
             expect(route.currentNode).toBe(undefined);
@@ -35,7 +35,7 @@ describe('Route', () => {
             const newStep = new StepModel('1');
             route.addSubStep(newStep, route.rootNode);
 
-            expect(route.countSteps(route.rootNode)).toEqual(2);
+            expect(route.getStepCount(route.rootNode)).toEqual(2);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.rootNode.children[1].step?.description).toEqual('2');
             expect(route.currentNode).toBe(undefined);
@@ -49,7 +49,7 @@ describe('Route', () => {
             const newStep = new StepModel('2');
             route.addStep(newStep, firstNode);
 
-            expect(route.countSteps(route.rootNode)).toEqual(3);
+            expect(route.getStepCount(route.rootNode)).toEqual(3);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
             expect(route.rootNode.children[1].step?.description).toEqual('2');
             expect(route.rootNode.children[2].step?.description).toEqual('3');
@@ -71,7 +71,7 @@ describe('Route', () => {
             const node211 = route.addSubStep(new StepModel('2.1.1'), node21);
             const node3 = route.addStep(new StepModel('3'), node2);
 
-            expect(route.countSteps(route.rootNode)).toEqual(11);
+            expect(route.getStepCount(route.rootNode)).toEqual(11);
             expect(route.rootNode.children[0]?.step?.description).toEqual('1');
             expect(route.rootNode.children[0]?.children[0]?.step?.description).toEqual('1.1');
             expect(route.rootNode.children[0]?.children[1]?.step?.description).toEqual('1.2');

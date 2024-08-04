@@ -118,10 +118,6 @@ export class RouteModel {
         return newNode;
     }
 
-    currentStep(): StepModel | undefined {
-        return this.currentNode?.step;
-    }
-
     /**
      * Applies the next step.
      * @returns `true` if a another step was executed or `false` otherwise.
@@ -158,11 +154,36 @@ export class RouteModel {
         }
     }
 
-    countSteps(fromNode: StepTreeNode): number {
+    getStepCount(fromNode: StepTreeNode): number {
         let total = 0;
         for (const node of fromNode.children)
-            total += 1 + this.countSteps(node);
+            total += 1 + this.getStepCount(node);
         return total;
+    }
+
+    getFirstNode(): StepTreeNode {
+        if (!this.rootNode.children.length)
+            return this.rootNode;
+        return this.rootNode.children[0];
+    }
+
+    getFirstStep(): StepModel | undefined {
+        return this.getFirstNode().step;
+    }
+
+    getCurrentStep(): StepModel | undefined {
+        return this.currentNode?.step;
+    }
+
+    getLastNode(): StepTreeNode {
+        let node = this.rootNode;
+        while (node.children.length)
+            node = node.children[this.rootNode.children.length - 1];
+        return node;
+    }
+
+    getLastStep(): StepModel | undefined {
+        return this.getLastNode().step;
     }
 }
 
