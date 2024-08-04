@@ -1,25 +1,25 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { InventoryModel, InventoryLimitExceededWarning, InventoryMissingItemWarning } from '../../../../../src/models/item/inventoryModel';
-import { ItemModel } from '../../../../../src/models/item/itemModel';
+import { Inventory, InventoryLimitExceededWarning, InventoryMissingItemWarning } from '../../../../../src/models/item/inventory';
+import { Item } from '../../../../../src/models/item/item';
 
 describe('Inventory', () => {
-    let inventory: InventoryModel;
+    let inventory: Inventory;
     const inventorySize = 28;
     const unstackableItemId = 42;
 
     beforeAll(() => {
-        const unstackableItem = new ItemModel();
+        const unstackableItem = new Item();
         unstackableItem.id = unstackableItemId;
         unstackableItem.stackable = false;
-        ItemModel.set(unstackableItem);
+        Item.set(unstackableItem);
     });
 
     afterAll(() => {
-        ItemModel.clear();
+        Item.clear();
     });
 
     beforeEach(() => {
-        inventory = new InventoryModel(inventorySize);
+        inventory = new Inventory(inventorySize);
     });
 
     describe('moveItem', () => {

@@ -1,8 +1,8 @@
-import type { EquipmentSlotTypes } from './equipmentSlotModel';
+import type { EquipmentSlotTypes } from './equipmentSlot';
 
-const itemsDb: { [id: number]: ItemModel } = {};
+const itemsDb: { [id: number]: Item } = {};
 
-export class ItemModel {
+export class Item {
     id: number;
     name: string;
     bankable: boolean;
@@ -13,11 +13,11 @@ export class ItemModel {
     imageUrl: string;
     wikiUrl: string;
 
-    static get(itemId: number): ItemModel {
+    static get(itemId: number): Item {
         return itemsDb[itemId];
     }
 
-    static set(item: ItemModel): void {
+    static set(item: Item): void {
         itemsDb[item.id] = item;
     }
 

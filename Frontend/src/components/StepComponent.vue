@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { StepModel } from '@/models/stepModel';
+import { Step } from '@/models/step';
 import StepListComponent from '@/components/StepListComponent.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
-import type { StepTreeNode } from '@/models/routeModel';
+import type { StepTreeNode } from '@/models/route';
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, ref, watch } from 'vue';
 
@@ -16,7 +16,7 @@ const state = useGlobalStore();
 const collapseSubStepList = ref(false);
 const showEffects = ref(false);
 
-const setCurrentStep = (step: StepModel) => state.setCurrentStep(step);
+const setCurrentStep = (step: Step) => state.setCurrentStep(step);
 const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node);
 
 const isCurrentStep = computed(() => state.currentStep === props.node.step);

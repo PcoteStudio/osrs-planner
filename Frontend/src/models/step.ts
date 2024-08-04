@@ -1,22 +1,22 @@
 import { nanoid } from 'nanoid';
-import type { PlayerStateModel } from './playerStateModel';
-import type { EffectModel } from '@/models/effectModel';
+import type { PlayerState } from './playerState';
+import type { Effect } from '@/models/effect';
 
-export class StepModel {
+export class Step {
     id: string = nanoid();
     description: string = '';
-    effects: EffectModel[] = [];
+    effects: Effect[] = [];
     completed: boolean = false;
 
     constructor(description: string) {
         this.description = description;
     }
 
-    addEffect(effect: EffectModel) {
+    addEffect(effect: Effect) {
         if (effect) this.effects.push(effect);
     }
 
-    applyEffects(playerState: PlayerStateModel) {
+    applyEffects(playerState: PlayerState) {
         for (const effect of this.effects) {
             effect.apply(playerState);
         }

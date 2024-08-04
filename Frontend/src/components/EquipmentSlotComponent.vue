@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { computed } from 'vue';
-import { EquipmentSlotTypes, getPlaceholderSrc } from '@/models/item/equipmentSlotModel';
+import { EquipmentSlotTypes, getPlaceholderSrc } from '@/models/item/equipmentSlot';
 import { useGlobalStore } from '@/stores/globalStore';
 
 const props = withDefaults(defineProps<{

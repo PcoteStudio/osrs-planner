@@ -1,32 +1,32 @@
 import { defineStore } from 'pinia';
-import { RouteModel } from '@/models/routeModel';
-import type { StepTreeNode } from '@/models/routeModel';
-import { PlayerStateModel } from '@/models/playerStateModel';
-import type { StepModel } from '@/models/stepModel';
+import { Route } from '@/models/route';
+import type { StepTreeNode } from '@/models/route';
+import { PlayerState } from '@/models/playerState';
+import type { Step } from '@/models/step';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
-        const playerState : PlayerStateModel = new PlayerStateModel();
-        const currentStep: StepModel | undefined = undefined;
+        const playerState: PlayerState = new PlayerState();
+        const currentStep: Step | undefined = undefined;
 
-        const currentRoute = new RouteModel();
+        const currentRoute = new Route();
         currentRoute.playerState = playerState;
 
         return {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
             currentWarnings: playerState.warnings,
-            currentStep: currentStep as StepModel | undefined,
+            currentStep: currentStep as Step | undefined,
         };
     },
     actions: {
-        setCurrentStep(step: StepModel) {
+        setCurrentStep(step: Step) {
             this.currentStep = step;
         },
         toggleCompleted(node: StepTreeNode) {
             node.step.completed = !node.step.completed;
 
-            function toggleChildren(parent: StepTreeNode,  isCompleted: boolean) {
+            function toggleChildren(parent: StepTreeNode, isCompleted: boolean) {
                 for (const child of parent.children) {
                     if (child.children.length > 0) {
                         toggleChildren(child, isCompleted);

@@ -1,17 +1,16 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { RouteModel } from '../../../../src/models/routeModel';
-import { StepModel } from '../../../../src/models/stepModel';
+import { Route } from '../../../../src/models/route';
+import { Step } from '../../../../src/models/step';
 
 describe('Route', () => {
-    let route: RouteModel;
+    let route: Route;
     beforeEach(() => {
-        route = new RouteModel();
+        route = new Route();
     });
 
     describe('addStep', () => {
         it('should correctly add a step in an empty route', () => {
-            const newStep = new StepModel('1');
-            route.addStep(newStep);
+            route.addStep(new Step('1'));
 
             expect(route.getStepCount(route.rootNode)).toEqual(1);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
@@ -20,23 +19,8 @@ describe('Route', () => {
         });
 
         it('should correctly add a step after the only other step of a route', () => {
-            const firstStep = new StepModel('1');
-            const firstNode = route.addStep(firstStep);
-            const newStep = new StepModel('2');
-            route.addStep(newStep, firstNode);
-
-            expect(route.getStepCount(route.rootNode)).toEqual(2);
-            expect(route.rootNode.children[0].step?.description).toEqual('1');
-            expect(route.rootNode.children[1].step?.description).toEqual('2');
-            expect(route.rootNode.children[0].depth).toEqual(0);
-            expect(route.rootNode.children[1].depth).toEqual(0);
-            expect(route.currentNode).toBe(undefined);
-        });
-
-        it('should correctly add a step before the only other step of a route', () => {
-            route.addStep(new StepModel('2'));
-            const newStep = new StepModel('1');
-            route.addSubStep(newStep, route.rootNode);
+            const firstNode = route.addStep(new Step('1'));
+            route.addStep(new Step('2'), firstNode);
 
             expect(route.getStepCount(route.rootNode)).toEqual(2);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
@@ -47,12 +31,9 @@ describe('Route', () => {
         });
 
         it('should correctly add a step in between the only 2 other steps of a route', () => {
-            const firstStep = new StepModel('1');
-            const firstNode = route.addStep(firstStep);
-            const thirdStep = new StepModel('3');
-            route.addStep(thirdStep, firstNode);
-            const newStep = new StepModel('2');
-            route.addStep(newStep, firstNode);
+            const firstNode = route.addStep(new Step('1'));
+            route.addStep(new Step('3'), firstNode);
+            route.addStep(new Step('2'), firstNode);
 
             expect(route.getStepCount(route.rootNode)).toEqual(3);
             expect(route.rootNode.children[0].step?.description).toEqual('1');
@@ -66,18 +47,30 @@ describe('Route', () => {
     });
 
     describe('addSubStep', () => {
-        it('should correctly create a complex tree', () => {
-            const node1 = route.addStep(new StepModel('1'));
-            const node11 = route.addSubStep(new StepModel('1.1'), node1);
-            const node12 = route.addStep(new StepModel('1.2'), node11);
-            const node121 = route.addSubStep(new StepModel('1.2.1'), node12);
-            const node122 = route.addStep(new StepModel('1.2.2'), node121);
-            const node123 = route.addStep(new StepModel('1.2.3'), node122);
-            const node13 = route.addStep(new StepModel('1.3'), node12);
-            const node2 = route.addStep(new StepModel('2'), node1);
-            const node21 = route.addSubStep(new StepModel('2.1'), node2);
-            const node211 = route.addSubStep(new StepModel('2.1.1'), node21);
-            const node3 = route.addStep(new StepModel('3'), node2);
+        it('should correctly add a step before the only other step of a route', () => {
+            route.addStep(new Step('2'));
+            route.addSubStep(new Step('1'), route.rootNode);
+
+            expect(route.getStepCount(route.rootNode)).toEqual(2);
+            expect(route.rootNode.children[0].step?.description).toEqual('1');
+            expect(route.rootNode.children[1].step?.description).toEqual('2');
+            expect(route.rootNode.children[0].depth).toEqual(0);
+            expect(route.rootNode.children[1].depth).toEqual(0);
+            expect(route.currentNode).toBe(undefined);
+        });
+
+        it('should correctly create a complex route', () => {
+            const node1 = route.addStep(new Step('1'));
+            const node11 = route.addSubStep(new Step('1.1'), node1);
+            const node12 = route.addStep(new Step('1.2'), node11);
+            const node121 = route.addSubStep(new Step('1.2.1'), node12);
+            const node122 = route.addStep(new Step('1.2.2'), node121);
+            const node123 = route.addStep(new Step('1.2.3'), node122);
+            const node13 = route.addStep(new Step('1.3'), node12);
+            const node2 = route.addStep(new Step('2'), node1);
+            const node21 = route.addSubStep(new Step('2.1'), node2);
+            const node211 = route.addSubStep(new Step('2.1.1'), node21);
+            const node3 = route.addStep(new Step('3'), node2);
 
             expect(route.getStepCount(route.rootNode)).toEqual(11);
             expect(route.rootNode.children[0]?.step?.description).toEqual('1');

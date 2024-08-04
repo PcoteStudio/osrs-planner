@@ -1,14 +1,14 @@
-import { EffectModel } from '../effectModel';
-import { PlayerStateModel } from '../playerStateModel';
-import { StateWarningModel } from '../stateWarningModel';
+import { Effect } from '../effect';
+import { PlayerState } from '../playerState';
+import { StateWarning } from '../stateWarning';
 import { SkillsEnum } from './skillsEnum';
 
-export class SkillEffectModel extends EffectModel {
+export class SkillEffect extends Effect {
     constructor(public skill: SkillsEnum, public experience: number) {
         super();
     }
 
-    public apply(playerState: PlayerStateModel): StateWarningModel | undefined {
+    public apply(playerState: PlayerState): StateWarning | undefined {
         const currentXp = playerState.skills[this.skill] ?? 0;
         playerState.skills[this.skill] = currentXp + this.experience;
         return undefined;

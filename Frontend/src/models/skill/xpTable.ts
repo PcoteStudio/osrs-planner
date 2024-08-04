@@ -1,4 +1,4 @@
-export class XpTableModel {
+export class XpTable {
     xpTable: number[];
 
     constructor(maxLevel: number) {

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import EquipmentSlot from '@/components/EquipmentSlotComponent.vue';
-import { ItemModel } from '@/models/item/itemModel';
+import { Item } from '@/models/item/item';
 import { useGlobalStore } from '@/stores/globalStore';
-import { EquipmentSlotTypes } from '@/models/item/equipmentSlotModel';
+import { EquipmentSlotTypes } from '@/models/item/equipmentSlot';
 
 const state = useGlobalStore();
 
-const test = state.currentPlayerState.equipment.slots[EquipmentSlotTypes.Head].item = new ItemModel();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
+const test = state.currentPlayerState.equipment.slots[EquipmentSlotTypes.Head].item = new Item();//.find((s) => s.equipmentSlotType === EquipmentSlotTypes.Head);
 test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?96920';
 
 </script>

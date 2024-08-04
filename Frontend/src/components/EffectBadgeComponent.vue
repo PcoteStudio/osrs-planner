@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { EffectModel } from '@/models/effectModel';
+import { Effect } from '@/models/effect';
 import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
 import { formatExperience } from '@/utils/formaters';
 
 const props = defineProps<{
-  effect: EffectModel;
+  effect: Effect;
 }>();
 
 const badgeStyle = getSkillStyle(props.effect.skill);

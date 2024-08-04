@@ -1,7 +1,7 @@
-import { StateWarningModel } from '../stateWarningModel';
-import { ItemModel } from './itemModel';
+import { StateWarning } from '../stateWarning';
+import { Item } from './item';
 
-export class InventoryModel {
+export class Inventory {
     items: { [id: number]: number } = {};
 
     constructor(public availableSlots: number = 28) { }
@@ -19,9 +19,9 @@ export class InventoryModel {
         if (newQuantity == 0)
             delete this.items[itemId];
         else if (newQuantity < 0)
-            return new InventoryMissingItemWarning(ItemModel.get(itemId), quantity, newQuantity);
+            return new InventoryMissingItemWarning(Item.get(itemId), quantity, newQuantity);
         else if (this.usedSlots() > this.availableSlots)
-            return new InventoryLimitExceededWarning(ItemModel.get(itemId), quantity, this.availableSlots, this.usedSlots());
+            return new InventoryLimitExceededWarning(Item.get(itemId), quantity, this.availableSlots, this.usedSlots());
         return undefined;
     }
 
@@ -41,16 +41,16 @@ export class InventoryModel {
         let usedSlot = 0;
         for (const [itemId, quantity] of Object.entries(this.items)) {
             if (quantity <= 0) continue;
-            if (ItemModel.get(Number(itemId)).stackable) usedSlot++;
+            if (Item.get(Number(itemId)).stackable) usedSlot++;
             else usedSlot += quantity;
         }
         return usedSlot;
     }
 }
 
-export class InventoryLimitExceededWarning extends StateWarningModel {
+export class InventoryLimitExceededWarning extends StateWarning {
     constructor(
-        lastItemInserted: ItemModel,
+        lastItemInserted: Item,
         quantityInserted: number,
         availableSlots: number,
         usedSlots: number,
@@ -62,9 +62,9 @@ export class InventoryLimitExceededWarning extends StateWarningModel {
     }
 }
 
-export class InventoryMissingItemWarning extends StateWarningModel {
+export class InventoryMissingItemWarning extends StateWarning {
     constructor(
-        itemWithdrawn: ItemModel,
+        itemWithdrawn: Item,
         quantityWithdrawn: number,
         quantityMissing: number,
     ) {
