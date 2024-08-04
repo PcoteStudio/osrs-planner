@@ -34,7 +34,7 @@ export class RouteModel {
         step.addEffect(new SkillEffectModel(SkillsEnum.Strength, 100));
         step.addEffect(new SkillEffectModel(SkillsEnum.Thieving, 100));
         step.addEffect(new SkillEffectModel(SkillsEnum.Woodcutting, 100));
-        const node1 = this.addStep(step, this.rootNode);
+        const node1 = this.addStep(step);
 
         step = new StepModel('I am another top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Herblore, 300));
