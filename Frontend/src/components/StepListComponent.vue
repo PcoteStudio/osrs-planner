@@ -35,7 +35,6 @@ if (props.indexPrefix) {
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-color: #222222 #111111;
 
   ol {
     //outline: green 1px solid;

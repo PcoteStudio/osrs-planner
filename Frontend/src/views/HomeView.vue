@@ -2,6 +2,7 @@
 import Inventory from '@/components/EquipmentComponent.vue';
 import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
+import DebugComponent from "@/components/DebugComponent.vue";
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
@@ -16,6 +17,7 @@ state.setCurrentStep(state.currentRoute.steps[0]);
   <main>
     <StepList :nodes="nodes" id="stepsRoot" class="first-child" />
     <Inventory />
+    <DebugComponent />
   </main>
 </template>
 
