@@ -135,10 +135,14 @@ export class Route {
             const currentNodeIndex = this.currentNode.parent.children.indexOf(this.currentNode);
             if (this.currentNode.parent.children.length > currentNodeIndex + 1) {
                 this.currentNode = this.currentNode.parent.children[currentNodeIndex + 1];
+                while (this.currentNode.children.length) {
+                    this.currentNode = this.currentNode.children[0];
+                }
             } else {
                 this.currentNode = this.currentNode.parent;
             }
         }
+
         if (this.currentNode.step) {
             this.currentNode.step.applyEffects(this.playerState);
             return true;
