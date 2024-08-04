@@ -87,6 +87,8 @@ export class RouteModel {
         step = new StepModel('I am the last top step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Smithing, 500));
         this.addStep(step, node7);
+
+        this.stepOnce();
     }
 
     addStep(newStep: StepModel, previousNode?: StepTreeNode): StepTreeNode {
@@ -116,6 +118,10 @@ export class RouteModel {
         return newNode;
     }
 
+    currentStep(): StepModel | undefined {
+        return this.currentNode?.step;
+    }
+
     /**
      * Applies the next step.
      * @returns `true` if a another step was executed or `false` otherwise.
@@ -123,8 +129,8 @@ export class RouteModel {
     stepOnce(): boolean {
         if (!this.currentNode) { // Find and execute the first node
             this.currentNode = this.rootNode;
-            while (this.currentNode.children) {
-                this.currentNode = this.currentNode?.children[0];
+            while (this.currentNode.children.length) {
+                this.currentNode = this.currentNode.children[0];
             }
         } else if (this.currentNode.parent) { // Execute the next node
             const currentNodeIndex = this.currentNode.parent.children.indexOf(this.currentNode);
