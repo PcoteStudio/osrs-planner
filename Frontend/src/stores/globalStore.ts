@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { RouteModel } from '@/models/routeModel';
 import { PlayerStateModel } from '@/models/playerStateModel';
 import { EquipmentModel } from '@/models/item/equipmentModel';
-import type {StepModel} from "@/models/stepModel";
+import type { StepModel } from '@/models/stepModel';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {

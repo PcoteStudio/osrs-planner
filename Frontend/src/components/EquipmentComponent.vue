@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import EquipmentSlot from '@/components/EquipmentSlotComponent.vue';
-import {ItemModel} from '@/models/item/itemModel';
-import {useGlobalStore} from '@/stores/globalStore';
-import {EquipmentSlotTypes} from '@/models/item/equipmentSlotModel';
+import { ItemModel } from '@/models/item/itemModel';
+import { useGlobalStore } from '@/stores/globalStore';
+import { EquipmentSlotTypes } from '@/models/item/equipmentSlotModel';
 
 const state = useGlobalStore();
 

@@ -18,6 +18,7 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'only-multiline'],
     semi: ['error', 'always'],
-    '@stylistic/js/quotes': ['error', 'single']
+    '@stylistic/js/quotes': ['error', 'single'],
+    '@stylistic/js/object-curly-spacing': ['error', 'always']
   },
 };

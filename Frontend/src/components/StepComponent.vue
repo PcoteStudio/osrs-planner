@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {StepModel} from "@/models/stepModel";
-import StepListComponent from "@/components/StepListComponent.vue";
-import EffectBadgeComponent from "@/components/EffectBadgeComponent.vue";
-import type {StepTreeNode} from "@/models/routeModel";
-import {useGlobalStore} from "@/stores/globalStore";
-import {ref} from "vue";
+import { StepModel } from '@/models/stepModel';
+import StepListComponent from '@/components/StepListComponent.vue';
+import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
+import type { StepTreeNode } from '@/models/routeModel';
+import { useGlobalStore } from '@/stores/globalStore';
+import { ref } from 'vue';
 
 const props = defineProps<{
   index: string;
@@ -16,11 +16,11 @@ const collapseSubStepList = ref(false);
 
 const setCurrentStep = (step: StepModel) => {
   state.setCurrentStep(step);
-}
+};
 
 const setCompleted = (step: StepModel) => {
   state.completeStep(step);
-}
+};
 
 </script>
 

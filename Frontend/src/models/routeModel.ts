@@ -2,7 +2,7 @@ import { PlayerStateModel } from './playerStateModel';
 import { SkillEffectModel } from './skill/skillEffectModel';
 import { SkillsEnum } from './skill/skillsEnum';
 import { StepModel } from './stepModel';
-import {loremIpsum} from "lorem-ipsum";
+import { loremIpsum } from 'lorem-ipsum';
 
 export class RouteModel {
     playerState: PlayerStateModel = new PlayerStateModel();
@@ -49,13 +49,13 @@ export class RouteModel {
         step = new StepModel(1, 'I am another child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Defence, 1500));
         this.addStep(step);
-        step =  new StepModel(2, 'I am a grand-child step');
+        step = new StepModel(2, 'I am a grand-child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Fishing, 30000));
         this.addStep(step);
-        step =  new StepModel(2, 'I am a grand-child step');
+        step = new StepModel(2, 'I am a grand-child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Fishing, 30000));
         this.addStep(step);
-        step =  new StepModel(2, 'I am a grand-child step');
+        step = new StepModel(2, 'I am a grand-child step');
         step.addEffect(new SkillEffectModel(SkillsEnum.Fishing, 30000));
         this.addStep(step);
         step = new StepModel(1, 'I am a just a child step');
@@ -133,29 +133,29 @@ export class RouteModel {
         return this.toTreeRec(0, 0).nodes;
     }
 
-    toTreeRec(start: number, depth: number): {position: number, nodes: StepTreeNode[]} {
-        let stepNodes: StepTreeNode[] = [];
+    toTreeRec(start: number, depth: number): { position: number, nodes: StepTreeNode[] } {
+        const stepNodes: StepTreeNode[] = [];
         let lastStepNode: StepTreeNode | undefined = undefined;
         let i = start;
-        for(; i < this.steps.length; i++) {
-            let step = this.steps[i];
+        for (; i < this.steps.length; i++) {
+            const step = this.steps[i];
             if (step.depth < depth) {
-                return {position: i - 1, nodes: stepNodes};
+                return { position: i - 1, nodes: stepNodes };
             }
             if (step.depth === depth) {
-                lastStepNode = {step, children: []};
-                stepNodes.push(lastStepNode)
+                lastStepNode = { step, children: [] };
+                stepNodes.push(lastStepNode);
             } else {
                 if (lastStepNode) {
-                    let {position, nodes} = this.toTreeRec(i, depth + 1);
+                    const { position, nodes } = this.toTreeRec(i, depth + 1);
                     lastStepNode.children = nodes;
                     i = position;
                 } else {
-                    throw new Error(`Trying to insert a node at depth ${step.depth} but no step was inserted before at depth ${step.depth - 1}`)
+                    throw new Error(`Trying to insert a node at depth ${step.depth} but no step was inserted before at depth ${step.depth - 1}`);
                 }
             }
         }
-        return {position: i, nodes: stepNodes};
+        return { position: i, nodes: stepNodes };
     }
 
 }

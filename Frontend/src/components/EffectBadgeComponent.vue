@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {EffectModel} from "@/models/effectModel";
-import {getSkillStyle, SkillsEnum} from "@/models/skill/skillsEnum";
-import {formatExperience} from "@/utils/formaters";
+import { EffectModel } from '@/models/effectModel';
+import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
+import { formatExperience } from '@/utils/formaters';
 
 const props = defineProps<{
   effect: EffectModel;

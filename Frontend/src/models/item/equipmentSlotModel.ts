@@ -10,7 +10,7 @@ import legsImg from '@/assets/images/icons/legs.webp';
 import handsImg from '@/assets/images/icons/hands.webp';
 import feetImg from '@/assets/images/icons/feet.webp';
 import ringImg from '@/assets/images/icons/ring.webp';
-import type {ItemModel} from '@/models/item/itemModel';
+import type { ItemModel } from '@/models/item/itemModel';
 
 export class EquipmentSlotModel {
     equipmentSlotType: EquipmentSlotTypes;

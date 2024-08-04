@@ -1,15 +1,15 @@
 <script lang="ts">
-import {type Component, defineComponent, h, ref} from 'vue';
-import {darkTheme, NIcon} from 'naive-ui';
+import { type Component, defineComponent, h, ref } from 'vue';
+import { darkTheme, NIcon } from 'naive-ui';
 import type { MenuOption } from 'naive-ui';
-import {useI18n} from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
 import {
   ChevronDown,
   Home as HomeIcon,
   Bookmark as BookmarkIcon,
   Info as InfoIcon
 } from '@vicons/fa';
-import {RouterLink} from 'vue-router';
+import { RouterLink } from 'vue-router';
 
 function renderIcon(src?: string | Component) {
   if (typeof src === 'string') {
@@ -28,7 +28,7 @@ function renderIcon(src?: string | Component) {
 export default defineComponent({
   computed: {
     darkTheme() {
-      return darkTheme
+      return darkTheme;
     }
   },
   setup() {

@@ -6,4 +6,4 @@ export const formatExperience = (exp: number) : string => {
     } else {
         return (exp / 1000000).toFixed(exp % 1000000 === 0 ? 0 : 1) + 'm';
     }
-}
+};

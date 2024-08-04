@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import type { PlayerStateModel } from './playerStateModel';
-import type {EffectModel} from "@/models/effectModel";
+import type { EffectModel } from '@/models/effectModel';
 
 export class StepModel {
     id: string = nanoid();

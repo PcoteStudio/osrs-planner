@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import StepComponent from "@/components/StepComponent.vue";
-import type {StepModel} from "@/models/stepModel";
+import StepComponent from '@/components/StepComponent.vue';
+import type { StepModel } from '@/models/stepModel';
 
 const props = defineProps<{
   nodes: Steptree[];

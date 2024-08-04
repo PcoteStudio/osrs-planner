@@ -170,4 +170,4 @@ export const getSkillStyle = (skill: SkillsEnum) => {
                 textColor: '#fff'
             };
     }
-}
+};

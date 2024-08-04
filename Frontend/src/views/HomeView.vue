@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Inventory from '@/components/EquipmentComponent.vue';
-import StepList from "@/components/StepListComponent.vue";
-import {useGlobalStore} from "@/stores/globalStore";
-import {StepModel} from "@/models/stepModel";
+import StepList from '@/components/StepListComponent.vue';
+import { useGlobalStore } from '@/stores/globalStore';
+import { StepModel } from '@/models/stepModel';
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
