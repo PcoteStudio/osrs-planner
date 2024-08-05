@@ -145,16 +145,20 @@ describe('Route', () => {
             expect(node3.step?.completed).toStrictEqual(false);
         });
 
-        it('should complete all children an grand-children nodes', () => {
+        it('should complete all children and grand-children nodes', () => {
             createComplexRoute();
-            route.completeNode(route.rootNode.children[1]); // Node 2
+            route.completeNode(route.rootNode.children[0]); // Node 1
 
-            // 3/11 nodes should be completed
+            // 7/11 nodes should be completed
             expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
-            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(3);
-            expect(route.rootNode.children[1].step?.completed).toStrictEqual(true); // Node 2
-            expect(route.rootNode.children[1].children[0].step?.completed).toStrictEqual(true); // Node 2.1
-            expect(route.rootNode.children[1].children[0].children[0].step?.completed).toStrictEqual(true); // Node 2.1.1
+            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(7);
+            expect(route.rootNode.children[0].step?.completed).toStrictEqual(true); // Node 1
+            expect(route.rootNode.children[0].children[0].step?.completed).toStrictEqual(true); // Node 1.1
+            expect(route.rootNode.children[0].children[1].step?.completed).toStrictEqual(true); // Node 1.2
+            expect(route.rootNode.children[0].children[1].children[0].step?.completed).toStrictEqual(true); // Node 1.2.1
+            expect(route.rootNode.children[0].children[1].children[1].step?.completed).toStrictEqual(true); // Node 1.2.2
+            expect(route.rootNode.children[0].children[1].children[2].step?.completed).toStrictEqual(true); // Node 1.2.3
+            expect(route.rootNode.children[0].children[2].step?.completed).toStrictEqual(true); // Node 1.3
         });
     });
 
@@ -188,10 +192,41 @@ describe('Route', () => {
 
             // 8/11 nodes should be completed
             expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
-            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(3);
+            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(8);
             expect(route.rootNode.children[1].step?.completed).toStrictEqual(false); // Node 2
             expect(route.rootNode.children[1].children[0].step?.completed).toStrictEqual(false); // Node 2.1
             expect(route.rootNode.children[1].children[0].children[0].step?.completed).toStrictEqual(false); // Node 2.1.1
+        });
+    });
+
+    describe('stepOnce', () => {
+        it('should correctly navigate through a complex route', () => {
+            createComplexRoute();
+
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1.1');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1.2.1');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1.2.2');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1.2.3');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1.2');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1.3');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('1');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('2.1.1');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('2.1');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('2');
+            expect(route.stepOnce()).toStrictEqual(true);
+            expect(route.getCurrentStep()?.description).toStrictEqual('3');
+            expect(route.stepOnce()).toStrictEqual(false);
+            expect(route.getCurrentStep()?.description).toStrictEqual('3');
         });
     });
 });

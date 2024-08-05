@@ -139,6 +139,8 @@ export class Route {
                     this.currentNode = this.currentNode.children[0];
                 }
             } else {
+                if (!this.currentNode.parent?.step)
+                    return false;
                 this.currentNode = this.currentNode.parent;
             }
         }
@@ -147,7 +149,7 @@ export class Route {
             this.currentNode.step.applyEffects(this.playerState);
             return true;
         }
-        return false; // There is only a root node left to execute
+        return false;
     }
 
     completeNode(node: StepTreeNode | undefined) {
@@ -159,7 +161,9 @@ export class Route {
         //         this.completeNode(node.parent.children[nodeIndex - 1]);
         // }
         if (node?.children?.length) { // Complete all children recursively
-            this.completeNode(node.children[node.children.length - 1]);
+            for (const childNode of node.children) {
+                this.completeNode(childNode);
+            }
         }
     }
 
