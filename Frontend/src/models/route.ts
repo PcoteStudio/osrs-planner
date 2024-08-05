@@ -107,6 +107,7 @@ export class Route {
             newNode.parent = this.rootNode;
         }
         newNode.depth = newNode.parent.depth + 1;
+        this.invalidateNextNodes(newNode);
         return newNode;
     }
 
@@ -118,6 +119,7 @@ export class Route {
             children: [],
         };
         parentNode.children.splice(0, 0, newNode);
+        this.invalidateNextNodes(newNode);
         return newNode;
     }
 
@@ -126,11 +128,11 @@ export class Route {
             throw ('Both nodes need to be different');
         if (!nodeToMove?.parent || !previousNode?.parent)
             throw ('Both nodes need to have a parent');
-        this.invalidateNextNodes(nodeToMove);
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
         nodeToMove.parent = previousNode?.parent;
         nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
-        this.invalidateNextNodes(nodeToMove);
+        this.invalidateNextNodes(this.rootNode);
+        this.setCurrentNode(this.currentNode);
         return nodeToMove;
     }
 
@@ -139,11 +141,11 @@ export class Route {
             throw ('Both nodes need to be different');
         if (!nodeToMove?.parent)
             throw ('The node to move needs to have a parent');
-        this.invalidateNextNodes(nodeToMove);
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
         nodeToMove.parent = parentNode;
         parentNode.children.splice(0, 0, nodeToMove);
-        this.invalidateNextNodes(nodeToMove);
+        this.invalidateNextNodes(this.rootNode);
+        this.setCurrentNode(this.currentNode);
         return nodeToMove;
     }
 
@@ -263,7 +265,7 @@ export class Route {
             this.playerState = node.step.resultingState;
             this.currentNode = node;
             return;
-        } if (!this.getFirstStep()?.resultingState) { // Re-process all steps
+        } if (!this.getCurrentStep()?.resultingState) { // Re-process all steps
             this.playerState = new PlayerState();
             this.currentNode = undefined;
         }
