@@ -14,7 +14,7 @@ export class Skill {
         this.experience = experience;
 
         const properties = getSkillStyle(type);
-        this.icon = properties.icon;
+        this.icon = properties.icon || '';
         this.bgColor = properties.bgColor;
         this.textColor = properties.textColor;
         this.order = properties.order;

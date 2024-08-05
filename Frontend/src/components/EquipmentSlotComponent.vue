@@ -34,7 +34,7 @@ const replaceWithPlaceholder = (e: any) => {
 
 <template>
   <div class="slot" :class="{ hidden: ! isVisible }">
-    <n-tooltip trigger="hover" placement="bottom" :delay="500" :keep-alive-on-hover="false">
+    <n-tooltip trigger="hover" :delay="100" :keep-alive-on-hover="false">
       <template #trigger>
         <div class="content">
           <img :src="slotImage"
@@ -52,7 +52,7 @@ const replaceWithPlaceholder = (e: any) => {
 
 <style scoped>
 .slot {
-  background: var(--vt-c-indigo);
+  background: #1a1a1a;
   position: relative;
   overflow: hidden;
   height: 100%;
@@ -70,6 +70,9 @@ const replaceWithPlaceholder = (e: any) => {
 
     img {
       width: 70%;
+      object-fit: contain;
+      image-rendering: pixelated;
+
       &.placeholder {
         width: fit-content;
         filter: invert(52%) sepia(9%) saturate(8%) hue-rotate(324deg) brightness(95%) contrast(90%);
