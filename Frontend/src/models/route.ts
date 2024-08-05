@@ -121,6 +121,32 @@ export class Route {
         return newNode;
     }
 
+    moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
+        if (nodeToMove?.step?.id === previousNode?.step?.id)
+            throw ('Both nodes need to be different');
+        if (!nodeToMove?.parent || !previousNode?.parent)
+            throw ('Both nodes need to have a parent');
+        this.invalidateNextNodes(nodeToMove);
+        nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
+        nodeToMove.parent = previousNode?.parent;
+        nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
+        this.invalidateNextNodes(nodeToMove);
+        return nodeToMove;
+    }
+
+    moveToSubNode(nodeToMove: StepTreeNode, parentNode: StepTreeNode): StepTreeNode {
+        if (nodeToMove?.step?.id === parentNode?.step?.id)
+            throw ('Both nodes need to be different');
+        if (!nodeToMove?.parent)
+            throw ('The node to move needs to have a parent');
+        this.invalidateNextNodes(nodeToMove);
+        nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
+        nodeToMove.parent = parentNode;
+        parentNode.children.splice(0, 0, nodeToMove);
+        this.invalidateNextNodes(nodeToMove);
+        return nodeToMove;
+    }
+
     getPreviousNode(node: StepTreeNode | undefined): StepTreeNode {
         if (node?.children.length) // The node has a child
             return node.children[node.children.length - 1];
@@ -150,6 +176,10 @@ export class Route {
                 }
             }
         }
+    }
+
+    invalidateNextNodes(node: StepTreeNode) {
+        this.executeOnNextNodes(node, (node: StepTreeNode) => { if (node?.step) node.step.resultingState = undefined; });
     }
 
     /**
