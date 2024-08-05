@@ -153,11 +153,11 @@ export class Route {
     completeNode(node: StepTreeNode | undefined) {
         if (node?.step) // Complete node
             node.step.completed = true;
-        if (node?.parent) { // Complete all previous brothers recursively
-            const nodeIndex = node.parent.children.indexOf(node);
-            if (nodeIndex > 0)
-                this.completeNode(node.parent.children[nodeIndex - 1]);
-        }
+        // if (node?.parent) { // Complete all previous brothers recursively
+        //     const nodeIndex = node.parent.children.indexOf(node);
+        //     if (nodeIndex > 0)
+        //         this.completeNode(node.parent.children[nodeIndex - 1]);
+        // }
         if (node?.children?.length) { // Complete all children recursively
             this.completeNode(node.children[node.children.length - 1]);
         }
@@ -166,12 +166,15 @@ export class Route {
     uncompleteNode(node: StepTreeNode | undefined) {
         if (node?.step) // Complete node
             node.step.completed = false;
-        if (node?.parent?.step) // Uncomplete the direct parent
-            node.parent.step.completed = false;
+
+        let parentNode = node?.parent;
+        while (parentNode && parentNode.step?.completed) { // Uncomplete the direct parent and grand-parents
+            parentNode.step.completed = false;
+            parentNode = node?.parent;
+        }
         if (node?.children?.length) { // Uncomplete all children recursively
             for (const childNode of node.children)
-                if (childNode.step)
-                    childNode.step.completed = false;
+                this.uncompleteNode(childNode);
         }
     }
 
@@ -198,8 +201,9 @@ export class Route {
 
     getStepCount(fromNode: StepTreeNode, filter?: (node: StepTreeNode) => boolean): number {
         let total = 0;
-        for (const node of fromNode.children)
-            total += (filter?.(node) ?? true ? 1 : 0) + this.getStepCount(node);
+        for (const node of fromNode.children) {
+            total += ((filter?.(node) ?? true) ? 1 : 0) + this.getStepCount(node, filter);
+        }
         return total;
     }
 

@@ -134,13 +134,13 @@ describe('Route', () => {
             expect(node.step?.completed).toStrictEqual(true);
         });
 
-        it('should complete all previous brother nodes', () => {
+        it('should complete a single node even if it has brothers', () => {
             const node1 = route.addStep(new Step('1'));
             const node2 = route.addStep(new Step('2'), node1);
             const node3 = route.addStep(new Step('3'), node2);
             route.completeNode(node2);
 
-            expect(node1.step?.completed).toStrictEqual(true);
+            expect(node1.step?.completed).toStrictEqual(false);
             expect(node2.step?.completed).toStrictEqual(true);
             expect(node3.step?.completed).toStrictEqual(false);
         });
@@ -149,10 +149,49 @@ describe('Route', () => {
             createComplexRoute();
             route.completeNode(route.rootNode.children[1]); // Node 2
 
-            // 10/11 nodes should be completed
+            // 3/11 nodes should be completed
             expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
-            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(10);
-            expect(route.rootNode.children[2].step?.completed).toStrictEqual(false); // Node 3
+            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(3);
+            expect(route.rootNode.children[1].step?.completed).toStrictEqual(true); // Node 2
+            expect(route.rootNode.children[1].children[0].step?.completed).toStrictEqual(true); // Node 2.1
+            expect(route.rootNode.children[1].children[0].children[0].step?.completed).toStrictEqual(true); // Node 2.1.1
+        });
+    });
+
+    describe('uncompleteNode', () => {
+        it('should uncomplete a single node route', () => {
+            const node = route.addStep(new Step('1'));
+            route.completeNode(node);
+            route.uncompleteNode(node);
+
+            expect(node.step?.completed).toStrictEqual(false);
+        });
+
+        it('should uncomplete the parent and grand-parent nodes', () => {
+            const node1 = route.addStep(new Step('1'));
+            const node2 = route.addSubStep(new Step('1.1'), node1);
+            const node3 = route.addSubStep(new Step('1.1.1'), node2);
+            route.completeNode(node2);
+            route.uncompleteNode(node3);
+
+            expect(node1.step?.completed).toStrictEqual(false);
+            expect(node2.step?.completed).toStrictEqual(false);
+            expect(node3.step?.completed).toStrictEqual(false);
+        });
+
+        it('should uncomplete all children an grand-children nodes', () => {
+            createComplexRoute();
+            route.completeNode(route.rootNode.children[0]); // Node 1
+            route.completeNode(route.rootNode.children[1]); // Node 2
+            route.completeNode(route.rootNode.children[2]); // Node 3
+            route.uncompleteNode(route.rootNode.children[1]); // Node 2
+
+            // 8/11 nodes should be completed
+            expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
+            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.completed === true)).toStrictEqual(3);
+            expect(route.rootNode.children[1].step?.completed).toStrictEqual(false); // Node 2
+            expect(route.rootNode.children[1].children[0].step?.completed).toStrictEqual(false); // Node 2.1
+            expect(route.rootNode.children[1].children[0].children[0].step?.completed).toStrictEqual(false); // Node 2.1.1
         });
     });
 });
