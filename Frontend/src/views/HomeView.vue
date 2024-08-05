@@ -2,9 +2,9 @@
 import EquipmentComponent from '@/components/EquipmentComponent.vue';
 import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
-import DebugComponent from "@/components/DebugComponent.vue";
-import InventoryComponent from "@/components/SkillTabComponent.vue";
-import { ref } from "vue";
+import DebugComponent from '@/components/DebugComponent.vue';
+import InventoryComponent from '@/components/SkillTabComponent.vue';
+import { ref } from 'vue';
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
@@ -12,7 +12,7 @@ state.currentRoute.initializeSomeSteps();
 const rootNode = ref(state.currentRoute.rootNode);
 
 //TODO: Current step is set to the 1st step for testing
-state.setCurrentStep(state.currentRoute.getCurrentStep());
+state.setCurrentNode(state.currentRoute.currentNode);
 
 </script>
 

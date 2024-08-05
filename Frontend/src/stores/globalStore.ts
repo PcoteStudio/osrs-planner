@@ -6,7 +6,7 @@ import type { Step } from '@/models/step';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
-        const playerState : PlayerState = new PlayerState();
+        const playerState: PlayerState = new PlayerState();
 
         const currentRoute = new Route();
         currentRoute.playerState = playerState;
@@ -18,8 +18,8 @@ export const useGlobalStore = defineStore('globalStore', {
         };
     },
     actions: {
-        setCurrentStep(step: Step) {
-            this.currentRoute.setCurrentStep(step);
+        setCurrentNode(node: StepTreeNode | undefined) {
+            this.currentRoute.setCurrentNode(node);
         },
         toggleCompleted(node: StepTreeNode) {
             this.currentRoute.toggleNodeCompletion(node);

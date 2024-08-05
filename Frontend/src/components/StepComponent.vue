@@ -21,7 +21,7 @@ const isFirstChild = computed(() =>  state.currentRoute.getFirstStep() === props
 const isLastChild = computed(() =>  state.currentRoute.getLastStep() === props.node.step);
 const isCompleted = computed(() => props.node.step?.completed);
 
-const setCurrentStep = (step: Step) => state.setCurrentStep(step);
+const setCurrentNode = (node: StepTreeNode) => state.setCurrentNode(node);
 const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node);
 
 watch(isCurrentStep, () => {
@@ -49,7 +49,7 @@ if (!props.node.step) {
       'current': isCurrentStep,
       'completed': isCompleted
     }">
-      <div class="tag" @click="setCurrentStep(node.step)">
+      <div class="tag" @click="setCurrentNode(node)">
         <div class="icon">
           <span class="label" v-if="node.depth <= 1">
             {{ index }}

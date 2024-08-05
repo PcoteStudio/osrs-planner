@@ -126,6 +126,8 @@ export class Route {
      * @returns `true` if a another step was executed or `false` otherwise.
      */
     stepOnce(): boolean {
+        if (this.currentNode?.step)
+            this.currentNode.step.resultingState = this.playerState.clone();
         if (!this.currentNode) { // Find and execute the first node
             this.currentNode = this.rootNode;
             while (this.currentNode.children.length) {
@@ -193,12 +195,18 @@ export class Route {
      * Applies the next steps until the specified step is applied or until the last step.
      * @param step Once this step is executed, will return.
      */
-    setCurrentStep(step: Step | undefined) {
-        // TODO don't reprocess it all every time
-        this.playerState = new PlayerState();
-        this.currentNode = undefined;
+    setCurrentNode(node: StepTreeNode | undefined) {
+        if (node?.step?.resultingState) { // Load pre-processed step
+            this.playerState = node.step.resultingState;
+            this.currentNode = node;
+            return;
+        } if (!this.getFirstStep()?.resultingState) { // Re-process all steps
+            this.playerState = new PlayerState();
+            this.currentNode = undefined;
+        }
+
         let wasStepExecuted = true;
-        while (step?.id !== this.getCurrentStep()?.id && wasStepExecuted) {
+        while (node?.step?.id !== this.getCurrentStep()?.id && wasStepExecuted) {
             wasStepExecuted = this.stepOnce();
         }
     }

@@ -10,4 +10,4 @@ export const formatExperience = (exp: number) : string => {
 
 export const formatNumber = (num: number) : string => {
     return new Intl.NumberFormat().format(num);
-}
+};

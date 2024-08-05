@@ -4,6 +4,7 @@ import type { Effect } from '@/models/effect';
 
 export class Step {
     id: string = nanoid();
+    resultingState: PlayerState | undefined;
     description: string = '';
     effects: Effect[] = [];
     completed: boolean = false;

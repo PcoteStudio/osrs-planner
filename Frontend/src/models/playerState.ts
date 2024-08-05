@@ -38,6 +38,9 @@ export class PlayerState {
     }
 
     clone(): PlayerState {
-        throw new Error('Method not implemented.');
+        const newState = new PlayerState;
+        newState.skills = { ...this.skills };
+        // TODO clone inventory/equipment/skills
+        return newState;
     }
 }
