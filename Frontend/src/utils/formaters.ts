@@ -7,3 +7,7 @@ export const formatExperience = (exp: number) : string => {
         return (exp / 1000000).toFixed(exp % 1000000 === 0 ? 0 : 1) + 'm';
     }
 };
+
+export const formatNumber = (num: number) : string => {
+    return new Intl.NumberFormat().format(num);
+}

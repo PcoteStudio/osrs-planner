@@ -15,11 +15,11 @@ const state = useGlobalStore();
 
 const collapseSubStepList = ref(false);
 const showEffects = ref(false);
-const isCompleted = ref(props.node.step?.completed);
 
 const isCurrentStep = computed(() => state.currentRoute.getCurrentStep() === props.node.step);
 const isFirstChild = computed(() =>  state.currentRoute.getFirstStep() === props.node.step);
 const isLastChild = computed(() =>  state.currentRoute.getLastStep() === props.node.step);
+const isCompleted = computed(() => props.node.step?.completed);
 
 const setCurrentStep = (step: Step) => state.setCurrentStep(step);
 const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node);
@@ -30,6 +30,11 @@ watch(isCurrentStep, () => {
 if (isCurrentStep.value) {
   showEffects.value = true;
 }
+
+watch(isCompleted, () => {
+  if (isCompleted.value)
+    collapseSubStepList.value = true;
+});
 
 if (!props.node.step) {
   throw new Error(`The node does not have a step: ${props.node}`);
@@ -86,6 +91,9 @@ if (!props.node.step) {
       </div>
     </div>
     <div class="sub-step-list" v-if="node.children.length">
+      <div class="toggle" @click="collapseSubStepList = !collapseSubStepList">
+        <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
+      </div>
       <StepListComponent
           :nodes="node.children"
           :indexPrefix="index"
@@ -98,9 +106,6 @@ if (!props.node.step) {
             height: collapseSubStepList ? '0' : 'auto',
           }"
       />
-      <div class="toggle" @click="collapseSubStepList = !collapseSubStepList">
-        <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
-      </div>
     </div>
   </div>
 </template>
@@ -261,7 +266,7 @@ if (!props.node.step) {
 
       &:before {
         content: "";
-        z-index: 1;
+        z-index: 2;
         position: absolute;
         top: 0;
         left: 1.5rem;

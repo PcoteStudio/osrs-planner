@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import StepComponent from '@/components/StepComponent.vue';
+import { StepTreeNode } from '@/models/route';
 
 const props = defineProps<{
-  nodes: Steptree[];
+  nodes: StepTreeNode[];
   indexPrefix?: string;
 }>();
 

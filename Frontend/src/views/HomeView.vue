@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import Inventory from '@/components/EquipmentComponent.vue';
+import EquipmentComponent from '@/components/EquipmentComponent.vue';
 import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from "@/components/DebugComponent.vue";
+import InventoryComponent from "@/components/SkillTabComponent.vue";
+import { ref } from "vue";
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
-let nodes = state.currentRoute.rootNode;
+
+const rootNode = ref(state.currentRoute.rootNode);
 
 //TODO: Current step is set to the 1st step for testing
 state.setCurrentStep(state.currentRoute.getCurrentStep());
@@ -15,8 +18,9 @@ state.setCurrentStep(state.currentRoute.getCurrentStep());
 
 <template>
   <main>
-    <StepList :nodes="nodes.children" id="stepsRoot" class="first-child" />
-    <Inventory />
+    <StepList :nodes="rootNode.children" id="stepsRoot" class="first-child" />
+    <EquipmentComponent />
+    <InventoryComponent />
     <DebugComponent />
   </main>
 </template>

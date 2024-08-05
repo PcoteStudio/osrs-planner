@@ -12,7 +12,7 @@ test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?969
 </script>
 
 <template>
-<div class="inventory">
+<div class="equipment">
   <div class="row center">
     <EquipmentSlot :type="EquipmentSlotTypes.Extra" :isVisible="false" />
     <EquipmentSlot :type="EquipmentSlotTypes.Head" />
@@ -40,7 +40,7 @@ test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?969
 </template>
 
 <style scoped>
-.inventory {
+.equipment {
   background-color: var(--color-background-soft);
   display: flex;
   flex-direction: column;
