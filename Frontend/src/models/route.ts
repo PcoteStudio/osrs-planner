@@ -197,6 +197,8 @@ export class Route {
      */
     setCurrentNode(node: StepTreeNode | undefined) {
         if (node?.step?.resultingState) { // Load pre-processed step
+            if (this.currentNode?.step)
+                this.currentNode.step.resultingState = this.playerState.clone();
             this.playerState = node.step.resultingState;
             this.currentNode = node;
             return;
@@ -246,6 +248,25 @@ export class Route {
 
     getPlayerState(): PlayerState {
         return this.playerState;
+    }
+
+    toString(node: StepTreeNode): string {
+        let result: string = '';
+        if (!node.step) result += 'root';
+        else if (node.step) {
+            result += `${node.step.description}`
+                + `${node.step.effects.length ? ', ' + node.step.effects.length + ' effects' : ''}`
+                + `${node.step.completed ? ', completed' : ''}`
+                + `${node.step.resultingState ? ', generated' : ''}`;
+        }
+        for (const childNode of node.children) {
+            const isLastChild = node.children[node.children.length - 1] === childNode;
+            result += `\n  ${'│  '.repeat(childNode.depth > 0 ? 1 : 0)}`
+                + `${'│  '.repeat(childNode.depth * 0.5)}`
+                + `${' '.repeat(childNode.depth * 0.5)}`
+                + `${isLastChild ? '└' : '├'}─ ${this.toString(childNode)}`;
+        }
+        return result;
     }
 }
 

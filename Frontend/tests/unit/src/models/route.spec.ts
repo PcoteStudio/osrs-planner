@@ -229,4 +229,26 @@ describe('Route', () => {
             expect(route.getCurrentStep()?.description).toStrictEqual('3');
         });
     });
+    describe('toString', () => {
+        it('should parse a full complex route as a string', () => {
+            createComplexRoute();
+            const result = route.toString(route.rootNode);
+            console.log(result);
+
+            const lines = result.split('\n');
+            expect(lines.length).toBeGreaterThanOrEqual(12);
+            expect(lines[0]).toContain('root');
+            expect(lines[1]).toContain('1');
+            expect(lines[2]).toContain('1.1');
+            expect(lines[3]).toContain('1.2');
+            expect(lines[4]).toContain('1.2.1');
+            expect(lines[5]).toContain('1.2.2');
+            expect(lines[6]).toContain('1.2.3');
+            expect(lines[7]).toContain('1.3');
+            expect(lines[8]).toContain('2');
+            expect(lines[9]).toContain('2.1');
+            expect(lines[10]).toContain('2.1.1');
+            expect(lines[11]).toContain('3');
+        });
+    });
 });

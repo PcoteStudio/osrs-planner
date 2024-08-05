@@ -8,9 +8,8 @@ const state = useGlobalStore();
 <template>
 <div class="debug">
   <pre>
-    {{state.currentRoute.getCurrentStep()}}
-
-    Total level: {{ state.currentRoute.getPlayerState().getTotalLevel() }}
+    {{ '\n'+state.currentRoute.toString(state.currentRoute.rootNode) }}
+    {{ state.currentRoute.getCurrentStep() }}
     {{ state.currentRoute.getPlayerState().skills }}
   </pre>
 </div>
