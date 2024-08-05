@@ -150,6 +150,19 @@ export class Route {
         return false; // There is only a root node left to execute
     }
 
+    completeNode(node: StepTreeNode | undefined) {
+        if (node?.step) // Complete node
+            node.step.completed = true;
+        if (node?.parent) { // Complete all previous brothers recursively
+            const nodeIndex = node.parent.children.indexOf(node);
+            if (nodeIndex > 0)
+                this.completeNode(node.parent.children[nodeIndex - 1]);
+        }
+        if (node?.children?.length) { // Complete all children recursively
+            this.completeNode(node.children[node.children.length - 1]);
+        }
+    }
+
     /**
      * Applies the next steps until the specified step is applied or until the last step.
      * @param step Once this step is executed, will return.
@@ -164,10 +177,10 @@ export class Route {
         }
     }
 
-    getStepCount(fromNode: StepTreeNode): number {
+    getStepCount(fromNode: StepTreeNode, filter?: (node: StepTreeNode) => boolean): number {
         let total = 0;
         for (const node of fromNode.children)
-            total += 1 + this.getStepCount(node);
+            total += (filter?.(node) ?? true ? 1 : 0) + this.getStepCount(node);
         return total;
     }
 
