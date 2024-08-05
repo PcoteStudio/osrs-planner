@@ -36,29 +36,27 @@ const computedLevel = computed(() => {
     return props.level;
   return xpTable.getLevel(computedExperience.value);
 });
+
+const skillTooltip = computed(() => {
+  if (hasEffect.value?.experience) {
+    return `${formatNumber(computedExperience.value - hasEffect.value?.experience)} <span style="color: deepskyblue"> + ${formatNumber(hasEffect.value?.experience)}</span> = ${formatNumber(computedExperience.value)}`;
+  }
+
+  return formatNumber(computedExperience.value);
+});
 </script>
 
 <template>
-  <n-tooltip trigger="hover" :delay="100" :keep-alive-on-hover="false">
-    <template #trigger>
-      <div class="skill" :class="{'has-effect': hasEffect}">
-        <img v-if="skill?.icon" :src="skill.icon">
-        <span class="label">
-            {{ computedLevel }}
-        </span>
-      </div>
-    </template>
-    <span v-if="hasEffect?.experience">
-      {{ formatNumber((computedExperience - hasEffect?.experience)) }}
-      <span style="color: deepskyblue">
-        + {{ formatNumber(hasEffect?.experience) }}
-      </span>
-      = {{ formatNumber(computedExperience) }}
+  <div
+      class="skill"
+      :class="{'has-effect': hasEffect}"
+      v-tooltip.top="{ value: skillTooltip, escape: false }"
+  >
+    <img v-if="skill?.icon" :src="skill.icon">
+    <span class="label">
+        {{ computedLevel }}
     </span>
-    <span v-if="!hasEffect">
-      {{ formatNumber(computedExperience) }}
-    </span>
-  </n-tooltip>
+  </div>
 </template>
 
 <style scoped>

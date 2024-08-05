@@ -34,19 +34,17 @@ const replaceWithPlaceholder = (e: any) => {
 
 <template>
   <div class="slot" :class="{ hidden: ! isVisible }">
-    <n-tooltip trigger="hover" :delay="100" :keep-alive-on-hover="false">
-      <template #trigger>
-        <div class="content">
-          <img :src="slotImage"
-               v-if="slotImage"
-               :class="{placeholder: isPlaceholder}"
-               :alt="EquipmentSlotTypes[props.type]"
-               @error="replaceWithPlaceholder"
-          />
-        </div>
-      </template>
-      {{ EquipmentSlotTypes[props.type] }}
-    </n-tooltip>
+    <div
+        class="content"
+        v-tooltip.top="EquipmentSlotTypes[props.type]"
+    >
+      <img :src="slotImage"
+           v-if="slotImage"
+           :class="{placeholder: isPlaceholder}"
+           :alt="EquipmentSlotTypes[props.type]"
+           @error="replaceWithPlaceholder"
+      />
+    </div>
   </div>
 </template>
 

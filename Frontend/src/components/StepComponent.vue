@@ -48,7 +48,10 @@ if (!props.node.step) {
       'current': isCurrentStep,
       'completed': isCompleted
     }">
-      <div class="tag" @click="setCurrentNode(node)">
+      <div class="tag"
+           @click="setCurrentNode(node)"
+           v-tooltip="index"
+      >
         <div class="icon">
           <span class="label" v-if="node.depth <= 1">
             {{ index }}

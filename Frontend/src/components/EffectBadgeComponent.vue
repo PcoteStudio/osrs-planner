@@ -1,30 +1,25 @@
 <script setup lang="ts">
-import { Effect } from '@/models/effect';
 import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
-import { formatExperience } from '@/utils/formaters';
-
+import { formatExperience, formatNumber } from '@/utils/formaters';
+import { SkillEffect } from '@/models/skill/skillEffect';
 const props = defineProps<{
-  effect: Effect;
+  effect: SkillEffect;
 }>();
 
 const badgeStyle = getSkillStyle(props.effect.skill);
 </script>
 
 <template>
-  <n-tooltip trigger="hover" :delay="500" :keep-alive-on-hover="false">
-    <template #trigger>
-      <div class="badge"
-           :style="{ backgroundColor: badgeStyle.bgColor, color: badgeStyle.textColor }"
-      >
-        <span>{{formatExperience(effect.experience)}}</span>
-        <img v-if="badgeStyle.icon"
-             :src="badgeStyle.icon"
-             :alt="SkillsEnum[effect.skill] + ' skill icon'"
-        />
-      </div>
-    </template>
-    {{ effect.experience }}
-  </n-tooltip>
+  <div class="badge"
+       :style="{ backgroundColor: badgeStyle.bgColor, color: badgeStyle.textColor }"
+       v-tooltip.top="formatNumber(effect.experience)"
+  >
+    <span>{{formatExperience(effect.experience)}}</span>
+    <img v-if="badgeStyle.icon"
+         :src="badgeStyle.icon"
+         :alt="SkillsEnum[effect.skill] + ' skill icon'"
+    />
+  </div>
 </template>
 
 <style scoped>

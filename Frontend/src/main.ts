@@ -12,6 +12,9 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import localeEn from './locales/en.json';
 import naive from 'naive-ui';
+import PrimeVue from 'primevue/config';
+import Aura from '@primevue/themes/aura';
+import Tooltip from 'primevue/tooltip';
 
 import App from './App.vue';
 import router from './router';
@@ -33,5 +36,12 @@ app.use(createPinia());
 app.use(router);
 app.use(i18n);
 app.use(naive);
+app.use(PrimeVue, {
+    theme: {
+        preset: Aura
+    }
+});
+
+app.directive('tooltip', Tooltip);
 
 app.mount('#app');
