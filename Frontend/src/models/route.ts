@@ -163,6 +163,25 @@ export class Route {
         }
     }
 
+    uncompleteNode(node: StepTreeNode | undefined) {
+        if (node?.step) // Complete node
+            node.step.completed = false;
+        if (node?.parent?.step) // Uncomplete the direct parent
+            node.parent.step.completed = false;
+        if (node?.children?.length) { // Uncomplete all children recursively
+            for (const childNode of node.children)
+                if (childNode.step)
+                    childNode.step.completed = false;
+        }
+    }
+
+    toggleNodeCompletion(node: StepTreeNode | undefined) {
+        if (node?.step?.completed === true)
+            this.uncompleteNode(node);
+        else if (node?.step?.completed === false)
+            this.completeNode(node);
+    }
+
     /**
      * Applies the next steps until the specified step is applied or until the last step.
      * @param step Once this step is executed, will return.
