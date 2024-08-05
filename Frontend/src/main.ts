@@ -18,6 +18,7 @@ import Tooltip from 'primevue/tooltip';
 
 import App from './App.vue';
 import router from './router';
+import Ripple from "primevue/ripple";
 
 library.add(fas, far, fab);
 
@@ -31,7 +32,6 @@ const i18n = createI18n({
 
 const app = createApp(App);
 
-app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(createPinia());
 app.use(router);
 app.use(i18n);
@@ -43,5 +43,8 @@ app.use(PrimeVue, {
 });
 
 app.directive('tooltip', Tooltip);
+app.directive('ripple', Ripple);
+
+app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.mount('#app');

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { Route } from '@/models/route';
 import type { StepTreeNode } from '@/models/route';
 import { PlayerState } from '@/models/playerState';
-import type { Step } from '@/models/step';
+import type { SkillsEnum } from '@/models/skill/skillsEnum';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
@@ -31,6 +31,9 @@ export const useGlobalStore = defineStore('globalStore', {
                     this.currentRoute.stepOnce();
                 } while (this.currentRoute.getCurrentStep()?.completed);
             }
+        },
+        addEffect(skill: SkillsEnum) {
+            console.log('Add effect : ' + skill);
         }
     },
 });

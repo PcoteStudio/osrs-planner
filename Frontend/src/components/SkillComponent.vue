@@ -85,5 +85,9 @@ const skillTooltip = computed(() => {
     padding-left: 0.4rem;
     padding-right: 0.4rem;
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 </style>
