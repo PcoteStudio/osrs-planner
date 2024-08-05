@@ -3,7 +3,6 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { computed } from 'vue';
 import SkillComponent from '@/components/SkillComponent.vue';
 import { Skill } from '@/models/skill/skill';
-import { SkillsEnum } from '@/models/skill/skillsEnum';
 
 const state = useGlobalStore();
 

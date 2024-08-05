@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Step } from '@/models/step';
 import StepListComponent from '@/components/StepListComponent.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import type { StepTreeNode } from '@/models/route';
@@ -99,11 +98,8 @@ if (!props.node.step) {
           :indexPrefix="index"
           :class="{
             'sub-step': node.depth < 1,
-            'deep-step': node.depth >= 1
-          }"
-          :style="{
-            opacity: collapseSubStepList ? '0' : '100',
-            height: collapseSubStepList ? '0' : 'auto',
+            'deep-step': node.depth >= 1,
+            'hidden': collapseSubStepList
           }"
       />
     </div>
@@ -194,7 +190,6 @@ if (!props.node.step) {
 
   &:before, &:after {
     content: "";
-    z-index: 1;
     position: absolute;
     left: calc((0.5rem + 3rem) / 2);
     border: #303030 solid 1px;
@@ -249,6 +244,12 @@ if (!props.node.step) {
 
 .sub-step-list {
   position: relative;
+
+  .hidden {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    z-index: 0;
+  }
 
   .toggle {
     background-color: #303030;
