@@ -121,6 +121,37 @@ export class Route {
         return newNode;
     }
 
+    getPreviousNode(node: StepTreeNode | undefined): StepTreeNode {
+        if (node?.children.length) // The node has a child
+            return node.children[node.children.length - 1];
+        while (node?.parent) { // The node has a parent
+            const nodeIndex = node.parent.children.indexOf(node);
+            if (nodeIndex > 0) // The node has an immediate brother
+                return node.parent.children[nodeIndex - 1];
+            node = node.parent;
+        }
+        return node || this.rootNode;
+    }
+
+    executeOnNextNodes(node: StepTreeNode, func: (node: StepTreeNode) => void) {
+        while (node !== undefined) {
+            func(node);
+            if (node.parent) { // Find the next node
+                const currentNodeIndex = node.parent.children.indexOf(node);
+                if (node.parent.children.length > currentNodeIndex + 1) {
+                    node = node.parent.children[currentNodeIndex + 1];
+                    while (node.children.length) {
+                        node = node.children[0];
+                    }
+                } else {
+                    if (!node.parent?.step)
+                        return false;
+                    node = node.parent;
+                }
+            }
+        }
+    }
+
     /**
      * Applies the next step.
      * @returns `true` if a another step was executed or `false` otherwise.
@@ -253,7 +284,7 @@ export class Route {
     toString(node: StepTreeNode): string {
         let result: string = '';
         if (!node.step) result += 'root';
-        else if (node.step) {
+        else if (node.step) { // Relevant info to display about the node
             result += `${node.step.description}`
                 + `${node.step.effects.length ? ', ' + node.step.effects.length + ' effects' : ''}`
                 + `${node.step.completed ? ', completed' : ''}`

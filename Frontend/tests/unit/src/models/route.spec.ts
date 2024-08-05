@@ -229,6 +229,49 @@ describe('Route', () => {
             expect(route.getCurrentStep()?.description).toStrictEqual('3');
         });
     });
+
+    describe('getPreviousNode', () => {
+        it('should correctly find the previous node in a complex route', () => {
+            createComplexRoute();
+
+            const lastNode = route.getLastNode(); // Node 3
+            let previousNode = route.getPreviousNode(lastNode);
+            expect(previousNode.step?.description).toStrictEqual('2');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('2.1');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('2.1.1');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1.3');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1.2');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1.2.3');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1.2.2');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1.2.1');
+            previousNode = route.getPreviousNode(previousNode);
+            expect(previousNode.step?.description).toStrictEqual('1.1');
+        });
+    });
+
+    describe('executeOnNextNodes', () => {
+        it('should execute the custom code on all the next nodes of a complex route', () => {
+            createComplexRoute();
+            route.executeOnNextNodes(
+                route.rootNode.children[0].children[1].children[1], // Node 1.2.2
+                (node: StepTreeNode) => { if (node.step) node.step.description += ' visited'; }
+            );
+
+            // 9/11 nodes should be completed
+            expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
+            expect(route.getStepCount(route.rootNode, (node: StepTreeNode) => node.step?.description?.endsWith('visited') || false)).toStrictEqual(9);
+        });
+    });
+
     describe('toString', () => {
         it('should parse a full complex route as a string', () => {
             createComplexRoute();
