@@ -26,8 +26,14 @@ export class PlayerState {
 
     getTotalLevel(): number {
         const xpTable = new XpTable(99); // TODO move table to static util
-        return Object.entries(this.skills).reduce((total, [skill, experience]) => {
+        return Object.entries(this.skills).reduce((total, [, experience]) => {
             return total + xpTable.getLevel(experience || 0);
+        }, 0);
+    }
+
+    getTotalExperience(): number {
+        return Object.entries(this.skills).reduce((total, [, experience]) => {
+            return total + (experience || 0);
         }, 0);
     }
 
