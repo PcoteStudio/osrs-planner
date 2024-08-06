@@ -33,7 +33,7 @@ export const useGlobalStore = defineStore('globalStore', {
             }
         },
         addEffect(skill: SkillsEnum) {
-            console.log('Add effect : ' + skill);
+            console.log(`Add effect : ${skill}`);
             this.showEffectModal = true;
         }
     },

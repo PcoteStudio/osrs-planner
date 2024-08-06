@@ -9,7 +9,7 @@ const props = defineProps<{
 
 let prefix = '';
 if (props.indexPrefix) {
-  prefix = props.indexPrefix + '.';
+  prefix = `${props.indexPrefix}.`;
 }
 
 </script>

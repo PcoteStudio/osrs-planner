@@ -322,7 +322,7 @@ export class Route {
         else if (node.step) { // Relevant info to display about the node
             result += `${node.step.description}`
                 + `, depth:${node.depth}`
-                + `${node.step.effects.length ? ', ' + node.step.effects.length + ' effects' : ''}`
+                + `${node.step.effects.length ? `, ${node.step.effects.length} effects` : ''}`
                 + `${node.step.completed ? ', completed' : ''}`
                 + `${node.step.resultingState ? ', generated' : ''}`;
         }
