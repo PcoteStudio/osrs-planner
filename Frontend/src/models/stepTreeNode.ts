@@ -1,4 +1,4 @@
-import type { Step } from './step';
+import { Step } from './step';
 
 export class StepTreeNode {
     step: Step | undefined;
@@ -12,7 +12,19 @@ export class StepTreeNode {
         this.parent = parent;
     }
 
-    toJSON(): string {
-        return JSON.stringify({ step: this.step, depth: this.depth, children: this.children });
+    toJSON() {
+        return { step: this.step, depth: this.depth, children: this.children };
+    }
+
+    static fromJSON(jsonObject: any): StepTreeNode {
+        const node = new StepTreeNode(jsonObject.depth);
+        if (jsonObject.step) node.step = Step.fromJSON(jsonObject.step);
+        if (jsonObject.children?.[Symbol.iterator])
+            for (const child of jsonObject.children) {
+                const childNode = StepTreeNode.fromJSON(child);
+                childNode.parent = node;
+                node.children.push(childNode);
+            }
+        return node;
     }
 }

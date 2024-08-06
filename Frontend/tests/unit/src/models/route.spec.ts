@@ -335,7 +335,7 @@ describe('Route', () => {
     describe('toString', () => {
         it('should parse a full complex route as a string', () => {
             createComplexRoute();
-            const result = route.toString(route.rootNode);
+            const result = route.toString();
             console.log(result);
 
             const lines = result.split('\n');
@@ -359,10 +359,21 @@ describe('Route', () => {
         it('should only save specific properties', () => {
             createComplexRoute();
 
-            const json = route.toJSON();
+            const json = JSON.stringify(route);
             const savedProperties: any = JSON.parse(json);
             expect(Object.keys(savedProperties).length).toStrictEqual(1);
             expect(savedProperties.rootNode).not.toBe(undefined);
+        });
+    });
+
+    describe('fromJSON', () => {
+        it('should rebuild the original object', () => {
+            createComplexRoute();
+
+            const json = JSON.stringify(route);
+            const parsedRoute = Route.fromJSON(JSON.parse(json));
+
+            expect(parsedRoute).to.deep.equal(route);
         });
     });
 });

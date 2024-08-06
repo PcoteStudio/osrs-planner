@@ -1,11 +1,23 @@
 import { PlayerState } from './playerState';
-import type { CompletionEffect } from '@/models/completionEffect';
-import type { ItemEffect } from '@/models/item/itemEffect';
-import type { SkillEffect } from '@/models/skill/skillEffect';
+import { SkillEffect } from './skill/skillEffect';
 
 export abstract class Effect {
     public abstract apply(playerState: PlayerState): void;
     public abstract toString(): string[];
+
+    constructor(public readonly type: EffectTypeEnum) {
+    }
+
+    public static fromJSON(jsonObject: any): Effect {
+        let funcToCall: ((jsonObject: any) => Effect) | undefined;
+        switch (jsonObject?.type) {
+            case EffectTypeEnum.Skill:
+                funcToCall = SkillEffect.fromJSON;
+        }
+        if (!funcToCall) throw new Error('Invalid effect type');
+        if (funcToCall === Effect.fromJSON) throw new Error(`${jsonObject?.type}Effect.fromJSON() is not implemented`);
+        return funcToCall(jsonObject);
+    }
 }
 
 export enum EffectTypeEnum {

@@ -148,6 +148,13 @@ export class Route {
             this.updateChildrenDepth(childNode);
     }
 
+    updateChildrenParent(parentNode: StepTreeNode) {
+        for (const childNode of parentNode.children) {
+            childNode.parent = parentNode;
+            this.updateChildrenParent(childNode);
+        }
+    }
+
     getPreviousNode(node: StepTreeNode | undefined): StepTreeNode {
         if (node?.children.length) // The node has a child
             return node.children[node.children.length - 1];
@@ -316,7 +323,11 @@ export class Route {
         return this.playerState;
     }
 
-    toString(node: StepTreeNode): string {
+    toString(): string {
+        return Route.toString(this.rootNode);
+    }
+
+    static toString(node: StepTreeNode): string {
         let result: string = '';
         if (!node.step) result += 'root';
         else if (node.step) { // Relevant info to display about the node
@@ -337,6 +348,15 @@ export class Route {
     }
 
     toJSON() {
-        return JSON.stringify({ rootNode: this.rootNode });
+        return { rootNode: this.rootNode };
+    }
+
+    static fromJSON(jsonObject: any): Route {
+        const route: Route = new Route();
+        if (!jsonObject.rootNode)
+            throw new Error('Route JSON is missing a rootNode property');
+        route.rootNode = StepTreeNode.fromJSON(jsonObject.rootNode);
+        route.updateChildrenParent(route.rootNode);
+        return route;
     }
 }
