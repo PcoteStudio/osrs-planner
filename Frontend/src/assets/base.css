@@ -36,14 +36,6 @@
   --section-gap: 160px;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
-}
-
 body {
   min-height: 100vh;
   color: var(--color-text);
@@ -70,4 +62,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scrollbar-color: #222222 #111111;
+}
+
+.highlight {
+  color: deepskyblue;
+  outline-color: deepskyblue;
 }

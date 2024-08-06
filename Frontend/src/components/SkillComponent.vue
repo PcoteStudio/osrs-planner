@@ -39,7 +39,7 @@ const computedLevel = computed(() => {
 
 const skillTooltip = computed(() => {
   if (hasEffect.value?.experience) {
-    return `${formatNumber(computedExperience.value - hasEffect.value?.experience)} <span style="color: deepskyblue"> + ${formatNumber(hasEffect.value?.experience)}</span> = ${formatNumber(computedExperience.value)}`;
+    return `${formatNumber(computedExperience.value - hasEffect.value?.experience)} <span class="highlight"> + ${formatNumber(hasEffect.value?.experience)}</span> = ${formatNumber(computedExperience.value)}`;
   }
 
   return formatNumber(computedExperience.value);

@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia';
-import { Route } from '@/models/route';
 import type { StepTreeNode } from '@/models/route';
+import { Route } from '@/models/route';
 import { PlayerState } from '@/models/playerState';
-import type { SkillsEnum } from '@/models/skill/skillsEnum';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
+import { Effect, EffectTypeEnum } from '@/models/effect';
+import { SkillEffect } from '@/models/skill/skillEffect';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
@@ -10,11 +12,22 @@ export const useGlobalStore = defineStore('globalStore', {
         const currentRoute = new Route();
         currentRoute.playerState = playerState;
 
+        const effectState = {
+            showModal: false,
+            type: '',
+            skill: undefined as SkillsEnum | undefined,
+        };
+
+        //TODO: We testing!
+        effectState.type = EffectTypeEnum.Skill;
+        effectState.skill = SkillsEnum.Slayer;
+        effectState.showModal = true;
+
         return {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
             currentWarnings: playerState.warnings,
-            showEffectModal: false,
+            effectState: effectState,
         };
     },
     actions: {
@@ -32,9 +45,24 @@ export const useGlobalStore = defineStore('globalStore', {
                 } while (this.currentRoute.getCurrentStep()?.completed);
             }
         },
-        addEffect(skill: SkillsEnum) {
-            console.log(`Add effect : ${skill}`);
-            this.showEffectModal = true;
+        openEffectModal(skill: SkillsEnum) {
+            console.log(`Add '${EffectTypeEnum.Skill}' effect : ${skill}`);
+            this.effectState.type = EffectTypeEnum.Skill;
+            this.effectState.skill = skill;
+            this.effectState.showModal = true;
+        },
+        addEffect(newEffect: Effect) {
+            if (!this.currentRoute.currentNode)
+                throw new Error(`Unable to add a new Effect, the current node is undefined : ${this.currentRoute}`);
+
+            if (!this.currentRoute.getCurrentStep())
+                throw new Error(`Unable to add a new Effect, the current step is undefined : ${this.currentRoute}`);
+
+            this.currentRoute.getCurrentStep()?.addEffect(newEffect);
+            this.currentRoute.invalidateNextNodes(this.currentRoute.currentNode);
+            this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
+
+            console.log('New effect applied');
         }
     },
 });
