@@ -1,22 +1,10 @@
 import { PlayerState } from './playerState';
-import { SkillEffect } from './skill/skillEffect';
 
 export abstract class Effect {
     public abstract apply(playerState: PlayerState): void;
     public abstract toString(): string[];
 
     constructor(public readonly type: EffectTypeEnum) {
-    }
-
-    public static fromJSON(jsonObject: { [key: string]: any }): Effect {
-        let funcToCall: ((jsonObject: { [key: string]: any }) => Effect) | undefined;
-        switch (jsonObject?.type) {
-            case EffectTypeEnum.Skill:
-                funcToCall = SkillEffect.fromJSON;
-        }
-        if (!funcToCall) throw new Error('Invalid effect type');
-        if (funcToCall === Effect.fromJSON) throw new Error(`${jsonObject?.type}Effect.fromJSON() is not implemented`);
-        return funcToCall(jsonObject);
     }
 }
 

@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { PlayerState } from './playerState';
 import { Effect } from '@/models/effect';
 import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
+import { EffectFactory } from './effectFactory';
 
 export class Step {
     id: string = nanoid();
@@ -38,7 +39,7 @@ export class Step {
         step.completed = jsonObject.completed;
         step.id = jsonObject.id;
         for (const effect of jsonObject.effects)
-            step.addEffect(Effect.fromJSON(effect));
+            step.addEffect(EffectFactory.fromJSON(effect));
         return step;
     }
 }

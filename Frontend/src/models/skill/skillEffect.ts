@@ -19,7 +19,7 @@ export class SkillEffect extends Effect {
         return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
     }
 
-    public static override fromJSON(jsonObject: { [key: string]: any }): SkillEffect {
+    public static fromJSON(jsonObject: { [key: string]: any }): SkillEffect {
         validateEnumProperty(SkillEffect, jsonObject, 'skill', SkillsEnum);
         validatePropertyType(SkillEffect, jsonObject, 'experience', 'number');
         const skill = SkillsEnum[jsonObject.skill as SkillsEnum];
