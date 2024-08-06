@@ -14,6 +14,7 @@ export class Step {
     }
 
     addEffect(effect: Effect) {
+        // TODO combine similar effects (ex: 2 slayer skill effects)
         if (effect) this.effects.push(effect);
     }
 

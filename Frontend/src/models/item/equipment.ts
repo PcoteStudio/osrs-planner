@@ -1,23 +1,22 @@
 import { Item } from './item';
-import { EquipmentSlotTypes, EquipmentSlot } from '@/models/item/equipmentSlot';
+import { EquipmentSlotTypes } from '@/models/item/equipmentSlot';
 
 export class Equipment {
-    slots: EquipmentSlot[] = [];
+    slots: { [slot in EquipmentSlotTypes as string]?: Item } = {};
 
     constructor() {
         for (const key in EquipmentSlotTypes) {
-            this.slots[key] = new EquipmentSlot();
-            this.slots[key].equipmentSlotType = EquipmentSlotTypes[key as keyof typeof EquipmentSlotTypes];
+            this.slots[key] = new Item();
         }
     }
 
     get(slot: EquipmentSlotTypes): Item | undefined {
-        return this.slots[slot].item;
+        return this.slots[slot];
     }
 
     swapSlot(slot: EquipmentSlotTypes, item: Item | undefined): Item | undefined {
-        const previousItem = this.slots[slot].item;
-        this.slots[slot].item = item;
+        const previousItem = this.slots[slot];
+        this.slots[slot] = item;
         return previousItem;
     }
 }

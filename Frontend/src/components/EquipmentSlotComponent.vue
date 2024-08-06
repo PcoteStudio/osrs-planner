@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<{
 const state = useGlobalStore();
 
 
-const item = state.currentPlayerState.equipment.slots[props.type]?.item;
+const item = state.currentPlayerState.equipment.slots[props.type];
 
 const isPlaceholder = computed(() => !item?.imageUrl);
 let slotImage = computed(() => {

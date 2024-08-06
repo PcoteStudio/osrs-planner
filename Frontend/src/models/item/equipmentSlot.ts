@@ -10,28 +10,22 @@ import legsImg from '@/assets/images/icons/legs.webp';
 import handsImg from '@/assets/images/icons/hands.webp';
 import feetImg from '@/assets/images/icons/feet.webp';
 import ringImg from '@/assets/images/icons/ring.webp';
-import type { Item } from '@/models/item/item';
-
-export class EquipmentSlot {
-    equipmentSlotType: EquipmentSlotTypes;
-    item: Item | undefined;
-}
 
 export enum EquipmentSlotTypes {
-    Head,
-    Cape,
-    Neck,
-    Ammunition,
-    ExtraAmmo,
-    Weapon,
-    Shield,
-    TwoHandedItems,
-    Body,
-    Legs,
-    Hands,
-    Feet,
-    Ring,
-    Extra,
+    Head = 'Head',
+    Cape = 'Cape',
+    Neck = 'Neck',
+    Ammunition = 'Ammunition',
+    ExtraAmmo = 'ExtraAmmo',
+    Weapon = 'Weapon',
+    Shield = 'Shield',
+    TwoHandedItems = 'TwoHandedItems',
+    Body = 'Body',
+    Legs = 'Legs',
+    Hands = 'Hands',
+    Feet = 'Feet',
+    Ring = 'Ring',
+    Extra = 'Extra',
 }
 
 export const getPlaceholderSrc = (slotType: EquipmentSlotTypes) => {
