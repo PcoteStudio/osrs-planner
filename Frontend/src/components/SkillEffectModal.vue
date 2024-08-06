@@ -6,7 +6,7 @@ import { computed, ref, watch } from 'vue';
 import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
 import { XpTable } from '@/models/skill/xpTable';
 import { useGlobalStore } from '@/stores/globalStore';
-import { formatNumber } from '../utils/formaters';
+import { formatNumber } from '@/utils/formaters';
 import Button from 'primevue/button';
 import { SkillEffect } from '@/models/skill/skillEffect';
 
@@ -56,14 +56,17 @@ const addExperience = (exp: number) => {
 };
 
 const addEffect = () => {
-  const newEffect = new SkillEffect(selectedSkill.value.type, experience);
+  if (!selectedSkill.value && !experience.value)
+    return;
+
+  const newEffect = new SkillEffect(selectedSkill.value.type, experience.value);
   state.addEffect(newEffect);
   state.effectState.showModal = false;
 };
 
 const xpTable = new XpTable(99); // TODO move table to static util
 
-const currentExp = computed(() => state.currentRoute.playerState.skills[selectedSkill.value.name] as number);
+const currentExp = computed(() => state.currentRoute.playerState.skills[selectedSkill.value?.name] as number);
 const additionalExp = computed(() => currentExp.value + Number(experience.value));
 const currentLevel = computed(() => xpTable.getLevel(currentExp.value));
 const newLevel = computed(() => xpTable.getLevel(currentExp.value + Number(experience.value)));
@@ -140,7 +143,7 @@ experience.value = expUntilNextLevel.value;
     </span>
     <div class="flex justify-end gap-2">
       <Button type="button" label="Cancel" severity="secondary" @click="state.effectState.showModal = false" size="small" />
-      <Button type="button" label="Add effect" @click="addEffect()" size="small" />
+      <Button type="button" label="Add effect" @click="addEffect()" :disabled="!selectedSkill?.type && !experience" size="small" />
     </div>
   </div>
 </template>
@@ -149,18 +152,5 @@ experience.value = expUntilNextLevel.value;
 
 a {
   text-decoration: underline;
-}
-
-.calculations {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  &.invalid {
-    color: gray;
-    .highlight {
-      color: gray;
-    }
-  }
 }
 </style>

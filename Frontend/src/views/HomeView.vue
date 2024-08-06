@@ -7,6 +7,7 @@ import InventoryComponent from '@/components/SkillTabComponent.vue';
 import { ref } from 'vue';
 import AddEffectModalComponent from '@/components/AddEffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
+import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
@@ -23,6 +24,9 @@ state.setCurrentNode(state.currentRoute.currentNode);
     <AddEffectModalComponent />
     <TabComponent :min-width="'24rem'" max-width="30rem">
       <StepList :nodes="rootNode.children" id="stepsRoot" class="first-child" />
+    </TabComponent>
+    <TabComponent :max-width="'24rem'">
+      <ControlPanelComponent />
     </TabComponent>
     <TabComponent :max-width="'20rem'">
       <EquipmentComponent />

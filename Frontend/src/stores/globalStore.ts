@@ -17,11 +17,6 @@ export const useGlobalStore = defineStore('globalStore', {
             skill: undefined as SkillsEnum | undefined,
         };
 
-        //TODO: We testing!
-        effectState.type = EffectTypeEnum.Skill;
-        effectState.skill = SkillsEnum.Slayer;
-        effectState.showModal = true;
-
         return {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
@@ -35,7 +30,6 @@ export const useGlobalStore = defineStore('globalStore', {
         },
         toggleCompleted(node: StepTreeNode) {
             this.currentRoute.toggleNodeCompletion(node);
-            this.currentRoute.rootNode;
 
             // Set current step to the next step
             if (this.currentRoute.getCurrentStep() === node.step) {
@@ -44,10 +38,11 @@ export const useGlobalStore = defineStore('globalStore', {
                 } while (this.currentRoute.getCurrentStep()?.completed);
             }
         },
-        openEffectModal(skill: SkillsEnum) {
-            console.log(`Add '${EffectTypeEnum.Skill}' effect : ${skill}`);
-            this.effectState.type = EffectTypeEnum.Skill;
-            this.effectState.skill = skill;
+        openEffectModal(skill?: SkillsEnum) {
+            if (skill) {
+                this.effectState.type = EffectTypeEnum.Skill;
+                this.effectState.skill = skill;
+            }
             this.effectState.showModal = true;
         },
         addEffect(newEffect: Effect) {

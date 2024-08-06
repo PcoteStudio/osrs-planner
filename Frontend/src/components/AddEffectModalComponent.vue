@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
 import Select from 'primevue/select';
 
 import { useGlobalStore } from '@/stores/globalStore';
@@ -13,7 +12,9 @@ const state = useGlobalStore();
 const selectedEffectType = ref();
 
 const title = computed(() => {
-  return `Add ${selectedEffectType.value.name} Effect`;
+  if (selectedEffectType.value)
+    return `Add ${selectedEffectType.value?.name} Effect`;
+  return 'Add Effect';
 });
 
 const effectTypes = computed(() => getEffectTypes());

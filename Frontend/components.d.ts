@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddEffectModalComponent: typeof import('./src/components/AddEffectModalComponent.vue')['default']
     Button: typeof import('primevue/button')['default']
+    ControlPanelComponent: typeof import('./src/components/ControlPanelComponent.vue')['default']
     DebugComponent: typeof import('./src/components/DebugComponent.vue')['default']
     EffectBadgeComponent: typeof import('./src/components/EffectBadgeComponent.vue')['default']
     EquipmentComponent: typeof import('./src/components/EquipmentComponent.vue')['default']
