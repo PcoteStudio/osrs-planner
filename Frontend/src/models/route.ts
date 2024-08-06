@@ -130,6 +130,7 @@ export class Route {
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
         nodeToMove.parent = previousNode?.parent;
         nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
+        this.updateChildrenDepth(nodeToMove);
         this.invalidateNextNodes(this.rootNode);
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
@@ -143,9 +144,16 @@ export class Route {
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
         nodeToMove.parent = parentNode;
         parentNode.children.splice(0, 0, nodeToMove);
+        this.updateChildrenDepth(nodeToMove);
         this.invalidateNextNodes(this.rootNode);
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
+    }
+
+    updateChildrenDepth(parentNode: StepTreeNode) {
+        parentNode.depth = (parentNode?.parent?.depth || 0) + 1;
+        for (const childNode of parentNode.children)
+            this.updateChildrenDepth(childNode);
     }
 
     getPreviousNode(node: StepTreeNode | undefined): StepTreeNode {
@@ -174,6 +182,10 @@ export class Route {
                     if (!node.parent?.step)
                         return false;
                     node = node.parent;
+                }
+            } else {
+                while (node.children.length) {
+                    node = node.children[0];
                 }
             }
         }
@@ -317,6 +329,7 @@ export class Route {
         if (!node.step) result += 'root';
         else if (node.step) { // Relevant info to display about the node
             result += `${node.step.description}`
+                + `, depth:${node.depth}`
                 + `${node.step.effects.length ? ', ' + node.step.effects.length + ' effects' : ''}`
                 + `${node.step.completed ? ', completed' : ''}`
                 + `${node.step.resultingState ? ', generated' : ''}`;

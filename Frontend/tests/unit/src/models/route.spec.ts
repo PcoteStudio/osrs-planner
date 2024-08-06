@@ -14,12 +14,12 @@ describe('Route', () => {
         const node12 = route.addStep(new Step('1.2'), node11);
         const node121 = route.addSubStep(new Step('1.2.1'), node12);
         const node122 = route.addStep(new Step('1.2.2'), node121);
-        const node123 = route.addStep(new Step('1.2.3'), node122);
-        const node13 = route.addStep(new Step('1.3'), node12);
+        route.addStep(new Step('1.2.3'), node122);
+        route.addStep(new Step('1.3'), node12);
         const node2 = route.addStep(new Step('2'), node1);
         const node21 = route.addSubStep(new Step('2.1'), node2);
-        const node211 = route.addSubStep(new Step('2.1.1'), node21);
-        const node3 = route.addStep(new Step('3'), node2);
+        route.addSubStep(new Step('2.1.1'), node21);
+        route.addStep(new Step('3'), node2);
     }
 
     describe('addStep', () => {
@@ -133,29 +133,55 @@ describe('Route', () => {
             expect(route.rootNode.children[2]?.step?.description).toStrictEqual('3');
             expect(route.rootNode.children[2]?.depth).toStrictEqual(0);
             expect(route.currentNode).toBe(undefined);
+        });
+    });
 
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1.1');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1.2.1');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1.2.2');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1.2.3');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1.2');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1.3');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('1');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('2.1.1');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('2.1');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('2');
-            route.stepOnce();
-            expect(route.getCurrentStep()?.description).toStrictEqual('3');
+    describe('moveToSubNode', () => {
+        it('should correctly move a step before the only other step of a route', () => {
+            route.addStep(new Step('2'));
+            const node1 = route.addStep(new Step('1'));
+            route.moveToSubNode(node1, route.rootNode);
+
+            expect(route.getStepCount(route.rootNode)).toStrictEqual(2);
+            expect(route.rootNode.children[0].step?.description).toStrictEqual('1');
+            expect(route.rootNode.children[1].step?.description).toStrictEqual('2');
+            expect(route.rootNode.children[0].depth).toStrictEqual(0);
+            expect(route.rootNode.children[1].depth).toStrictEqual(0);
+            expect(route.currentNode).toBe(undefined);
+        });
+
+        it.only('should correctly move a tree of steps in a complex route', () => {
+            createComplexRoute();
+            const node12 = route.rootNode.children[0]?.children[1];
+            const node2 = route.rootNode.children[1];
+            route.moveToSubNode(node12, node2);
+
+            expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
+            expect(route.rootNode.children[0]?.step?.description).toStrictEqual('1');
+            expect(route.rootNode.children[0]?.depth).toStrictEqual(0);
+            expect(route.rootNode.children[0]?.children[0]?.step?.description).toStrictEqual('1.1');
+            expect(route.rootNode.children[0]?.children[1]?.step?.description).toStrictEqual('1.3');
+            expect(route.rootNode.children[0]?.children[0]?.depth).toStrictEqual(1);
+            expect(route.rootNode.children[0]?.children[1]?.depth).toStrictEqual(1);
+            expect(route.rootNode.children[0]?.children[1]?.step?.description).toStrictEqual('1.3');
+            expect(route.rootNode.children[0]?.children[1]?.depth).toStrictEqual(1);
+            expect(route.rootNode.children[1]?.step?.description).toStrictEqual('2');
+            expect(route.rootNode.children[1]?.depth).toStrictEqual(0);
+            expect(route.rootNode.children[1]?.children[0]?.step?.description).toStrictEqual('1.2');
+            expect(route.rootNode.children[1]?.children[0]?.depth).toStrictEqual(1);
+            expect(route.rootNode.children[1]?.children[1]?.step?.description).toStrictEqual('2.1');
+            expect(route.rootNode.children[1]?.children[1]?.depth).toStrictEqual(1);
+            expect(route.rootNode.children[1]?.children[0]?.children[0]?.step?.description).toStrictEqual('1.2.1');
+            expect(route.rootNode.children[1]?.children[0]?.children[1]?.step?.description).toStrictEqual('1.2.2');
+            expect(route.rootNode.children[1]?.children[0]?.children[2]?.step?.description).toStrictEqual('1.2.3');
+            expect(route.rootNode.children[1]?.children[0]?.children[0].depth).toStrictEqual(2);
+            expect(route.rootNode.children[1]?.children[0]?.children[1].depth).toStrictEqual(2);
+            expect(route.rootNode.children[1]?.children[0]?.children[2].depth).toStrictEqual(2);
+            expect(route.rootNode.children[1]?.children[1]?.children[0]?.step?.description).toStrictEqual('2.1.1');
+            expect(route.rootNode.children[1]?.children[1]?.children[0].depth).toStrictEqual(2);
+            expect(route.rootNode.children[2]?.step?.description).toStrictEqual('3');
+            expect(route.rootNode.children[2]?.depth).toStrictEqual(0);
+            expect(route.currentNode).toBe(undefined);
         });
     });
 
