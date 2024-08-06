@@ -5,6 +5,7 @@ import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from '@/components/DebugComponent.vue';
 import InventoryComponent from '@/components/SkillTabComponent.vue';
 import { ref } from 'vue';
+import AddEffectModalComponent from '@/components/AddEffectModalComponent.vue';
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
@@ -18,6 +19,7 @@ state.setCurrentNode(state.currentRoute.currentNode);
 
 <template>
   <main>
+    <AddEffectModalComponent />
     <StepList :nodes="rootNode.children" id="stepsRoot" class="first-child" />
     <EquipmentComponent />
     <InventoryComponent />

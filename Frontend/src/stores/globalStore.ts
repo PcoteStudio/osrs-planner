@@ -7,7 +7,6 @@ import type { SkillsEnum } from '@/models/skill/skillsEnum';
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
         const playerState: PlayerState = new PlayerState();
-
         const currentRoute = new Route();
         currentRoute.playerState = playerState;
 
@@ -15,6 +14,7 @@ export const useGlobalStore = defineStore('globalStore', {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
             currentWarnings: playerState.warnings,
+            showEffectModal: true,
         };
     },
     actions: {
@@ -34,6 +34,7 @@ export const useGlobalStore = defineStore('globalStore', {
         },
         addEffect(skill: SkillsEnum) {
             console.log('Add effect : ' + skill);
+            this.showEffectModal = true;
         }
     },
 });

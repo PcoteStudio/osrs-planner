@@ -18,7 +18,7 @@ import Tooltip from 'primevue/tooltip';
 
 import App from './App.vue';
 import router from './router';
-import Ripple from "primevue/ripple";
+import Ripple from 'primevue/ripple';
 
 library.add(fas, far, fab);
 
@@ -38,7 +38,14 @@ app.use(i18n);
 app.use(naive);
 app.use(PrimeVue, {
     theme: {
-        preset: Aura
+        preset: Aura,
+        options: {
+            ripple: true,
+            cssLayer: {
+                name: 'primevue',
+                order: 'tailwind-base, primevue, tailwind-utilities'
+            }
+        }
     }
 });
 
