@@ -144,6 +144,17 @@ This route planner is a powerfull website that will make much easier the process
 | Handle combat task requirements | |
 | Handle alternative requirements | |
 
+### Shop features
+| Feature | Progress |
+| --- | --- |
+| Display shop panel | |
+| Display all shop items available at the selected step | |
+| Add a shop effect to directly handle the transaction | |
+| Remove shop effect from selected step | |
+| Add issue when missing quest requirement for shop/item access | |
+| Add issue when missing item requirement for shop/item access (ex: Zanaris) | |
+| Add issue when missing skill requirement for shop/item access (ex: LMS) | |
+
 ### Route troubleshooting features
 
 | Feature | Progress |
