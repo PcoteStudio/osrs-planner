@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import type { PlayerState } from './playerState';
+import { PlayerState } from './playerState';
 import type { Effect } from '@/models/effect';
 
 export class Step {
@@ -21,5 +21,9 @@ export class Step {
         for (const effect of this.effects) {
             effect.apply(playerState);
         }
+    }
+
+    toJSON(): string {
+        return JSON.stringify({ description: this.description, effects: this.effects, completed: this.completed });
     }
 }

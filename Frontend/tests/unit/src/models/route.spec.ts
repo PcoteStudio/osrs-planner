@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Route, StepTreeNode } from '../../../../src/models/route';
+import { Route } from '../../../../src/models/route';
 import { Step } from '../../../../src/models/step';
+import { StepTreeNode } from '../../../../src/models/stepTreeNode';
 
 describe('Route', () => {
     let route: Route;
@@ -150,7 +151,7 @@ describe('Route', () => {
             expect(route.currentNode).toBe(undefined);
         });
 
-        it.only('should correctly move a tree of steps in a complex route', () => {
+        it('should correctly move a tree of steps in a complex route', () => {
             createComplexRoute();
             const node12 = route.rootNode.children[0]?.children[1];
             const node2 = route.rootNode.children[1];
@@ -351,6 +352,17 @@ describe('Route', () => {
             expect(lines[9]).toContain('2.1');
             expect(lines[10]).toContain('2.1.1');
             expect(lines[11]).toContain('3');
+        });
+    });
+
+    describe('toJSON', () => {
+        it('should only save specific properties', () => {
+            createComplexRoute();
+
+            const json = route.toJSON();
+            const savedProperties: any = JSON.parse(json);
+            expect(Object.keys(savedProperties).length).toStrictEqual(1);
+            expect(savedProperties.rootNode).not.toBe(undefined);
         });
     });
 });

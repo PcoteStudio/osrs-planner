@@ -14,7 +14,7 @@ export const useGlobalStore = defineStore('globalStore', {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
             currentWarnings: playerState.warnings,
-            showEffectModal: true,
+            showEffectModal: false,
         };
     },
     actions: {

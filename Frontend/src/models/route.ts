@@ -1,11 +1,12 @@
 import { PlayerState } from './playerState';
 import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
+import { StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
-    rootNode: StepTreeNode = { depth: -1, children: [] };
+    rootNode: StepTreeNode = new StepTreeNode(-1);
     currentNode: StepTreeNode | undefined; // Current step is considered already executed
 
     initializeSomeSteps() {
@@ -91,11 +92,7 @@ export class Route {
     }
 
     addStep(newStep: Step, previousNode?: StepTreeNode): StepTreeNode {
-        const newNode: StepTreeNode = {
-            depth: previousNode?.parent ? previousNode?.parent?.depth + 1 : 0,
-            step: newStep,
-            children: [],
-        };
+        const newNode: StepTreeNode = new StepTreeNode(previousNode?.parent ? previousNode?.parent?.depth + 1 : 0, newStep);
         if (previousNode) {
             if (!previousNode.parent) throw new Error('previousNode doesn\'t have a parent');
             const previousNodeIndex = previousNode.parent.children.indexOf(previousNode);
@@ -111,12 +108,7 @@ export class Route {
     }
 
     addSubStep(newStep: Step, parentNode: StepTreeNode): StepTreeNode {
-        const newNode: StepTreeNode = {
-            depth: parentNode.depth + 1,
-            step: newStep,
-            parent: parentNode,
-            children: [],
-        };
+        const newNode = new StepTreeNode(parentNode.depth + 1, newStep, parentNode);
         parentNode.children.splice(0, 0, newNode);
         this.invalidateNextNodes(newNode);
         return newNode;
@@ -343,11 +335,8 @@ export class Route {
         }
         return result;
     }
-}
 
-export type StepTreeNode = {
-    step?: Step;
-    depth: number;
-    parent?: StepTreeNode;
-    children: StepTreeNode[];
-};
+    toJSON() {
+        return JSON.stringify({ rootNode: this.rootNode });
+    }
+}
