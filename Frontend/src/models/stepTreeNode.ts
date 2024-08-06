@@ -1,3 +1,4 @@
+import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
 import { Step } from './step';
 
 export class StepTreeNode {
@@ -16,15 +17,16 @@ export class StepTreeNode {
         return { step: this.step, depth: this.depth, children: this.children };
     }
 
-    static fromJSON(jsonObject: any): StepTreeNode {
+    static fromJSON(jsonObject: { [key: string]: any }): StepTreeNode {
+        validatePropertyType(StepTreeNode, jsonObject, 'depth', 'number');
+        validatePropertyIterability(StepTreeNode, jsonObject, 'children');
         const node = new StepTreeNode(jsonObject.depth);
         if (jsonObject.step) node.step = Step.fromJSON(jsonObject.step);
-        if (jsonObject.children?.[Symbol.iterator])
-            for (const child of jsonObject.children) {
-                const childNode = StepTreeNode.fromJSON(child);
-                childNode.parent = node;
-                node.children.push(childNode);
-            }
+        for (const child of jsonObject.children) {
+            const childNode = StepTreeNode.fromJSON(child);
+            childNode.parent = node;
+            node.children.push(childNode);
+        }
         return node;
     }
 }

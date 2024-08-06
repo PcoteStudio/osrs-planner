@@ -8,8 +8,8 @@ export abstract class Effect {
     constructor(public readonly type: EffectTypeEnum) {
     }
 
-    public static fromJSON(jsonObject: any): Effect {
-        let funcToCall: ((jsonObject: any) => Effect) | undefined;
+    public static fromJSON(jsonObject: { [key: string]: any }): Effect {
+        let funcToCall: ((jsonObject: { [key: string]: any }) => Effect) | undefined;
         switch (jsonObject?.type) {
             case EffectTypeEnum.Skill:
                 funcToCall = SkillEffect.fromJSON;

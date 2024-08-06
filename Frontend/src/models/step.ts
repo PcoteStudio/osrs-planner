@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import { PlayerState } from './playerState';
 import { Effect } from '@/models/effect';
+import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
 
 export class Step {
     id: string = nanoid();
@@ -24,19 +25,20 @@ export class Step {
         }
     }
 
-    static fromJSON(jsonObject: any): Step {
-        const step = new Step(jsonObject.description || '');
-        if (typeof jsonObject.completed !== 'boolean')
-            throw new Error(`Invalid completed value when parsing step: ${jsonObject.completed}`);
-        step.completed = jsonObject.completed;
-        step.id = jsonObject.id || step.id;
-        for (const effect of jsonObject.effects) {
-            step.addEffect(Effect.fromJSON(effect));
-        }
-        return step;
-    }
-
     toJSON() {
         return { id: this.id, description: this.description, effects: this.effects, completed: this.completed };
+    }
+
+    static fromJSON(jsonObject: { [key: string]: any }): Step {
+        validatePropertyType(Step, jsonObject, 'id', 'string');
+        validatePropertyType(Step, jsonObject, 'description', 'string');
+        validatePropertyType(Step, jsonObject, 'completed', 'boolean');
+        validatePropertyIterability(Step, jsonObject, 'effects');
+        const step = new Step(jsonObject.description);
+        step.completed = jsonObject.completed;
+        step.id = jsonObject.id;
+        for (const effect of jsonObject.effects)
+            step.addEffect(Effect.fromJSON(effect));
+        return step;
     }
 }

@@ -3,6 +3,7 @@ import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
 import { StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
+import { validatePropertyType } from '@/utils/parsingValidators';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
@@ -351,10 +352,9 @@ export class Route {
         return { rootNode: this.rootNode };
     }
 
-    static fromJSON(jsonObject: any): Route {
+    static fromJSON(jsonObject: { [key: string]: any }): Route {
+        validatePropertyType(Route, jsonObject, 'rootNode', 'object');
         const route: Route = new Route();
-        if (!jsonObject.rootNode)
-            throw new Error('Route JSON is missing a rootNode property');
         route.rootNode = StepTreeNode.fromJSON(jsonObject.rootNode);
         route.updateChildrenParent(route.rootNode);
         return route;

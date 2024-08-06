@@ -1,6 +1,7 @@
-import { Effect, EffectTypeEnum } from '../effect';
-import { PlayerState } from '../playerState';
-import { StateWarning } from '../stateWarning';
+import { validateEnumProperty, validatePropertyType } from '@/utils/parsingValidators';
+import { Effect, EffectTypeEnum } from '@/models/effect';
+import { PlayerState } from '@/models/playerState';
+import { StateWarning } from '@/models/stateWarning';
 import { SkillsEnum } from './skillsEnum';
 
 export class SkillEffect extends Effect {
@@ -18,11 +19,9 @@ export class SkillEffect extends Effect {
         return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
     }
 
-    public static override fromJSON(jsonObject: any): SkillEffect {
-        if (!jsonObject.skill)
-            throw new Error(`Invalid skill value when parsing effect: ${jsonObject.skill}`);
-        if (!jsonObject.experience)
-            throw new Error(`Invalid experience value when parsing effect: ${jsonObject.experience}`);
+    public static override fromJSON(jsonObject: { [key: string]: any }): SkillEffect {
+        validateEnumProperty(SkillEffect, jsonObject, 'skill', SkillsEnum);
+        validatePropertyType(SkillEffect, jsonObject, 'experience', 'number');
         const skill = SkillsEnum[jsonObject.skill as SkillsEnum];
         return new SkillEffect(skill, jsonObject.experience);
     }

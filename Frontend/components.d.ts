@@ -22,7 +22,6 @@ declare module 'vue' {
     StepComponent: typeof import('./src/components/StepComponent.vue')['default']
     StepListComponent: typeof import('./src/components/StepListComponent.vue')['default']
     TabComponent: typeof import('./src/components/TabComponent.vue')['default']
-    ToggleSwitch: typeof import('primevue/toggleswitch')['default']
   }
   export interface ComponentCustomProperties {
     Ripple: typeof import('primevue/ripple')['default']

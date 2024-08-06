@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
-import type { StepTreeNode } from '@/models/route';
+import { StepTreeNode } from '@/models/stepTreeNode';
 import { Route } from '@/models/route';
 import { PlayerState } from '@/models/playerState';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { Effect, EffectTypeEnum } from '@/models/effect';
-import { SkillEffect } from '@/models/skill/skillEffect';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
