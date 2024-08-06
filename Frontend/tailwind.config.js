@@ -1,4 +1,4 @@
-import tailwindcssPrimeUI from 'tailwindcss-primeui';
+import tailwindcss_primeui from 'tailwindcss-primeui';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -8,6 +8,6 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [tailwindcssPrimeUI]
+  plugins: [tailwindcss_primeui]
 };
 

@@ -1,6 +1,4 @@
 import './assets/main.css';
-import 'vfonts/Lato.css';
-import 'vfonts/FiraCode.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
@@ -11,7 +9,6 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import localeEn from './locales/en.json';
-import naive from 'naive-ui';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import Tooltip from 'primevue/tooltip';
@@ -35,7 +32,6 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(i18n);
-app.use(naive);
 app.use(PrimeVue, {
     theme: {
         preset: Aura,

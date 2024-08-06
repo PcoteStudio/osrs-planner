@@ -61,18 +61,20 @@ if (!props.node.step) {
       <div class="label">
         <div class="header">
           <div class="actions">
-            <n-button secondary round
+            <Button
                 @click="showEffects = !showEffects"
-                :type="showEffects ? 'primary' : 'default'"
+                size="small"
+                :severity="showEffects ? 'primary' : 'secondary'"
             >
               Effects
-            </n-button>
-            <n-button secondary circle
-                @click="toggleCompleted(node)"
-                :type="isCompleted ? 'success' : 'default'"
+            </Button>
+            <Button rounded
+                    size="small"
+                    @click="toggleCompleted(node)"
+                    :severity="isCompleted ? 'primary' : 'secondary'"
             >
               <font-awesome-icon icon="check" />
-            </n-button>
+            </Button>
           </div>
         </div>
         <div class="body">

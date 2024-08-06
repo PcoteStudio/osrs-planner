@@ -45,14 +45,13 @@ test.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?969
   display: flex;
   flex-direction: column;
   gap: 3%;
-  flex-grow: 0;
-  height: 40%;
-  min-height: 250px;
-  aspect-ratio: 3 / 4;
   padding: 1rem;
+  aspect-ratio: 3 / 4;
+  width: inherit;
+  flex: 1;
 }
 .row {
-  flex-basis: 100%;
+  flex: 1;
   justify-content: space-between;
   display: flex;
   gap: 3%;

@@ -11,7 +11,7 @@ import { getEffectTypes } from '@/models/effect';
 const state = useGlobalStore();
 
 const title = computed(() => {
-  return 'Add slayer effect';
+  return 'Add effect';
 });
 
 const selectedEffectType = ref();
@@ -25,13 +25,16 @@ const effectTypes = ref(getEffectTypes());
           :header="title"
           :style="{ width: '25rem' }"
   >
+    <div class="card flex justify-center">
+    <FloatLabel>
     <Select v-model="selectedEffectType"
+            id="effectTypes"
             :options="effectTypes"
             optionLabel="name"
             placeholder="Select an effect type"
             class="w-full md:w-56"
     >
-      <template #name="slotProps">
+      <template #value="slotProps">
         <div v-if="slotProps.value" class="flex items-center">
           <img :alt="slotProps.value.name"
                :src="slotProps.value.icon"
@@ -55,10 +58,18 @@ const effectTypes = ref(getEffectTypes());
         </div>
       </template>
     </Select>
+      <label for="effectTypes">effectTypes</label>
+    </FloatLabel>
+
+  </div>
+    <div class="flex justify-center">
+        <InputText id="username" v-model="value" />
+    </div>
+
 
     <div class="flex justify-end gap-2">
-      <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-      <Button type="button" label="Save" @click="visible = false"></Button>
+      <Button type="button" label="Cancel" severity="secondary" @click="visible = false" size="small"></Button>
+      <Button type="button" label="Save" @click="visible = false" size="small"></Button>
     </div>
   </Dialog>
 </template>

@@ -33,7 +33,7 @@ const replaceWithPlaceholder = (e: any) => {
 </script>
 
 <template>
-  <div class="slot" :class="{ hidden: ! isVisible }">
+  <div class="slot" :class="{ hide: ! isVisible }">
     <div
         class="content"
         v-tooltip.top="EquipmentSlotTypes[props.type]"
@@ -79,7 +79,7 @@ const replaceWithPlaceholder = (e: any) => {
   }
 }
 
-.hidden {
+.hide {
   visibility: hidden;
 }
 </style>

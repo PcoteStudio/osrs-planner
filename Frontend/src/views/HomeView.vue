@@ -6,6 +6,7 @@ import DebugComponent from '@/components/DebugComponent.vue';
 import InventoryComponent from '@/components/SkillTabComponent.vue';
 import { ref } from 'vue';
 import AddEffectModalComponent from '@/components/AddEffectModalComponent.vue';
+import TabComponent from '@/components/TabComponent.vue';
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
@@ -20,10 +21,18 @@ state.setCurrentNode(state.currentRoute.currentNode);
 <template>
   <main>
     <AddEffectModalComponent />
-    <StepList :nodes="rootNode.children" id="stepsRoot" class="first-child" />
-    <EquipmentComponent />
-    <InventoryComponent />
-    <DebugComponent />
+    <TabComponent :min-width="'24rem'" max-width="30rem">
+      <StepList :nodes="rootNode.children" id="stepsRoot" class="first-child" />
+    </TabComponent>
+    <TabComponent :max-width="'20rem'">
+      <EquipmentComponent />
+    </TabComponent>
+    <TabComponent :max-width="'20rem'">
+      <InventoryComponent />
+    </TabComponent>
+    <TabComponent>
+      <DebugComponent />
+    </TabComponent>
   </main>
 </template>
 
@@ -32,13 +41,13 @@ main {
   display: flex;
   gap: 0.5rem;
   width: 100%;
-  height: 100%;
-  * {
-    border: darkred solid 1px;
-  }
+  height: 100vh;
+  overflow-y: hidden;
 
-  #stepsRoot {
-    width: 350px;
+  @media screen and (max-width: 450px) {
+    flex-wrap: wrap;
+    overflow-y: auto;
+    justify-content: center;
   }
 }
 </style>

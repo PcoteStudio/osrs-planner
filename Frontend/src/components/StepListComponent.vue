@@ -41,8 +41,8 @@ if (props.indexPrefix) {
   display: grid;
   grid-template-rows: 1fr;
   transition: grid-template-rows 1s ease-in-out, opacity 1s ease-in-out;
-  width: 100%;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  height: inherit;
 }
 
 .task-list {
