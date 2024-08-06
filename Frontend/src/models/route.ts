@@ -2,7 +2,6 @@ import { PlayerState } from './playerState';
 import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
 import { Step } from './step';
-import { loremIpsum } from 'lorem-ipsum';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
@@ -10,7 +9,7 @@ export class Route {
     currentNode: StepTreeNode | undefined; // Current step is considered already executed
 
     initializeSomeSteps() {
-        let step = new Step('I am a top step ' + loremIpsum());
+        let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide.');
         step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
         step.addEffect(new SkillEffect(SkillsEnum.Attack, 100));
         step.addEffect(new SkillEffect(SkillsEnum.Construction, 100));
@@ -40,7 +39,7 @@ export class Route {
         step.addEffect(new SkillEffect(SkillsEnum.Herblore, 300));
         const node2 = this.addStep(step, node1);
 
-        step = new Step('I am a child step ' + loremIpsum());
+        step = new Step('En ce qui concerne la restriction actuelle, on ne peut se passer d\'imaginer chacune des modalités opportunes, à court terme.');
         step.addEffect(new SkillEffect(SkillsEnum.Attack, 2000));
         const node21 = this.addSubStep(step, node2);
 
