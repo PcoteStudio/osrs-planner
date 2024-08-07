@@ -1,8 +1,9 @@
 import { StateWarning } from '../stateWarning';
+import { ContainerItem } from './containerItem';
 import { Item } from './item';
 
 export class Inventory {
-    items: { [id: number]: number } = {};
+    items: { [id: number]: ContainerItem } = {};
 
     constructor(public availableSlots: number = 28) { }
 
@@ -12,16 +13,16 @@ export class Inventory {
      * @param quantity Number of item inserted if positive or removed if negative.
      * @returns Detailed warning or `undefined` if the move is valid.
      */
-    moveItem(itemId: number, quantity: number): InventoryMissingItemWarning | InventoryLimitExceededWarning | undefined {
-        const currentQuantity = this.items[itemId];
-        const newQuantity = currentQuantity ? currentQuantity + quantity : quantity;
-        this.items[itemId] = newQuantity;
-        if (newQuantity == 0)
-            delete this.items[itemId];
-        else if (newQuantity < 0)
-            return new InventoryMissingItemWarning(Item.get(itemId), quantity, newQuantity);
+    moveItem(item: Item, quantity: number): InventoryMissingItemWarning | InventoryLimitExceededWarning | undefined {
+        const containerItem: ContainerItem = this.items[item.id] || new ContainerItem(item, 0);
+        containerItem.quantity += quantity;
+        this.items[item.id] = containerItem;
+        if (containerItem.quantity == 0)
+            delete this.items[item.id];
+        else if (containerItem.quantity < 0)
+            return new InventoryMissingItemWarning(item, quantity, containerItem.quantity);
         else if (this.usedSlots() > this.availableSlots)
-            return new InventoryLimitExceededWarning(Item.get(itemId), quantity, this.availableSlots, this.usedSlots());
+            return new InventoryLimitExceededWarning(item, quantity, this.availableSlots, this.usedSlots());
         return undefined;
     }
 
@@ -39,10 +40,10 @@ export class Inventory {
      */
     usedSlots(): number {
         let usedSlot = 0;
-        for (const [itemId, quantity] of Object.entries(this.items)) {
-            if (quantity <= 0) continue;
-            if (Item.get(Number(itemId)).stackable) usedSlot++;
-            else usedSlot += quantity;
+        for (const [itemId, containerItem] of Object.entries(this.items)) {
+            if (containerItem.quantity <= 0) continue;
+            if (containerItem.item.stackable || containerItem.noted) usedSlot++;
+            else usedSlot += containerItem.quantity;
         }
         return usedSlot;
     }

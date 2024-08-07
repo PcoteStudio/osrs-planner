@@ -194,7 +194,7 @@ describe('Route', () => {
             route.removeNode(node1);
 
             expect(route.getStepCount(route.rootNode)).toStrictEqual(1);
-            expect(route.rootNode.children[0].step?.description).toStrictEqual('1');
+            expect(route.rootNode.children[0].step?.description).toStrictEqual('2');
             expect(route.rootNode.children[0].depth).toStrictEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
@@ -219,8 +219,8 @@ describe('Route', () => {
             expect(route.rootNode.children[0]?.children[1]?.children[2].depth).toStrictEqual(2);
             expect(route.rootNode.children[0]?.children[2]?.step?.description).toStrictEqual('1.3');
             expect(route.rootNode.children[0]?.children[2]?.depth).toStrictEqual(1);
-            expect(route.rootNode.children[2]?.step?.description).toStrictEqual('3');
-            expect(route.rootNode.children[2]?.depth).toStrictEqual(0);
+            expect(route.rootNode.children[1]?.step?.description).toStrictEqual('3');
+            expect(route.rootNode.children[1]?.depth).toStrictEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
     });

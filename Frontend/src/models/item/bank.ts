@@ -1,8 +1,9 @@
 import { StateWarning } from '../stateWarning';
+import { ContainerItem } from './containerItem';
 import { Item } from './item';
 
 export class Bank {
-    items: { [id: number]: number } = {};
+    items: { [id: number]: ContainerItem } = {};
 
     constructor() { }
 
@@ -12,14 +13,14 @@ export class Bank {
      * @param quantity Number of item inserted if positive or removed if negative.
      * @returns Detailed warning or `undefined` if the move is valid.
      */
-    moveItem(itemId: number, quantity: number): BankMissingItemWarning | undefined {
-        const currentQuantity = this.items[itemId];
-        const newQuantity = currentQuantity ? currentQuantity + quantity : quantity;
-        this.items[itemId] = newQuantity;
-        if (newQuantity == 0)
-            delete this.items[itemId];
-        else if (newQuantity < 0)
-            return new BankMissingItemWarning(Item.get(itemId), quantity, newQuantity);
+    moveItem(item: Item, quantity: number): BankMissingItemWarning | undefined {
+        const containerItem: ContainerItem = this.items[item.id] || new ContainerItem(item, 0);
+        containerItem.quantity += quantity;
+        this.items[item.id] = containerItem;
+        if (containerItem.quantity == 0)
+            delete this.items[item.id];
+        else if (containerItem.quantity < 0)
+            return new BankMissingItemWarning(item, quantity, containerItem.quantity);
         return undefined;
     }
 
@@ -37,8 +38,8 @@ export class Bank {
      */
     usedSlots(): number {
         let usedSlot = 0;
-        for (const [, quantity] of Object.entries(this.items)) {
-            if (quantity <= 0) continue;
+        for (const [, containerItem] of Object.entries(this.items)) {
+            if (containerItem.quantity <= 0) continue;
             usedSlot++;
         }
         return usedSlot;
