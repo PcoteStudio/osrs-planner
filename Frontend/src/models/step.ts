@@ -3,6 +3,7 @@ import { PlayerState } from './playerState';
 import { Effect } from '@/models/effect';
 import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
 import { EffectFactory } from './effectFactory';
+import { SkillEffect } from './skill/skillEffect';
 
 export class Step {
     id: string = nanoid();
@@ -15,8 +16,21 @@ export class Step {
         this.description = description;
     }
 
-    addEffect(effect: Effect) {
-        // TODO combine similar effects (ex: 2 slayer skill effects)
+    addEffect(effect: Effect | undefined) {
+        // Merge similar effects together
+        if (effect instanceof SkillEffect) {
+            const skillEffect = effect as SkillEffect;
+            for (const existingEffect of this.effects) {
+                if (existingEffect instanceof SkillEffect) {
+                    const existingSkillEffect = existingEffect as SkillEffect;
+                    if (skillEffect.skill == existingSkillEffect.skill) {
+                        existingSkillEffect.experience += skillEffect.experience;
+                        return;
+                    }
+                }
+            }
+        }
+        // Add the effect otherwise
         if (effect) this.effects.push(effect);
     }
 

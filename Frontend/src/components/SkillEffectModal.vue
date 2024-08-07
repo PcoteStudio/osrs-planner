@@ -64,15 +64,15 @@ const addEffect = () => {
   if (!selectedSkill.value && !experience.value)
     return;
 
-  const newEffect = new SkillEffect(selectedSkill.value.type, experience.value);
+  const newEffect = new SkillEffect(selectedSkill.value.type, Number(experience.value));
   state.addEffect(newEffect);
   state.effectState.showModal = false;
 };
 
 const currentExp = computed(() => state.currentRoute.playerState.skills[selectedSkill.value?.name] as number);
-const additionalExp = computed(() => currentExp.value + experience.value);
+const additionalExp = computed(() => currentExp.value + Number(experience.value));
 const currentLevel = computed(() => XpHelper.getLevel(currentExp.value));
-const newLevel = computed(() => XpHelper.getLevel(currentExp.value + experience.value));
+const newLevel = computed(() => XpHelper.getLevel(currentExp.value + Number(experience.value)));
 const nextLevel = computed(() => (newLevel.value < 99) ? newLevel.value + 1 : newLevel.value);
 const expUntilNextLevel = computed(() => XpHelper.getXpUntilNextLevel(additionalExp.value) || 0);
 
