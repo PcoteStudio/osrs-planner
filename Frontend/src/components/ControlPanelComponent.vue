@@ -121,11 +121,13 @@ const buttons = [
         label: 'Import current route',
         type: 'secondary',
         icon: 'pi pi-file-import',
+        action: () => state.openImportExportModal('import'),
       },
       {
         label: 'Export current route',
         type: 'secondary',
         icon: 'pi pi-save',
+        action: () => state.openImportExportModal('export')
       }
     ]
   }

@@ -18,7 +18,8 @@ export const useGlobalStore = defineStore('globalStore', {
         };
 
         const importExportState = {
-            showModal: true,
+            type: undefined as string | undefined,
+            showModal: false,
         };
 
         return {
@@ -63,7 +64,8 @@ export const useGlobalStore = defineStore('globalStore', {
 
             console.log('New effect applied');
         },
-        openImportExportModal() {
+        openImportExportModal(type?: string) {
+            this.importExportState.type = type;
             this.importExportState.showModal = true;
         },
     },

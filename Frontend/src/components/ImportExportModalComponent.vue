@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
 import { useGlobalStore } from '@/stores/globalStore';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Route } from '@/models/route';
 import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
+import { download, downloadAsFile } from '@/utils/webHelpers';
 
 const state = useGlobalStore();
 
@@ -22,6 +23,10 @@ const showExportMessage = (content: string, type?: tring) => {
   }, 3500);
 };
 
+watch(state.importExportState, () => {
+  toggleImportSwitch.value = state.importExportState.type === 'import';
+});
+
 const showImportMessage = (content: string, type?: tring) => {
   importMessage.value.type = type ? type : 'info';
   importMessage.value.content = content;
@@ -29,12 +34,14 @@ const showImportMessage = (content: string, type?: tring) => {
 
   setTimeout(() => {
     importMessage.value.visible = false;
-  }, 10500);
+    state.importExportState.showModal = false;
+  }, 5500);
 };
 
 const saveToFile = () => {
   if (exportData.value) {
-    console.log('save');
+    downloadAsFile(`osrs-planner-route-${new Date().toISOString()}`, 'json', exportData.value);
+    showExportMessage(`Export has been saved to osrs-planner-route-${new Date().toISOString()}.json`);
   }
 };
 
@@ -81,7 +88,7 @@ const importSave = () => {
           <Textarea v-model="importData" rows="5" class="w-full" />
           <label>JSON of an export</label>
         </FloatLabel>
-        <Message v-if="importMessage.visible" :severity="importMessage.type" :life="10000">
+        <Message v-if="importMessage.visible" :severity="importMessage.type" :life="5000">
           {{ importMessage.content }}
         </Message>
         <Button label="Import" icon="pi pi-file-import" :disabled="!importData" @click="importSave()" />
