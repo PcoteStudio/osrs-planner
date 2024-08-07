@@ -1,0 +1,36 @@
+import { describe, it } from 'vitest';
+import { Route } from '../../src/models/route';
+import { Step } from '../../src/models/step';
+import { SkillEffect } from '../../src/models/skill/skillEffect';
+import { SkillsEnum } from '../../src/models/skill/skillsEnum';
+
+describe('Route load test', () => {
+    describe('generate and execute massive route with 200 000 steps', () => {
+        it('should only save specific properties', () => {
+            const route = new Route();
+            let lastNode;
+            const timestampStart = performance.now();
+            for (let i = 0; i < 200_000; i++) {
+                const step = new Step(i.toString());
+                step.addEffect(new SkillEffect(SkillsEnum[i % Object.keys(SkillsEnum).length], i % 1000));
+                lastNode = route.addStep(step, lastNode);
+            }
+            const timestampBuilt = performance.now();
+            route.setCurrentNode(lastNode);
+            const timestampExecuted1 = performance.now();
+            route.setCurrentNode(route.getFirstNode());
+            const timestampExecuted2 = performance.now();
+            route.setCurrentNode(lastNode);
+            const timestampExecuted3 = performance.now();
+            route.getLastNode();
+            const timestampLastNode = performance.now();
+
+            const duration = (start: number, end: number) => ((end - start) / 1000).toPrecision(4);
+            console.log(`Build tree:\t${duration(timestampStart, timestampBuilt)} s`);
+            console.log(`Exec last:\t${duration(timestampBuilt, timestampExecuted1)} s`);
+            console.log(`Exec first:\t${duration(timestampExecuted1, timestampExecuted2)} s`);
+            console.log(`Exec last:\t${duration(timestampExecuted2, timestampExecuted3)} s`);
+            console.log(`Get last:\t${duration(timestampExecuted3, timestampLastNode)} s`);
+        });
+    });
+});
