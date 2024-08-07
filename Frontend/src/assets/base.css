@@ -68,3 +68,7 @@ body {
   color: deepskyblue;
   outline-color: deepskyblue;
 }
+
+img {
+  image-rendering: pixelated;
+}

@@ -4,7 +4,7 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { ref, watch } from 'vue';
 import { Route } from '@/models/route';
 import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
-import { download, downloadAsFile } from '@/utils/webHelpers';
+import { downloadAsFile } from '@/utils/webHelpers';
 
 const state = useGlobalStore();
 

@@ -35,6 +35,7 @@ export class Route {
         step.addEffect(new SkillEffect(SkillsEnum.Strength, 100));
         step.addEffect(new SkillEffect(SkillsEnum.Thieving, 100));
         step.addEffect(new SkillEffect(SkillsEnum.Woodcutting, 100));
+        step.completed = true;
         const node1 = this.addStep(step);
 
         step = new Step('I am another top step');

@@ -2,39 +2,40 @@
 import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
 import { formatExperience, formatNumber } from '@/utils/formaters';
 import { SkillEffect } from '@/models/skill/skillEffect';
-const props = defineProps<{
-  effect: SkillEffect;
-}>();
+const props = withDefaults(defineProps<{
+  effect: SkillEffect,
+  removable?: boolean,
+}>(), {
+  removable: false,
+});
 
 const badgeStyle = getSkillStyle(props.effect.skill);
 </script>
 
 <template>
-  <div class="badge"
-       :style="{ backgroundColor: badgeStyle.bgColor, color: badgeStyle.textColor }"
-       v-tooltip.top="formatNumber(effect.experience)"
-  >
-    <span>{{formatExperience(effect.experience)}}</span>
-    <img v-if="badgeStyle.icon"
-         :src="badgeStyle.icon"
-         :alt="SkillsEnum[effect.skill] + ' skill icon'"
-    />
-  </div>
+  <Chip
+        :image="getSkillStyle(effect.skill).icon"
+        :label="formatExperience(effect.experience)"
+        :removable="removable"
+        v-tooltip.top="formatNumber(effect.experience)"
+        class="badge"
+        :style="{ backgroundColor: badgeStyle.bgColor, color: badgeStyle.textColor }"
+  />
 </template>
 
-<style scoped>
+<style>
 .badge {
-  display: flex;
-  gap: 0.2em;
-  align-items: center;
-  width: fit-content;
-  height: 1.5em;
-  padding: 0.4em;
-  border-radius: 10px;
+  height: 1.5rem;
+  gap: 0.3em;
 
-  img {
-    max-height: 100%;
-    object-fit: contain;
+  & > img {
+    height: 100%;
+    width: fit-content;
+    object-fit: scale-down;
+    border-radius: unset;
+  }
+  & > svg {
+    color: unset;
   }
 }
 </style>

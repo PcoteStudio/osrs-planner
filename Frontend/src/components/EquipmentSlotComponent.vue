@@ -69,7 +69,6 @@ const replaceWithPlaceholder = (e: any) => {
     img {
       width: 70%;
       object-fit: contain;
-      image-rendering: pixelated;
 
       &.placeholder {
         width: fit-content;

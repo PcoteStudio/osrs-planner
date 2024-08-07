@@ -18,7 +18,11 @@ export const useGlobalStore = defineStore('globalStore', {
         };
 
         const importExportState = {
+            showModal: false,
             type: undefined as string | undefined,
+        };
+
+        const stepState = {
             showModal: false,
         };
 
@@ -28,6 +32,7 @@ export const useGlobalStore = defineStore('globalStore', {
             currentWarnings: playerState.warnings,
             effectState: effectState,
             importExportState: importExportState,
+            stepState: stepState,
         };
     },
     actions: {

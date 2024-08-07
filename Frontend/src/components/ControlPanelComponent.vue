@@ -16,10 +16,9 @@ const buttons = [
       },
       {
         label: 'Edit step',
-        type: 'danger',
+        type: 'secondary',
         icon: 'pi pi-pen-to-square',
-        disabled: true,
-        outlined: true,
+        action: () => state.stepState.showModal = true,
       },
       {
         label: 'Add step',
