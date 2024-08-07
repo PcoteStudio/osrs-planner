@@ -115,6 +115,16 @@ export class Route {
         return newNode;
     }
 
+    removeNode(nodeToRemove: StepTreeNode | undefined) {
+        this.invalidateNextNodes(nodeToRemove);
+        if (nodeToRemove?.parent) {
+            const nodeIndex = nodeToRemove.parent.children.indexOf(nodeToRemove);
+            nodeToRemove.parent.children.splice(nodeIndex, 1);
+        } else if (nodeToRemove?.children.length) {
+            nodeToRemove.children = [];
+        }
+    }
+
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
         if (nodeToMove?.step?.id === previousNode?.step?.id)
             throw ('Both nodes need to be different');
@@ -191,8 +201,9 @@ export class Route {
         }
     }
 
-    invalidateNextNodes(node: StepTreeNode) {
-        this.executeOnNextNodes(node, (node: StepTreeNode) => { if (node?.step) node.step.resultingState = undefined; });
+    invalidateNextNodes(node: StepTreeNode | undefined) {
+        if (node)
+            this.executeOnNextNodes(node, (node: StepTreeNode) => { if (node?.step) node.step.resultingState = undefined; });
     }
 
     /**

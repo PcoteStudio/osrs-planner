@@ -31,7 +31,7 @@ export class Step {
     }
 
     static fromJSON(jsonObject: { [key: string]: any }): Step {
-        validatePropertyType(Step, jsonObject, 'id', 'string');
+        validatePropertyType(Step, jsonObject, 'id', 'string'); // TODO remove ID from export and update tests
         validatePropertyType(Step, jsonObject, 'description', 'string');
         validatePropertyType(Step, jsonObject, 'completed', 'boolean');
         validatePropertyIterability(Step, jsonObject, 'effects');
