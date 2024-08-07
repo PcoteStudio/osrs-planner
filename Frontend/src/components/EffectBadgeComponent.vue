@@ -1,25 +1,47 @@
 <script setup lang="ts">
-import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
+import { getSkillStyle } from '@/models/skill/skillsEnum';
 import { formatExperience, formatNumber } from '@/utils/formaters';
-import { SkillEffect } from '@/models/skill/skillEffect';
+import { Effect, EffectTypeEnum } from '@/models/effect';
+import { computed, ref, watch } from 'vue';
+import type { SkillEffect } from '@/models/skill/skillEffect';
+
 const props = withDefaults(defineProps<{
-  effect: SkillEffect,
+  effect: Effect,
   removable?: boolean,
+  command?: Function,
 }>(), {
   removable: false,
+  command: () => {},
 });
 
-const badgeStyle = getSkillStyle(props.effect.skill);
+const content = computed(() => {
+  switch (props.effect.type) {
+    case EffectTypeEnum.Skill:
+      // eslint-disable-next-line no-case-declarations
+      const typedEffect = props.effect as SkillEffect;
+      return {
+        image: getSkillStyle(typedEffect.skill).icon,
+        label: formatExperience(typedEffect.experience),
+        tooltip: formatNumber(typedEffect.experience),
+        badgeStyle: {
+          backgroundColor: getSkillStyle(typedEffect.skill).bgColor,
+          color: getSkillStyle(typedEffect.skill).textColor,
+        }
+      };
+  }
+  return {};
+});
 </script>
 
 <template>
   <Chip
-        :image="getSkillStyle(effect.skill).icon"
-        :label="formatExperience(effect.experience)"
-        :removable="removable"
-        v-tooltip.top="formatNumber(effect.experience)"
-        class="badge"
-        :style="{ backgroundColor: badgeStyle.bgColor, color: badgeStyle.textColor }"
+    :image="content.image"
+    :label="content.label"
+    :removable="removable"
+    v-tooltip.top="content.tooltip"
+    :style="content.badgeStyle"
+    class="badge"
+    @remove="command"
   />
 </template>
 

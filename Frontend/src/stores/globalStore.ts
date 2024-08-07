@@ -69,6 +69,17 @@ export const useGlobalStore = defineStore('globalStore', {
 
             console.log('New effect applied');
         },
+        removeEffect(effect: Effect) {
+            if (!this.currentRoute.currentNode)
+                throw new Error(`Unable to add a new Effect, the current node is undefined : ${this.currentRoute}`);
+
+            if (!this.currentRoute.getCurrentStep())
+                throw new Error(`Unable to add a new Effect, the current step is undefined : ${this.currentRoute}`);
+
+            this.currentRoute.getCurrentStep()?.removeEffect(effect);
+            this.currentRoute.invalidateNextNodes(this.currentRoute.currentNode);
+            this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
+        },
         openImportExportModal(type?: string) {
             this.importExportState.type = type;
             this.importExportState.showModal = true;
