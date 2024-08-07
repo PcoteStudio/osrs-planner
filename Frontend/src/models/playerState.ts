@@ -2,6 +2,7 @@ import { Bank } from './item/bank';
 import { Equipment } from './item/equipment';
 import { Inventory } from './item/inventory';
 import { SkillsEnum } from './skill/skillsEnum';
+import { XpHelper } from './skill/xpHelper';
 import { XpTable } from './skill/xpTable';
 import { StateWarning } from './stateWarning';
 
@@ -13,7 +14,6 @@ export class PlayerState {
     warnings: StateWarning[] = [];
 
     constructor() {
-        // TODO Load from JSON
         for (const skill of Object.values(SkillsEnum))
             this.skills[skill] = 0;
         this.skills[SkillsEnum.Hitpoints] = 1154;
@@ -24,10 +24,10 @@ export class PlayerState {
     }
 
     getTotalLevel(): number {
-        const xpTable = new XpTable(99); // TODO move table to static util
-        return Object.entries(this.skills).reduce((total, [, experience]) => {
-            return total + xpTable.getLevel(experience || 0);
-        }, 0);
+        return Object.entries(this.skills).reduce(
+            (total, [, experience]) => total + XpHelper.getLevel(experience || 0),
+            0
+        );
     }
 
     getTotalExperience(): number {

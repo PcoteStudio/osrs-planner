@@ -40,7 +40,7 @@ const level = computed({
 const skillTypes = computed(() => {
   const skillList = [];
   for (const [key, value] of Object.entries(SkillsEnum)) {
-    skillList.push({ name: value, icon: getSkillStyle(SkillsEnum[key]).icon, type: key });
+    skillList.push({ name: value, icon: getSkillStyle(value).icon, type: key });
   }
   return skillList;
 });
