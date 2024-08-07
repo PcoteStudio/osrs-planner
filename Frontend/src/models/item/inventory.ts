@@ -40,7 +40,7 @@ export class Inventory {
      */
     usedSlots(): number {
         let usedSlot = 0;
-        for (const [itemId, containerItem] of Object.entries(this.items)) {
+        for (const [, containerItem] of Object.entries(this.items)) {
             if (containerItem.quantity <= 0) continue;
             if (containerItem.item.stackable || containerItem.noted) usedSlot++;
             else usedSlot += containerItem.quantity;

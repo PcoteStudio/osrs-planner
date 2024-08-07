@@ -4,11 +4,11 @@ import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import { computed, ref, watch } from 'vue';
 import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
-import { XpTable } from '@/models/skill/xpTable';
 import { useGlobalStore } from '@/stores/globalStore';
 import { formatNumber } from '@/utils/formaters';
 import Button from 'primevue/button';
 import { SkillEffect } from '@/models/skill/skillEffect';
+import { XpHelper } from '@/models/skill/xpHelper';
 
 const state = useGlobalStore();
 
@@ -22,12 +22,17 @@ const level = computed({
     return newLevel.value;
   },
   set(newLevel) {
-    if (newLevel > currentLevel.value && newLevel <= 99) {
-      levelInvalid.value = false;
-      experience.value = xpTable.getXp(newLevel) - Number(currentExp.value);
-    }
-    else {
+    if(newLevel <= currentLevel.value) {
+      newLevel = currentLevel.value + 1;
       levelInvalid.value = true;
+    }
+    else if(newLevel > 99){
+      newLevel = 99;
+      levelInvalid.value = true;
+    }
+    else{
+      experience.value = Number(XpHelper.getXp(newLevel)) - currentExp.value;
+      levelInvalid.value = false;
     }
   },
 });
@@ -47,7 +52,7 @@ watch(state.effectState, (effectState) => {
 watch(levelInput, () => {
   if (levelInput.value)
   {
-    experience.value = xpTable.getXp(newLevel.value) - Number(currentExp.value);
+    experience.value = Number(XpHelper.getXp(newLevel.value)) - currentExp.value;
   }
 });
 
@@ -64,24 +69,14 @@ const addEffect = () => {
   state.effectState.showModal = false;
 };
 
-const xpTable = new XpTable(99); // TODO move table to static util
-
 const currentExp = computed(() => state.currentRoute.playerState.skills[selectedSkill.value?.name] as number);
-const additionalExp = computed(() => currentExp.value + Number(experience.value));
-const currentLevel = computed(() => xpTable.getLevel(currentExp.value));
-const newLevel = computed(() => xpTable.getLevel(currentExp.value + Number(experience.value)));
-const nextLevel = computed(() => {
-  if (newLevel.value < 99)
-    return newLevel.value + 1;
-  return newLevel.value;
-});
-const expUntilNextLevel = computed(() => {
-  if (newLevel.value < 99)
-    return xpTable.getXp(nextLevel.value) - additionalExp.value;
-  return 0;
-});
+const additionalExp = computed(() => currentExp.value + experience.value);
+const currentLevel = computed(() => XpHelper.getLevel(currentExp.value));
+const newLevel = computed(() => XpHelper.getLevel(currentExp.value + experience.value));
+const nextLevel = computed(() => (newLevel.value < 99) ? newLevel.value + 1 : newLevel.value);
+const expUntilNextLevel = computed(() => XpHelper.getXpUntilNextLevel(additionalExp.value) || 0);
 
-experience.value = expUntilNextLevel.value;
+level.value = nextLevel.value;
 </script>
 
 <template>

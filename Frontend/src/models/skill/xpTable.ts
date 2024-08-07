@@ -1,7 +1,7 @@
 export class XpTable {
     xpTable: number[];
 
-    constructor(maxLevel: number) {
+    constructor(public maxLevel: number) {
         this.xpTable = new Array<number>(maxLevel);
         let previousLevel = 0;
         this.xpTable[0] = Math.floor(previousLevel);
@@ -11,7 +11,7 @@ export class XpTable {
         }
     }
 
-    public getXp(level: number): number {
+    public getXp(level: number): number | undefined {
         return this.xpTable[level - 1];
     }
 
