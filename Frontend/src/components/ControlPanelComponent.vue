@@ -113,6 +113,21 @@ const buttons = [
         outlined: true,
       },
     ]
+  },
+  {
+    label: 'Route',
+    options: [
+      {
+        label: 'Import current route',
+        type: 'secondary',
+        icon: 'pi pi-file-import',
+      },
+      {
+        label: 'Export current route',
+        type: 'secondary',
+        icon: 'pi pi-save',
+      }
+    ]
   }
 ];
 
@@ -125,6 +140,7 @@ const buttons = [
       <div class="options">
         <Button v-for="(option, index) in buttonGroup.options"
                 :key="index"
+                v-tooltip.top="option.label"
                 :aria-label="option.label"
                 :severity="option.type"
                 :icon="option.icon"

@@ -8,6 +8,7 @@ import { ref } from 'vue';
 import AddEffectModalComponent from '@/components/AddEffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
+import ImportExportModalComponent from '@/components/ImportExportModalComponent.vue';
 
 const state = useGlobalStore();
 state.currentRoute.initializeSomeSteps();
@@ -21,7 +22,11 @@ state.setCurrentNode(state.currentRoute.currentNode);
 
 <template>
   <main>
+    <!--  Modals  -->
     <AddEffectModalComponent />
+    <ImportExportModalComponent />
+
+    <!--  Regular components  -->
     <TabComponent :min-width="'24rem'" max-width="30rem">
       <StepList :nodes="rootNode.children" id="stepsRoot" class="first-child" />
     </TabComponent>

@@ -17,11 +17,16 @@ export const useGlobalStore = defineStore('globalStore', {
             skill: undefined as SkillsEnum | undefined,
         };
 
+        const importExportState = {
+            showModal: true,
+        };
+
         return {
             currentRoute: currentRoute,
             currentPlayerState: playerState,
             currentWarnings: playerState.warnings,
             effectState: effectState,
+            importExportState: importExportState,
         };
     },
     actions: {
@@ -57,6 +62,9 @@ export const useGlobalStore = defineStore('globalStore', {
             this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
 
             console.log('New effect applied');
-        }
+        },
+        openImportExportModal() {
+            this.importExportState.showModal = true;
+        },
     },
 });
