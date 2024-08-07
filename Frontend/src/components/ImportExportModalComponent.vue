@@ -3,6 +3,7 @@
 import { useGlobalStore } from '@/stores/globalStore';
 import { ref } from 'vue';
 import { Route } from '@/models/route';
+import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
 
 const state = useGlobalStore();
 
@@ -53,12 +54,12 @@ const importSave = () => {
     showImportMessage('Please provide import data', 'error');
   }
 
-  try {
+  const result = parseRouteJson(importData.value);
+  if(result.success) {
     state.currentRoute = Route.fromJSON(JSON.parse(importData.value));
     showImportMessage('New route imported', 'success');
-  }
-  catch (e) {
-    showImportMessage(e, 'error');
+  } else {
+    showImportMessage(result.error.message, 'error');
   }
 };
 </script>
