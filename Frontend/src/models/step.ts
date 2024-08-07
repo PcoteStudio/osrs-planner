@@ -20,6 +20,12 @@ export class Step {
         if (effect) this.effects.push(effect);
     }
 
+    removeEffect(effect: Effect) {
+        const effectIndex = this.effects.indexOf(effect);
+        if (effectIndex >= 0)
+            this.effects.splice(effectIndex, 1);
+    }
+
     applyEffects(playerState: PlayerState) {
         for (const effect of this.effects) {
             effect.apply(playerState);

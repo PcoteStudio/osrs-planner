@@ -3,7 +3,6 @@ import { Equipment } from './item/equipment';
 import { Inventory } from './item/inventory';
 import { SkillsEnum } from './skill/skillsEnum';
 import { XpHelper } from './skill/xpHelper';
-import { XpTable } from './skill/xpTable';
 import { StateWarning } from './stateWarning';
 
 export class PlayerState {

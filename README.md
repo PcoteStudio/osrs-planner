@@ -14,12 +14,12 @@ This route planner is a powerfull website that will make much easier the process
 | Mark a step as completed | *Done* |
 | Show and hide sub-steps | *Done* |
 | Serialize/Deserialize the route | *Done* |
-| Edit a step's description | |
-| Add a step | |
-| Add a sub-step | |
-| Move a step | |
-| Remove a step | |
-| Export/Import a route | |
+| Edit a step's description | *Implemented* |
+| Add a step | *Implemented* |
+| Add a sub-step | *Implemented* |
+| Move a step | *Implemented* |
+| Remove a step | *Implemented* |
+| Export/Import a route | *Implemented* |
 
 ### Skill features
 
