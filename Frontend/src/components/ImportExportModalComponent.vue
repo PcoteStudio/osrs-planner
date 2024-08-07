@@ -64,6 +64,8 @@ const importSave = () => {
   const result = parseRouteJson(importData.value);
   if(result.success) {
     state.currentRoute = Route.fromJSON(JSON.parse(importData.value));
+    const firstNode = state.currentRoute.getFirstNode();
+    state.currentRoute.setCurrentNode(firstNode);
     showImportMessage('New route imported', 'success');
   } else {
     showImportMessage(result.error.message, 'error');

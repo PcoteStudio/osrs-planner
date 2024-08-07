@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { Route } from '../../../../src/models/route';
 import { Step } from '../../../../src/models/step';
 import { StepTreeNode } from '../../../../src/models/stepTreeNode';
+import { SkillEffect } from '../../../../src/models/skill/skillEffect';
+import { SkillsEnum } from '../../../../src/models/skill/skillsEnum';
 
 describe('Route', () => {
     let route: Route;
@@ -408,11 +410,18 @@ describe('Route', () => {
     describe('fromJSON', () => {
         it('should rebuild the original object', () => {
             createComplexRoute();
+            const firstNode = route.getFirstNode();
+            firstNode.step?.addEffect(new SkillEffect(SkillsEnum.Crafting, 300));
+            const lastNode = route.getLastNode();
+            lastNode.step?.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
 
             const json = JSON.stringify(route);
             const parsedRoute = Route.fromJSON(JSON.parse(json));
 
             expect(parsedRoute).to.deep.equal(route);
+
+            parsedRoute.setCurrentNode(parsedRoute.getLastNode());
+            expect(parsedRoute.playerState.getTotalExperience()).toStrictEqual(1554);
         });
     });
 });

@@ -14,10 +14,9 @@ export class PlayerState {
 
     constructor() {
         // TODO Load from JSON
-        for (const skill in Object.keys(SkillsEnum)) {
-            if (typeof skill == 'number')
-                this.skills[skill] = 1;
-        }
+        for (const skill of Object.values(SkillsEnum))
+            this.skills[skill] = 0;
+        this.skills[SkillsEnum.Hitpoints] = 1154;
     }
 
     addWarning(warning: StateWarning | undefined) {

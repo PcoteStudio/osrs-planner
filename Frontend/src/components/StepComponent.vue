@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import StepListComponent from '@/components/StepListComponent.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
-import type { StepTreeNode } from '@/models/route';
+import type { StepTreeNode } from '@/models/stepTreeNode';
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, ref, watch } from 'vue';
 
