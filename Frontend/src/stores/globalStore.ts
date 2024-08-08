@@ -13,7 +13,8 @@ export const useGlobalStore = defineStore('globalStore', {
 
         const effectState = {
             showModal: false,
-            type: '',
+            node: undefined as StepTreeNode | undefined,
+            type: undefined as EffectTypeEnum | undefined,
             skill: undefined as SkillsEnum | undefined,
         };
 
@@ -23,7 +24,7 @@ export const useGlobalStore = defineStore('globalStore', {
         };
 
         const stepState = {
-            showModal: false,
+            showModal: true,
         };
 
         return {
@@ -49,12 +50,16 @@ export const useGlobalStore = defineStore('globalStore', {
                 } while (this.currentRoute.getCurrentStep()?.completed);
             }
         },
-        openEffectModal(skill?: SkillsEnum) {
+        openEffectModal(node: StepTreeNode | undefined, skill?: SkillsEnum) {
+            this.effectState.node = node;
+            this.effectState.type = undefined;
+            this.effectState.skill = undefined;
+
             if (skill) {
                 this.effectState.type = EffectTypeEnum.Skill;
                 this.effectState.skill = skill;
             }
-            this.effectState.showModal = true;
+            this.effectState.showModal = false;
         },
         addEffect(node: StepTreeNode | undefined, newEffect: Effect) {
             if (!node)

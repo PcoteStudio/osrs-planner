@@ -61,16 +61,16 @@ const getDetails = (name: string, args: any[], success: any, error: any) => {
 
   switch (name) {
     case 'addEffect':
-      details.success = `New effect added: "${args[1].toString()}" to step: ${args[0].toString()}`;
-      details.error = `Error while adding effect: "${args[1].toString()}" to step: ${args[0].toString()}`;
+      details.success = `New effect added: "${args[1].toString()}" to step ${args[0].step.toString()}`;
+      details.error = `Error while adding effect: "${args[1].toString()}" to step ${args[0].step.toString()}`;
       break;
     case 'removeEffect':
-      details.success = `Effect removed: "${args[1].toString()}" from step: ${args[0].toString()}`;
-      details.error = `Error while removing effect: "${args[1].toString()}" from step: ${args[0].toString()}`;
+      details.success = `Effect removed: "${args[1].toString()}" from step ${args[0].step.toString()}`;
+      details.error = `Error while removing effect: "${args[1].toString()}" from step ${args[0].step.toString()}`;
       break;
     case 'toggleCompleted':
-      details.success = `Step: ${args[0].toString()} is ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
-      details.error = `Error while changing the state of step: ${args[0].toString()} to ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
+      details.success = `Step ${args[0].step.toString()}: ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
+      details.error = `Error while changing the state of step: ${args[0].step.toString()} to ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
       break;
   }
 

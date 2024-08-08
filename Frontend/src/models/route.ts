@@ -178,7 +178,7 @@ export class Route {
         for (let i = 0; i < parentNode.children.length; i++) {
             const childNode = parentNode.children[i];
             if (childNode.step)
-                childNode.step.label = baseLabel + i;
+                childNode.step.label = baseLabel + (i + 1);
             this.updateChildrenLabel(childNode);
         }
 

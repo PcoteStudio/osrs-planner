@@ -72,3 +72,13 @@ body {
 img {
   image-rendering: pixelated;
 }
+
+.p-select-overlay, .p-treeselect-overlay {
+  max-width: 0;
+}
+
+.p-tree-node-label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}

@@ -2,38 +2,31 @@
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, ref } from 'vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
-import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import type { Effect } from '@/models/effect';
 
 const state = useGlobalStore();
 
-const selectedStep = ref(null);
-
 const nodes = computed(() => {
-  return state.currentRoute.rootNode.children.map((e, index) => getRouteNodes(e, index + 1));
+  return state.currentRoute.rootNode.children.map(e => getRouteNodes(e));
 });
-const getRouteNodes = (node: StepTreeNode, key: string) => {
+const getRouteNodes = (node: StepTreeNode) => {
   let children = [];
   if (node.children) {
-    let index = 0;
     for (const child of node.children) {
-      index++;
-      children.push(getRouteNodes(child, `${key}.${index}`));
+      children.push(getRouteNodes(child));
     }
   }
 
   return {
-    key,
-    data: {
-      index: key,
-      ...node
-    },
-    children
+    key: node.step?.id,
+    ...node.step,
+    node,
+    children,
   };
 };
 
-const addEffect = () => {
-  state.openEffectModal();
+const addEffect = (node: StepTreeNode) => {
+  state.openEffectModal(node);
 };
 
 const removeEffect = (node: StepTreeNode, effect: Effect) => {
@@ -54,36 +47,49 @@ const toggleCompleted = (node: StepTreeNode) => {
   >
     <div class="content">
       <TreeTable :value="nodes" size="small">
-        <Column field="index" header="Step" :style="{ paddingRight: 0 }"></Column>
+        <Column field="label" key="label" header="Step" :style="{ paddingRight: 0 }" >
+          <template #body="{ node, column }">
+            {{ node[column.key] }}
+          </template>
+        </Column>
         <Column expander :style="{ padding: 0 }"></Column>
-        <Column field="step.description" header="Description"></Column>
-        <Column field="step.effects" header="Effects">
-          <template #body="data">
+
+        <Column field="description" key="description" header="Description" :style="{ width: '40%' }">
+          <template #body="{ node, column }">
+            {{ node[column.key] }}
+          </template>
+          <template #editor="{ node, column }">
+            <InputText v-model="node[column.key]" autofocus fluid />
+          </template>
+        </Column>
+
+        <Column field="effects" key="effects" header="Effects" :style="{ width: '40%' }">
+          <template #body="{ node, column }">
             <div class="flex flex-wrap gap-1 items-center">
-<!--              FIXME: 2 elements from the list are removed, it is only the displayed values that are impacted, the model behind has the right value removed-->
               <EffectBadgeComponent
-                  v-for="(effect, index) in data.node.data.step.effects"
+                  v-for="(effect, index) in node[column.key]"
                   :key="index"
                   :effect="effect"
                   :removable="true"
-                  :command="() => removeEffect(data.node.data, effect)"
+                  :command="() => removeEffect(node.node, effect)"
               />
               <Button type="button" icon="pi pi-plus" rounded severity="primary" outlined
                       :style="{ height: '2em', width: '2em', fontSize: '0.9em'}" size="small"
-                      @click="addEffect(data.node.data.step)"
+                      @click="addEffect(node.node)"
               />
             </div>
           </template>
         </Column>
-        <Column>
-          <template #body="data">
-              <Button rounded
-                      size="small"
-                      :severity="data.node.data.step.completed ? 'primary' : 'secondary'"
-                      icon="pi pi-check"
-                      @click="toggleCompleted(data.node.data)"
-              />
-              <Button type="button" icon="pi pi-pencil" rounded severity="secondary" />
+
+        <Column :style="{ width: '10%' }">
+          <template #body="{ node }">
+            <Button rounded
+                    size="small"
+                    :severity="node.completed ? 'primary' : 'secondary'"
+                    icon="pi pi-check"
+                    @click="toggleCompleted(node.node)"
+            />
+            <Button type="button" icon="pi pi-pencil" rounded severity="secondary" />
           </template>
         </Column>
       </TreeTable>

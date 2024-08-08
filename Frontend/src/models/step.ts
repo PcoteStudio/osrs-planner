@@ -4,6 +4,7 @@ import { Effect } from '@/models/effect';
 import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
 import { EffectFactory } from './effectFactory';
 import { SkillEffect } from './skill/skillEffect';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
 
 export class Step {
     id: string = nanoid();
@@ -62,5 +63,9 @@ export class Step {
         for (const effect of jsonObject.effects)
             step.addEffect(EffectFactory.fromJSON(effect));
         return step;
+    }
+
+    public toString(): string {
+        return `${this.label}`;
     }
 }

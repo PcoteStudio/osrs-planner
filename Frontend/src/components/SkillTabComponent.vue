@@ -20,7 +20,7 @@ const items = ref([
   {
     label: 'effect',
     icon: 'pi pi-plus',
-    command: () => state.openEffectModal(selectedSkill.value.type),
+    command: () => state.openEffectModal(state.currentRoute.currentNode, selectedSkill.value.type),
   }
 ]);
 

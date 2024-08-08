@@ -9,6 +9,7 @@ import { formatNumber } from '@/utils/formaters';
 import Button from 'primevue/button';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { XpHelper } from '@/models/skill/xpHelper';
+import { StepTreeNode } from '@/models/stepTreeNode';
 
 const state = useGlobalStore();
 
@@ -16,6 +17,10 @@ const experience = ref(0);
 const selectedSkill = ref();
 const levelInput = ref(true);
 const levelInvalid = ref(false);
+
+const props = defineProps<{
+  node: StepTreeNode
+}>();
 
 const level = computed({
   get() {
@@ -65,7 +70,7 @@ const addEffect = () => {
     return;
 
   const newEffect = new SkillEffect(selectedSkill.value.type, Number(experience.value));
-  state.addEffect(state.currentRoute.currentNode, newEffect);
+  state.addEffect(props.node, newEffect);
   state.effectState.showModal = false;
 };
 

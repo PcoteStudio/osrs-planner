@@ -6,10 +6,12 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { computed, ref, watch } from 'vue';
 import { EffectTypeEnum, getEffectTypes } from '@/models/effect';
 import SkillEffectModal from '@/components/SkillEffectModal.vue';
+import type { StepTreeNode } from '@/models/stepTreeNode';
 
 const state = useGlobalStore();
 
 const selectedEffectType = ref();
+const selectedNodeKey = ref();
 
 const title = computed(() => {
   if (selectedEffectType.value)
@@ -18,11 +20,43 @@ const title = computed(() => {
 });
 
 const effectTypes = computed(() => getEffectTypes());
+const nodes = computed(() => state.currentRoute.rootNode.children.map(n => getRouteNodes(n)));
+const selectedNode = computed(() => nodes.value.find(n =>
+    selectedNodeKey.value &&
+    Object.keys(selectedNodeKey.value).length > 0 &&
+    n.key === Object.keys(selectedNodeKey.value)[0]).value
+);
+
+const getRouteNodes = (node: StepTreeNode) : any[] => {
+  let children = [];
+  if (node.children) {
+    for (const child of node.children) {
+      children.push(getRouteNodes(child));
+    }
+  }
+
+  return {
+    key: node.step?.id,
+    label: `${node.step?.label} - ${node.step?.description}`,
+    value: node,
+    children,
+  };
+};
+
+const setNodeKey = (node: StepTreeNode) => {
+  const defaultValue = {};
+  if (node?.step?.id)
+    defaultValue[node?.step?.id] = true;
+  else if (state.currentRoute.currentNode?.step?.id)
+    defaultValue[state.currentRoute.currentNode?.step?.id] = true;
+
+  return defaultValue;
+};
 
 watch(state.effectState, (effectState) => {
   selectedEffectType.value = effectTypes.value.find(e => e.type === effectState.type);
+  selectedNodeKey.value = setNodeKey(effectState.node);
 }, { immediate: true });
-
 </script>
 
 <template>
@@ -33,12 +67,22 @@ watch(state.effectState, (effectState) => {
   >
     <div class="content">
       <FloatLabel>
+        <TreeSelect v-model="selectedNodeKey"
+                id="node"
+                :options="nodes"
+                optionLabel="name"
+                placeholder="Select an step"
+                class="w-full"
+        ></TreeSelect>
+        <label for="effectTypes">Step</label>
+      </FloatLabel>
+      <FloatLabel>
         <Select v-model="selectedEffectType"
                 id="effectTypes"
                 :options="effectTypes"
                 optionLabel="name"
                 placeholder="Select an effect type"
-                class="w-full md:w-56"
+                class="w-full"
         >
           <template #value="slotProps">
             <div v-if="slotProps.value" class="flex items-center">
@@ -66,7 +110,7 @@ watch(state.effectState, (effectState) => {
         </Select>
         <label for="effectTypes">Effect type</label>
       </FloatLabel>
-      <SkillEffectModal v-if="selectedEffectType?.type === EffectTypeEnum.Skill" />
+      <SkillEffectModal v-if="selectedEffectType?.type === EffectTypeEnum.Skill" :node="selectedNode" />
     </div>
   </Dialog>
 </template>

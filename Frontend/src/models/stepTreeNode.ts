@@ -1,5 +1,6 @@
 import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
 import { Step } from './step';
+import { merge } from '@primevue/themes';
 
 export class StepTreeNode {
     step: Step | undefined;
@@ -28,5 +29,17 @@ export class StepTreeNode {
             node.children.push(childNode);
         }
         return node;
+    }
+
+    toFlatList(): StepTreeNode[] {
+        const list : StepTreeNode[] = [];
+
+        if (this.step)
+            list.push(this);
+
+        for (const child of this.children) {
+            merge(list, child.toFlatList());
+        }
+        return list;
     }
 }
