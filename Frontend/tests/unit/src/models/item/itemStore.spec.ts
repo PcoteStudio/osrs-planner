@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ItemStore } from '../../../../../src/models/item/itemStore';
+import { ItemStore } from '@/models/item/itemStore';
 import coinsJson from '../../../../data/coins.json';
 
 describe('itemStore', () => {

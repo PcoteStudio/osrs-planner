@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { Inventory, InventoryLimitExceededWarning, InventoryMissingItemWarning } from '../../../../../src/models/item/inventory';
-import { Item } from '../../../../../src/models/item/item';
+import { Inventory, InventoryLimitExceededWarning, InventoryMissingItemWarning } from '@/models/item/inventory';
+import { Item } from '@/models/item/item';
 
 describe('Inventory', () => {
     let inventory: Inventory;

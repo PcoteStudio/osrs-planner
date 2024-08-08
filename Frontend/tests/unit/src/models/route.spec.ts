@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Route } from '../../../../src/models/route';
-import { Step } from '../../../../src/models/step';
-import { StepTreeNode } from '../../../../src/models/stepTreeNode';
-import { SkillEffect } from '../../../../src/models/skill/skillEffect';
-import { SkillsEnum } from '../../../../src/models/skill/skillsEnum';
+import { Route } from '@/models/route';
+import { Step } from '@/models/step';
+import { StepTreeNode } from '@/models/stepTreeNode';
+import { SkillEffect } from '@/models/skill/skillEffect';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
 
 describe('Route', () => {
     let route: Route;

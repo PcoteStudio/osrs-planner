@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { XpHelper } from '../../../../../src/models/skill/xpHelper';
+import { XpHelper } from '@/models/skill/xpHelper';
 
 describe('xpHelper', () => {
     describe('getXpTable', () => {

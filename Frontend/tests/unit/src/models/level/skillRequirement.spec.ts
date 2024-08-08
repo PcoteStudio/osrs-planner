@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { SkillRequirement } from '../../../../../src/models/skill/skillRequirement';
-import { SkillsEnum } from '../../../../../src/models/skill/skillsEnum';
-import { PlayerState } from '../../../../../src/models/playerState';
+import { SkillRequirement } from '@/models/skill/skillRequirement';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
+import { PlayerState } from '@/models/playerState';
 
 describe('SkillRequirement', () => {
     describe('isMet', () => {

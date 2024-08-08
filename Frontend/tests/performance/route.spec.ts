@@ -1,8 +1,8 @@
 import { describe, it } from 'vitest';
-import { Route } from '../../src/models/route';
-import { Step } from '../../src/models/step';
-import { SkillEffect } from '../../src/models/skill/skillEffect';
-import { SkillsEnum } from '../../src/models/skill/skillsEnum';
+import { Route } from '@/models/route';
+import { Step } from '@/models/step';
+import { SkillEffect } from '@/models/skill/skillEffect';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
 
 describe('Route load test', () => {
     describe('generate and execute massive route with 200 000 steps', () => {

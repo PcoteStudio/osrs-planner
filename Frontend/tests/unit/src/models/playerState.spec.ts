@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { PlayerState } from '../../../../src/models/playerState';
-import { SkillsEnum } from '../../../../src/models/skill/skillsEnum';
+import { PlayerState } from '@/models/playerState';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
 
 describe('PlayerState', () => {
     describe('constructor', () => {

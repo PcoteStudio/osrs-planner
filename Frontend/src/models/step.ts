@@ -4,7 +4,6 @@ import { Effect } from '@/models/effect';
 import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
 import { EffectFactory } from './effectFactory';
 import { SkillEffect } from './skill/skillEffect';
-import { SkillsEnum } from '@/models/skill/skillsEnum';
 
 export class Step {
     id: string = nanoid();

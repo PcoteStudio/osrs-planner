@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { SkillEffect } from '../../../../src/models/skill/skillEffect';
-import { SkillsEnum } from '../../../../src/models/skill/skillsEnum';
-import { PlayerState } from '../../../../src/models/playerState';
-import { Step } from '../../../../src/models/step';
+import { SkillEffect } from '@/models/skill/skillEffect';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
+import { PlayerState } from '@/models/playerState';
+import { Step } from '@/models/step';
 
 describe('step', () => {
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { validateEnumProperty, validatePropertyIterability, validatePropertyType } from '../../../../src/utils/parsingValidators';
-import { SkillsEnum } from '../../../../src/models/skill/skillsEnum';
-import { SkillEffect } from '../../../../src/models/skill/skillEffect';
-import { Step } from '../../../../src/models/step';
+import { validateEnumProperty, validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
+import { SkillsEnum } from '@/models/skill/skillsEnum';
+import { SkillEffect } from '@/models/skill/skillEffect';
+import { Step } from '@/models/step';
 
 describe('parsingValidators', () => {
     describe('validateEnumProperty', () => {

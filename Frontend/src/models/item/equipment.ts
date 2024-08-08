@@ -6,7 +6,7 @@ export class Equipment {
 
     constructor() {
         for (const key in EquipmentSlotTypes) {
-            this.slots[key] = new Item();
+            this.slots[key] = undefined;
         }
     }
 

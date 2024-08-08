@@ -19,7 +19,6 @@ declare module 'vue' {
     EquipmentSlotComponent: typeof import('./src/components/EquipmentSlotComponent.vue')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
     ImportExportModalComponent: typeof import('./src/components/ImportExportModalComponent.vue')['default']
-    InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

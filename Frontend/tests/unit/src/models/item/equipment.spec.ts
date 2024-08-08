@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { Equipment } from '../../../../../src/models/item/equipment';
-import { Item } from '../../../../../src/models/item/item';
-import { EquipmentSlotTypes } from '../../../../../src/models/item/equipmentSlot';
+import { Equipment } from '@/models/item/equipment';
+import { Item } from '@/models/item/item';
+import { EquipmentSlotTypes } from '@/models/item/equipmentSlot';
 
 describe('equipment', () => {
     const torvaHelm = new Item();

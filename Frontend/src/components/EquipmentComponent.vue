@@ -6,7 +6,7 @@ import { EquipmentSlotTypes } from '@/models/item/equipmentSlot';
 
 const state = useGlobalStore();
 
-const torvaHelm = new Item();
+const torvaHelm = new Item(26382, 'Torva full helm');
 torvaHelm.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?96920';
 state.currentPlayerState.equipment.swapSlot(EquipmentSlotTypes.Head, torvaHelm);
 

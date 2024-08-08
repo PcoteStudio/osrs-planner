@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { Bank, BankMissingItemWarning } from '../../../../../src/models/item/bank';
-import { Item } from '../../../../../src/models/item/item';
+import { Bank, BankMissingItemWarning } from '@/models/item/bank';
+import { Item } from '@/models/item/item';
 
 describe('Bank', () => {
     let bank: Bank;
