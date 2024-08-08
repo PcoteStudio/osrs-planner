@@ -8,10 +8,10 @@ export function validateEnumProperty(classType: classType | string, jsonObject: 
             + `to be member of [${Object.keys(expectedEnumType).join(', ')}], but found '${jsonObject[key]}' instead`);
 }
 
-export function validatePropertyType(classType: classType | string, jsonObject: any, key: string, expectedType: validType) {
-    if (typeof jsonObject[key] !== expectedType)
+export function validatePropertyType(classType: classType | string, jsonObject: any, key: string, ...expectedTypes: validType[]) {
+    if (!expectedTypes.includes(typeof jsonObject[key]) && !(expectedTypes.includes('undefined') && jsonObject[key] === null))
         throw new Error(`TypeParsingError: Expected ${typeof classType === 'string' ? classType : classType.prototype.constructor.name}.${key} `
-            + `to be of type '${expectedType}', but found '${jsonObject[key]}' of type '${typeof jsonObject[key]}' instead`);
+            + `to be of type '${expectedTypes.join('|')}', but found '${jsonObject[key]}' of type '${typeof jsonObject[key]}' instead`);
 }
 
 export function validatePropertyIterability(classType: classType | string, jsonObject: any, key: string) {

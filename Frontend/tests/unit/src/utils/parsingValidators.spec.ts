@@ -32,6 +32,14 @@ describe('parsingValidators', () => {
             validatePropertyType(SkillEffect, { skill: 0 }, 'skill', 'number');
         });
 
+        it('should not throw when undefined is expected found in the JSON object', () => {
+            validatePropertyType(SkillEffect, { skill: undefined }, 'skill', 'number', 'undefined');
+        });
+
+        it('should not throw when undefined is expected and null is found in the JSON object', () => {
+            validatePropertyType(SkillEffect, { skill: null }, 'skill', 'number', 'undefined');
+        });
+
         it('should throw when a different type is found in the JSON object', () => {
             expect(() => { validatePropertyType(SkillEffect, { skill: 'string' }, 'skill', 'number'); }).toThrow();
         });
