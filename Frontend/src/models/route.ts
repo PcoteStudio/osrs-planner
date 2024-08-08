@@ -367,8 +367,6 @@ export class Route {
     static fromJSON(jsonObject: { [key: string]: any }): Route {
         validatePropertyType(Route, jsonObject, 'rootNode', 'object');
         const route: Route = new Route();
-        console.log('Playerstate');
-        console.log(route.playerState);
         route.rootNode = StepTreeNode.fromJSON(jsonObject.rootNode);
         route.updateChildrenParent(route.rootNode);
         return route;

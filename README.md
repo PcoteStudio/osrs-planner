@@ -31,7 +31,8 @@ This route planner is a powerfull website that will make much easier the process
 | Highlight skills that gained experience on selected step | *Done* |
 | Add skill effect to selected step | *Done* |
 | Display experience required to reach the next level | *Done* |
-| Remove skill effect from selected step | |
+| Merge similar skill effects together | *Done* |
+| Remove skill effect from selected step | *Implemented* |
 
 ### Inventory features
 
@@ -40,11 +41,13 @@ This route planner is a powerfull website that will make much easier the process
 | Display inventory panel | |
 | Match inventory items to selected step | |
 | Highlight items were added on the selected step | |
-| Add inventory effect to selected step | |
-| Remove inventory effect from selected step | |
+| Add inventory effect to selected step | *Implemented* |
+| Remove inventory effect from selected step | *Implemented* |
+| Merge similar item effects together | |
 | Add 'drop all' inventory effect | |
 | Add 'bank all' inventory effect | |
-| Add issue when missing item from inventory to apply an effect | |
+| Add issue when missing item from inventory to apply an effect | *Implemented* |
+| Add issue when inventory is too full when appling an an effect | *Implemented* |
 
 ### Equipment features
 
@@ -55,6 +58,7 @@ This route planner is a powerfull website that will make much easier the process
 | Highlight gear that was added on the selected step | |
 | Add equipment effect to selected step | |
 | Remove equipment effect from selected step | |
+| Merge similar equipment effects together | |
 | Add issue when missing gear from equipment to apply an effect | |
 
 ### Bank features
@@ -66,6 +70,7 @@ This route planner is a powerfull website that will make much easier the process
 | Highlight bank items that were added on the selected step | |
 | Add bank effect to selected step | |
 | Remove bank effect from selected step | |
+| Merge similar bank effects together | |
 | Add issue when missing item from bank to apply an effect | |
 
 ### Quest features
@@ -144,16 +149,38 @@ This route planner is a powerfull website that will make much easier the process
 | Handle combat task requirements | |
 | Handle alternative requirements | |
 
+### Recipe features
+| Feature | Progress |
+| --- | --- |
+| Display recipe panel | |
+| Display all recipe available the selected step | |
+| Add recipe effect to directly handle the production | |
+| Remove recipe effect from selected step | |
+| Add issue when missing quest requirement for recipe use | |
+| Add issue when missing item requirement for recipe use | |
+| Add issue when missing skill requirement for recipe use | |
+
 ### Shop features
 | Feature | Progress |
 | --- | --- |
 | Display shop panel | |
 | Display all shop items available at the selected step | |
-| Add a shop effect to directly handle the transaction | |
+| Add shop effect to directly handle the transaction | |
 | Remove shop effect from selected step | |
 | Add issue when missing quest requirement for shop/item access | |
 | Add issue when missing item requirement for shop/item access (ex: Zanaris) | |
 | Add issue when missing skill requirement for shop/item access (ex: LMS) | |
+
+### Findable item features
+| Feature | Progress |
+| --- | --- |
+| Display findable items panel | |
+| Display all findable items available at the selected step | |
+| Add item effect to directly handle the obtention | |
+| Remove item effect from selected step | |
+| Add issue when missing quest requirement for item access | |
+| Add issue when missing item requirement for item access | |
+| Add issue when missing skill requirement for item access | |
 
 ### Route troubleshooting features
 
@@ -163,7 +190,6 @@ This route planner is a powerfull website that will make much easier the process
 | Display issue for any step after every change | |
 | Move to the problematic step when selecting an issue | |
 | Remove an issue from the panel when fixed | |
-
 
 ### Wiki crawler features
 
@@ -187,6 +213,13 @@ This route planner is a powerfull website that will make much easier the process
 | Share a route publicly for other users to follow | |
 
 ### Collaboration features
+
 | Feature | Progress |
 | --- | --- |
 | Collabore with another user on the same route simultaneously | |
+
+### Other features
+
+| Feature |
+| Death mechanics panel/effect |
+| Alching effect |

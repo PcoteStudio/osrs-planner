@@ -1,21 +1,21 @@
-import { Effect } from '../effect';
+import { Effect, EffectTypeEnum } from '../effect';
 import { PlayerState } from '../playerState';
 import { Item } from './item';
 import { ItemContainers } from './itemContainers';
 
 export class ItemEffect extends Effect {
     constructor(public source: ItemContainers, public destination: ItemContainers, public item: Item, public quantity: number) {
-        super();
+        super(EffectTypeEnum.Item);
     }
 
     // TODO Clear container feature
     public apply(playerState: PlayerState) {
         switch (this.source) {
             case ItemContainers.Bank:
-                playerState.addWarning(playerState.bank.moveItem(this.item.id, -this.quantity));
+                playerState.addWarning(playerState.bank.moveItem(this.item, -this.quantity));
                 break;
             case ItemContainers.Inventory:
-                playerState.addWarning(playerState.inventory.moveItem(this.item.id, -this.quantity));
+                playerState.addWarning(playerState.inventory.moveItem(this.item, -this.quantity));
                 break;
             case ItemContainers.Equipment:
                 playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
@@ -25,10 +25,10 @@ export class ItemEffect extends Effect {
         }
         switch (this.destination) {
             case ItemContainers.Bank:
-                playerState.addWarning(playerState.bank.moveItem(this.item.id, this.quantity));
+                playerState.addWarning(playerState.bank.moveItem(this.item, this.quantity));
                 break;
             case ItemContainers.Inventory:
-                playerState.addWarning(playerState.inventory.moveItem(this.item.id, this.quantity));
+                playerState.addWarning(playerState.inventory.moveItem(this.item, this.quantity));
                 break;
             case ItemContainers.Equipment:
                 playerState.equipment.swapSlot(this.item.equipmentSlot, this.item);
