@@ -223,3 +223,4 @@ This route planner is a powerfull website that will make much easier the process
 | Feature |
 | Death mechanics panel/effect |
 | Alching effect |
+| F2P restrictions |

@@ -105,6 +105,7 @@ export class Route {
             newNode.parent = this.rootNode;
         }
         newNode.depth = newNode.parent.depth + 1;
+        this.updateChildrenLabel(newNode.parent);
         this.invalidateNextNodes(newNode);
         return newNode;
     }
@@ -112,6 +113,7 @@ export class Route {
     addSubStep(newStep: Step, parentNode: StepTreeNode): StepTreeNode {
         const newNode = new StepTreeNode(parentNode.depth + 1, newStep, parentNode);
         parentNode.children.splice(0, 0, newNode);
+        this.updateChildrenLabel(newNode.parent);
         this.invalidateNextNodes(newNode);
         return newNode;
     }
@@ -121,6 +123,7 @@ export class Route {
         if (nodeToRemove?.parent) {
             const nodeIndex = nodeToRemove.parent.children.indexOf(nodeToRemove);
             nodeToRemove.parent.children.splice(nodeIndex, 1);
+            this.updateChildrenLabel(nodeToRemove.parent);
         } else if (nodeToRemove?.children.length) {
             nodeToRemove.children = [];
         }
@@ -135,6 +138,7 @@ export class Route {
         nodeToMove.parent = previousNode?.parent;
         nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
         this.updateChildrenDepth(nodeToMove);
+        this.updateChildrenLabel(this.rootNode);
         this.invalidateNextNodes(this.rootNode);
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
@@ -149,6 +153,7 @@ export class Route {
         nodeToMove.parent = parentNode;
         parentNode.children.splice(0, 0, nodeToMove);
         this.updateChildrenDepth(nodeToMove);
+        this.updateChildrenLabel(this.rootNode);
         this.invalidateNextNodes(this.rootNode);
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
@@ -165,6 +170,18 @@ export class Route {
             childNode.parent = parentNode;
             this.updateChildrenParent(childNode);
         }
+    }
+
+    updateChildrenLabel(parentNode: StepTreeNode | undefined) {
+        if (!parentNode) return;
+        const baseLabel: string = (parentNode.step) ? `${parentNode.step?.label}.` : '';
+        for (let i = 0; i < parentNode.children.length; i++) {
+            const childNode = parentNode.children[i];
+            if (childNode.step)
+                childNode.step.label = baseLabel + i;
+            this.updateChildrenLabel(childNode);
+        }
+
     }
 
     getPreviousNode(node: StepTreeNode | undefined): StepTreeNode {
@@ -344,7 +361,7 @@ export class Route {
         let result: string = '';
         if (!node.step) result += 'root';
         else if (node.step) { // Relevant info to display about the node
-            result += `${node.step.description}`
+            result += `${node.step.label} ${node.step.description}`
                 + `, depth:${node.depth}`
                 + `${node.step.effects.length ? `, ${node.step.effects.length} effects` : ''}`
                 + `${node.step.completed ? ', completed' : ''}`
@@ -369,6 +386,7 @@ export class Route {
         const route: Route = new Route();
         route.rootNode = StepTreeNode.fromJSON(jsonObject.rootNode);
         route.updateChildrenParent(route.rootNode);
+        route.updateChildrenLabel(route.rootNode);
         return route;
     }
 }

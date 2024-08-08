@@ -7,6 +7,7 @@ import { SkillEffect } from './skill/skillEffect';
 
 export class Step {
     id: string = nanoid();
+    label: string = '?';
     resultingState: PlayerState | undefined;
     description: string = '';
     effects: Effect[] = [];
