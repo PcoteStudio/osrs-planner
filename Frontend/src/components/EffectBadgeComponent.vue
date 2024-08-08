@@ -2,7 +2,7 @@
 import { getSkillStyle } from '@/models/skill/skillsEnum';
 import { formatExperience, formatNumber } from '@/utils/formaters';
 import { Effect, EffectTypeEnum } from '@/models/effect';
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import type { SkillEffect } from '@/models/skill/skillEffect';
 
 const props = withDefaults(defineProps<{

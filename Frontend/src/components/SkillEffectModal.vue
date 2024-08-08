@@ -65,7 +65,7 @@ const addEffect = () => {
     return;
 
   const newEffect = new SkillEffect(selectedSkill.value.type, Number(experience.value));
-  state.addEffect(newEffect);
+  state.addEffect(state.currentRoute.currentNode, newEffect);
   state.effectState.showModal = false;
 };
 

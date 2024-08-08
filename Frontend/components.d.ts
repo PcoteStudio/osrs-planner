@@ -20,6 +20,7 @@ declare module 'vue' {
     FloatLabel: typeof import('primevue/floatlabel')['default']
     ImportExportModalComponent: typeof import('./src/components/ImportExportModalComponent.vue')['default']
     Message: typeof import('primevue/message')['default']
+    NotificationComponent: typeof import('./src/components/NotificationComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SkillComponent: typeof import('./src/components/SkillComponent.vue')['default']
@@ -30,6 +31,7 @@ declare module 'vue' {
     StepModalComponent: typeof import('./src/components/StepModalComponent.vue')['default']
     TabComponent: typeof import('./src/components/TabComponent.vue')['default']
     Textarea: typeof import('primevue/textarea')['default']
+    Toast: typeof import('primevue/toast')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     TreeTable: typeof import('primevue/treetable')['default']
   }

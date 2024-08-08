@@ -56,28 +56,17 @@ export const useGlobalStore = defineStore('globalStore', {
             }
             this.effectState.showModal = true;
         },
-        addEffect(newEffect: Effect) {
-            if (!this.currentRoute.currentNode)
-                throw new Error(`Unable to add a new Effect, the current node is undefined : ${this.currentRoute}`);
+        addEffect(node: StepTreeNode | undefined, newEffect: Effect) {
+            if (!node)
+                throw new Error('Cannot assign effect to undefined node.');
 
-            if (!this.currentRoute.getCurrentStep())
-                throw new Error(`Unable to add a new Effect, the current step is undefined : ${this.currentRoute}`);
-
-            this.currentRoute.getCurrentStep()?.addEffect(newEffect);
-            this.currentRoute.invalidateNextNodes(this.currentRoute.currentNode);
+            node.step?.addEffect(newEffect);
+            this.currentRoute.invalidateNextNodes(node);
             this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
-
-            console.log('New effect applied');
         },
-        removeEffect(effect: Effect) {
-            if (!this.currentRoute.currentNode)
-                throw new Error(`Unable to add a new Effect, the current node is undefined : ${this.currentRoute}`);
-
-            if (!this.currentRoute.getCurrentStep())
-                throw new Error(`Unable to add a new Effect, the current step is undefined : ${this.currentRoute}`);
-
-            this.currentRoute.getCurrentStep()?.removeEffect(effect);
-            this.currentRoute.invalidateNextNodes(this.currentRoute.currentNode);
+        removeEffect(node: StepTreeNode, effect: Effect) {
+            node.step?.removeEffect(effect);
+            this.currentRoute.invalidateNextNodes(node);
             this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
         },
         openImportExportModal(type?: string) {
