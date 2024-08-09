@@ -104,8 +104,8 @@ level.value = nextLevel.value;
             <div>{{ slotProps.value.name }}</div>
           </div>
           <span v-else>
-                  {{ slotProps.placeholder }}
-              </span>
+            {{ slotProps.placeholder }}
+          </span>
         </template>
         <template #option="slotProps">
           <div class="flex items-center">

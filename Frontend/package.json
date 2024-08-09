@@ -24,6 +24,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@primevue/themes": "^4.0.4",
     "autoprefixer": "^10.4.20",
+    "fuzzysort": "^3.0.2",
     "nanoid": "^5.0.7",
     "pinia": "^2.1.7",
     "postcss": "^8.4.41",

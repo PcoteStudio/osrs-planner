@@ -70,6 +70,12 @@ const importSave = () => {
     });
   }
 };
+
+const importMode = ref({ label: 'Export', value: 'export' });
+const importOptions = ref([
+  { label: 'Export', value: 'export' },
+  { label: 'Import', value: 'import' }
+]);
 </script>
 
 <template>
@@ -80,11 +86,9 @@ const importSave = () => {
   >
     <div class="content">
       <div class="toggle">
-        <span :class="{active: !toggleImportSwitch}">Export</span>
-        <ToggleSwitch v-model="toggleImportSwitch" size="large" />
-        <span :class="{active: toggleImportSwitch}">Import</span>
+        <SelectButton v-model="importMode" optionLabel="label" dataKey="label" :options="importOptions" />
       </div>
-      <div v-if="toggleImportSwitch" class="import">
+      <div v-if="importMode.value === 'import'" class="import">
         <FloatLabel class="w-full">
           <Textarea v-model="importData" rows="5" class="w-full" />
           <label>JSON of an export</label>
@@ -92,7 +96,7 @@ const importSave = () => {
         <Button label="Import" icon="pi pi-file-import" :disabled="!importData" @click="importSave()" />
       </div>
 
-      <div v-if="!toggleImportSwitch"  class="export">
+      <div v-if="importMode.value === 'export'"  class="export">
         <Button label="Generate route export" @click="generateExport()"/>
         <FloatLabel v-if="exportData" class="w-full">
           <Textarea v-model="exportData" rows="5" class="w-full" />

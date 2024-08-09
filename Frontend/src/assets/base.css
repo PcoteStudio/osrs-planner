@@ -82,3 +82,7 @@ img {
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
+
+.p-treetable-thead {
+  top: 0;
+}
