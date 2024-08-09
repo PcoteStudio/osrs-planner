@@ -21,7 +21,6 @@ declare module 'vue' {
     IconField: typeof import('primevue/iconfield')['default']
     ImportExportModalComponent: typeof import('./src/components/ImportExportModalComponent.vue')['default']
     InputIcon: typeof import('primevue/inputicon')['default']
-    InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -4,93 +4,25 @@ import { SkillsEnum } from './skill/skillsEnum';
 import { StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
 import { validatePropertyType } from '@/utils/parsingValidators';
+import type { Effect } from './effect';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
     rootNode: StepTreeNode = new StepTreeNode(-1);
     currentNode: StepTreeNode | undefined; // Current step is considered already executed
 
-    initializeSomeSteps() {
-        let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide.');
-        step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Attack, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Construction, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Cooking, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Crafting, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Defence, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Farming, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Firemaking, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Fletching, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Herblore, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Hitpoints, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Hunter, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Magic, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Mining, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Prayer, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Ranged, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Runecraft, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Slayer, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Strength, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Thieving, 100));
-        step.addEffect(new SkillEffect(SkillsEnum.Woodcutting, 100));
-        step.completed = true;
-        const node1 = this.addStep(step);
+    addEffect(node: StepTreeNode, effect: Effect) {
+        if (!node?.step) throw new Error('Cannot assign effect to undefined step');
+        node.step.addEffect(effect);
+        this.invalidateNextNodes(node);
+        this.setCurrentNode(this.currentNode);
+    }
 
-        step = new Step('I am another top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Herblore, 300));
-        const node2 = this.addStep(step, node1);
-
-        step = new Step('En ce qui concerne la restriction actuelle, on ne peut se passer d\'imaginer chacune des modalités opportunes, à court terme.');
-        step.addEffect(new SkillEffect(SkillsEnum.Attack, 2000));
-        const node21 = this.addSubStep(step, node2);
-
-        step = new Step('I am another child step');
-        step.addEffect(new SkillEffect(SkillsEnum.Defence, 1500));
-        const node22 = this.addStep(step, node21);
-
-        step = new Step('I am a grand-child step');
-        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
-        const node221 = this.addSubStep(step, node22);
-
-        step = new Step('I am a grand-child step');
-        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
-        const node222 = this.addStep(step, node221);
-
-        step = new Step('I am a grand-child step');
-        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
-        this.addStep(step, node222);
-
-        step = new Step('I am a just a child step');
-        step.addEffect(new SkillEffect(SkillsEnum.Mining, 2000));
-        this.addStep(step, node22);
-
-        step = new Step('I am a but a meager top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Farming, 50000));
-        const node3 = this.addStep(step, node2);
-
-        step = new Step('I am the last top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-        const node4 = this.addStep(step, node3);
-
-        step = new Step('I am the last top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-        const node5 = this.addStep(step, node4);
-
-        step = new Step('I am the last top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-        const node6 = this.addStep(step, node5);
-
-        step = new Step('I am the last top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-        const node7 = this.addStep(step, node6);
-
-        step = new Step('I am the last top step');
-        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-        this.addStep(step, node7);
-
-        this.stepOnce();
+    removeEffect(node: StepTreeNode, effect: Effect) {
+        if (!node?.step) throw new Error('Cannot remove effect from undefined step');
+        node.step.removeEffect(effect);
+        this.invalidateNextNodes(node);
+        this.setCurrentNode(this.currentNode);
     }
 
     addStep(newStep: Step, previousNode?: StepTreeNode): StepTreeNode {
@@ -134,12 +66,14 @@ export class Route {
             throw ('Both nodes need to be different');
         if (!nodeToMove?.parent || !previousNode?.parent)
             throw ('Both nodes need to have a parent');
+        this.invalidateNextNodes(nodeToMove);
+        const previousParent = nodeToMove.parent;
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
         nodeToMove.parent = previousNode?.parent;
         nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
         this.updateChildrenDepth(nodeToMove);
-        this.updateChildrenLabel(this.rootNode);
-        this.invalidateNextNodes(this.rootNode);
+        this.updateChildrenLabel(previousParent);
+        this.invalidateNextNodes(nodeToMove);
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
     }
@@ -388,5 +322,88 @@ export class Route {
         route.updateChildrenParent(route.rootNode);
         route.updateChildrenLabel(route.rootNode);
         return route;
+    }
+
+    initializeSomeSteps() {
+        let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide.');
+        step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Attack, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Construction, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Cooking, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Crafting, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Defence, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Farming, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Firemaking, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Fletching, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Herblore, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Hitpoints, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Hunter, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Magic, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Mining, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Prayer, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Ranged, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Runecraft, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Slayer, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Strength, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Thieving, 100));
+        step.addEffect(new SkillEffect(SkillsEnum.Woodcutting, 100));
+        step.completed = true;
+        const node1 = this.addStep(step);
+
+        step = new Step('I am another top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Herblore, 300));
+        const node2 = this.addStep(step, node1);
+
+        step = new Step('En ce qui concerne la restriction actuelle, on ne peut se passer d\'imaginer chacune des modalités opportunes, à court terme.');
+        step.addEffect(new SkillEffect(SkillsEnum.Attack, 2000));
+        const node21 = this.addSubStep(step, node2);
+
+        step = new Step('I am another child step');
+        step.addEffect(new SkillEffect(SkillsEnum.Defence, 1500));
+        const node22 = this.addStep(step, node21);
+
+        step = new Step('I am a grand-child step');
+        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
+        const node221 = this.addSubStep(step, node22);
+
+        step = new Step('I am a grand-child step');
+        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
+        const node222 = this.addStep(step, node221);
+
+        step = new Step('I am a grand-child step');
+        step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
+        this.addStep(step, node222);
+
+        step = new Step('I am a just a child step');
+        step.addEffect(new SkillEffect(SkillsEnum.Mining, 2000));
+        this.addStep(step, node22);
+
+        step = new Step('I am a but a meager top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Farming, 50000));
+        const node3 = this.addStep(step, node2);
+
+        step = new Step('I am the last top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
+        const node4 = this.addStep(step, node3);
+
+        step = new Step('I am the last top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
+        const node5 = this.addStep(step, node4);
+
+        step = new Step('I am the last top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
+        const node6 = this.addStep(step, node5);
+
+        step = new Step('I am the last top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
+        const node7 = this.addStep(step, node6);
+
+        step = new Step('I am the last top step');
+        step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
+        this.addStep(step, node7);
+
+        this.stepOnce();
     }
 }

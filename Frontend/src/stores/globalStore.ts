@@ -61,13 +61,8 @@ export const useGlobalStore = defineStore('globalStore', {
             }
             this.effectState.showModal = false;
         },
-        addEffect(node: StepTreeNode | undefined, newEffect: Effect) {
-            if (!node)
-                throw new Error('Cannot assign effect to undefined node.');
-
-            node.step?.addEffect(newEffect);
-            this.currentRoute.invalidateNextNodes(node);
-            this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
+        addEffect(node: StepTreeNode, newEffect: Effect) {
+            this.currentRoute.addEffect(node, newEffect);
         },
         removeEffect(node: StepTreeNode, effect: Effect) {
             node.step?.removeEffect(effect);
