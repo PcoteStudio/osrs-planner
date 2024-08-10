@@ -51,7 +51,7 @@ function getMessageDetails(notification: Notification) {
       details.message = `Effect removed: "${notification.data.effect.toString()}" from step ${notification.data.stepLabel}`;
       break;
     case 'setCurrentRoute':
-      details.message = `Route imported succesfully with ${notification.data.nbSteps} steps`;
+      details.message = `Route set successfully with ${notification.data.nbSteps} steps`;
       break;
     default:
       throw new Error(`Message not defined for type: ${notification.action}`);
@@ -65,7 +65,7 @@ function getErrorMessageDetails(error: Error) {
 
   switch (typeof error) {
     case InvalidRouteJsonError:
-      details.message = `The json of the route was invalid: ${error.innerError.message}`;
+      details.message = `The json of the route is invalid: ${error.innerError.message}`;
       details.logLevel = 'warn';
       break;
     default:

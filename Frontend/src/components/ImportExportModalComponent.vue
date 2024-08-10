@@ -2,21 +2,32 @@
 
 import { useGlobalStore } from '@/stores/globalStore';
 import { ref, watch } from 'vue';
-import { Route } from '@/models/route';
-import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
 import { downloadAsFile } from '@/utils/webHelpers';
 import { useToast } from 'primevue/usetoast';
+import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
 
 const toast = useToast();
-const state = useGlobalStore();
+const store = useGlobalStore();
 
 const importData = ref();
+const importDataErrors = ref();
 const exportData = ref();
-const toggleImportSwitch = ref(false);
 
-watch(state.importExportState, () => {
-  toggleImportSwitch.value = state.importExportState.type === 'import';
-});
+const importMode = ref();
+const importOptions = ref([
+  { label: 'Export', value: 'export' },
+  { label: 'Import', value: 'import' }
+]);
+
+watch(store.importExportState, (state) => {
+  importMode.value = importOptions.value.find(o => o.value === state.type) || { label: 'Export', value: 'export' };
+  importData.value = undefined;
+  exportData.value = undefined;
+}, { immediate: true });
+
+const generateExport = () => {
+  exportData.value = JSON.stringify(store.getCurrentRoute);
+};
 
 const saveToFile = () => {
   if (exportData.value) {
@@ -40,10 +51,6 @@ const copyToClipboard = () => {
   }
 };
 
-const generateExport = () => {
-  exportData.value = JSON.stringify(state.currentRoute);
-};
-
 const importSave = () => {
   if (!importData.value) {
     toast.add({
@@ -53,27 +60,30 @@ const importSave = () => {
     });
   }
 
-  const result = parseRouteJson(importData.value);
-  if(result.success) {
-    state.setCurrentRoute(Route.fromJSON(JSON.parse(importData.value)));
-  } else {
-    toast.add({
-      severity: 'error',
-      detail: `Error while importing a new route\n ${result.error.message}`,
-    });
+  store.importRoute(importData.value);
+  store.closeImportExportModal();
+};
+
+watch(importData, (data) => validateImportData(data));
+
+const validateImportData = (data: string) => {
+  importDataErrors.value = undefined;
+
+  if (!data)
+    return;
+
+  try {
+    parseRouteJson(data);
+  } catch (e) {
+    importDataErrors.value = e;
   }
 };
 
-const importMode = ref({ label: 'Export', value: 'export' });
-const importOptions = ref([
-  { label: 'Export', value: 'export' },
-  { label: 'Import', value: 'import' }
-]);
 </script>
 
 <template>
   <Dialog modal
-          v-model:visible="state.importExportState.showModal"
+          v-model:visible="store.getImportExportState.showModal"
           header="Import / Export a route"
           :style="{ width: '50rem' }"
   >
@@ -86,7 +96,8 @@ const importOptions = ref([
           <Textarea v-model="importData" rows="5" class="w-full" />
           <label>JSON of an export</label>
         </FloatLabel>
-        <Button label="Import" icon="pi pi-file-import" :disabled="!importData" @click="importSave()" />
+        <Message v-if="importDataErrors" severity="warn">{{ importDataErrors }}</Message>
+        <Button label="Import" icon="pi pi-file-import" :disabled="!importData || importDataErrors" @click="importSave()" />
       </div>
 
       <div v-if="importMode.value === 'export'"  class="export">
@@ -115,10 +126,6 @@ const importOptions = ref([
       gap: 1rem;
       justify-content: center;
       align-items: center;
-
-      .active {
-        color: #34d399;
-      }
 
       span {
         font-size: 1.5em;

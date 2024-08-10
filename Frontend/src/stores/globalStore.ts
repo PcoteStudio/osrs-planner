@@ -5,11 +5,12 @@ import { PlayerState } from '@/models/playerState';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { type Notification } from '@/components/Notification/notificationTypes';
+import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
         const playerState: PlayerState = new PlayerState();
-        const currentRoute = new Route();
+        const currentRoute : Route = new Route();
         currentRoute.playerState = playerState;
 
         const effectState = {
@@ -39,6 +40,14 @@ export const useGlobalStore = defineStore('globalStore', {
             stepState: stepState,
             notifications: notifications
         };
+    },
+    getters: {
+        getImportExportState: (state) => {
+            return state.importExportState;
+        },
+        getCurrentRoute: (state) => {
+            return state.currentRoute;
+        }
     },
     actions: {
         setCurrentNode(nodeId : string) {
@@ -131,5 +140,12 @@ export const useGlobalStore = defineStore('globalStore', {
             this.importExportState.type = type;
             this.importExportState.showModal = true;
         },
+        closeImportExportModal() {
+          this.importExportState.showModal = false;
+        },
+        importRoute(data: string) {
+            const newRoute = parseRouteJson(data);
+            this.setCurrentRoute(newRoute);
+        }
     },
 });
