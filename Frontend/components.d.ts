@@ -12,8 +12,10 @@ declare module 'vue' {
     Chip: typeof import('primevue/chip')['default']
     Column: typeof import('primevue/column')['default']
     ControlPanelComponent: typeof import('./src/components/ControlPanelComponent.vue')['default']
+    DataTable: typeof import('primevue/datatable')['default']
     DebugComponent: typeof import('./src/components/DebugComponent.vue')['default']
     Dialog: typeof import('primevue/dialog')['default']
+    EditableInputText: typeof import('./src/components/EditableInputText.vue')['default']
     EffectBadgeComponent: typeof import('./src/components/EffectBadgeComponent.vue')['default']
     EquipmentComponent: typeof import('./src/components/EquipmentComponent.vue')['default']
     EquipmentSlotComponent: typeof import('./src/components/EquipmentSlotComponent.vue')['default']
@@ -34,7 +36,6 @@ declare module 'vue' {
     TabComponent: typeof import('./src/components/TabComponent.vue')['default']
     Textarea: typeof import('primevue/textarea')['default']
     Toast: typeof import('primevue/toast')['default']
-    ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     TreeSelect: typeof import('primevue/treeselect')['default']
     TreeTable: typeof import('primevue/treetable')['default']
   }

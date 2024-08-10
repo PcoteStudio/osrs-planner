@@ -4,13 +4,15 @@ import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from '@/components/DebugComponent.vue';
 import InventoryComponent from '@/components/SkillTabComponent.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import AddEffectModalComponent from '@/components/AddEffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
 import ImportExportModalComponent from '@/components/ImportExportModalComponent.vue';
 import StepModalComponent from '@/components/StepModalComponent.vue';
 import { useToast } from 'primevue/usetoast';
+import { Effect } from '@/models/effect';
+import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
 
 const toast = useToast();
 const state = useGlobalStore();
@@ -20,8 +22,46 @@ state.currentRoute.initializeSomeSteps();
 const rootNode = ref(state.currentRoute.rootNode.children);
 
 //TODO: Current step is set to the 1st step for testing
-state.setCurrentNode(state.currentRoute.currentNode);
+if (state.currentRoute.currentNode.step.id)
+state.setCurrentNode(state.currentRoute.currentNode.step.id);
 
+type Notifications = {
+  name: 'addEffect',
+  effect: Effect;
+  stepLabel: string;
+} | {
+  name: 'removeEffect',
+  args:  [nodeId: string, effect: Effect]
+} | {
+  name: 'toggleCompleted',
+  args:  [nodeId: string]
+}
+
+watch(
+    () => state.notifications,
+    (notifications) => {
+      let message = '';
+      for (const notification of notifications) {
+        switch (notification.action) {
+          case 'toggleCompleted':
+            message = `Step ${notification.data.stepLabel}: ${notification.data.completed ? 'Completed' : 'Incomplete'}`;
+            break;
+          case 'addEffect':
+            message = `New effect added: "${notification.data.effect.toString()}" to step ${notification.data.stepLabel}`;
+            break;
+          case 'removeEffect':
+            message = `Effect removed: "${notification.data.effect.toString()}" from step ${notification.data.stepLabel}`;
+        }
+        toast.add({
+          severity: 'info',
+          detail: message,
+          life: 5000
+        });
+      }
+      state.clearNotifications();
+    },
+    { deep: true }
+);
 state.$onAction(
     ({
        name, // name of the action
@@ -30,18 +70,38 @@ state.$onAction(
        onError, // hook if the action throws or rejects
      }) => {
 
-      after((result) => {
-        const details = getDetails(name, args, result, null);
-        if (details.success) {
-          toast.add({
-            severity: 'info',
-            detail: details.success,
-            life: 5000
-          });
-        }
-      });
       onError((error) => {
-        const details = getDetails(name, args, null, error);
+        console.error(error);
+
+        let logLevel: 'Error' | 'Warning' = 'Error';
+        let message: string;
+        if (error instanceof InvalidRouteJsonError) {
+          message = `The json of the route was invalid: ${error.innerError.message}`;
+          logLevel = 'Warning';
+          console.error(error.innerError);
+        } else {
+          message = 'An error occured';
+        }
+
+        toast.add({
+          severity: 'error',
+          detail: message
+        });
+      });
+    }
+);
+
+/*
+state.$onAction(
+    ({
+       name, // name of the action
+       args, // array of parameters passed to the action
+       after, // hook after the action returns or resolves
+       onError, // hook if the action throws or rejects
+     }) => {
+
+      onError((error) => {
+        const details = getDetails({ name, args }, null, error);
         if (details.error) {
           toast.add({
             severity: 'error',
@@ -52,30 +112,48 @@ state.$onAction(
       });
     }
 );
-
-const getDetails = (name: string, args: any[], success: any, error: any) => {
-  let details = {
-    success: '',
-    error: '',
-  };
-
-  switch (name) {
-    case 'addEffect':
-      details.success = `New effect added: "${args[1].toString()}" to step ${args[0].step.toString()}`;
-      details.error = `Error while adding effect: "${args[1].toString()}" to step ${args[0].step.toString()}`;
-      break;
-    case 'removeEffect':
-      details.success = `Effect removed: "${args[1].toString()}" from step ${args[0].step.toString()}`;
-      details.error = `Error while removing effect: "${args[1].toString()}" from step ${args[0].step.toString()}`;
-      break;
-    case 'toggleCompleted':
-      details.success = `Step ${args[0].step.toString()}: ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
-      details.error = `Error while changing the state of step: ${args[0].step.toString()} to ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
-      break;
+const getSuccessDetails = (
+    action: AllActions,
+    success: Effect  | undefined,
+    error: any
+): string => {
+  switch (action.name) {
+    case 'addEffect': {
+      const [nodeId, effect] = action.args;
+      return `New effect added: "${effect}" to step ${nodeId}`;
+    }
+    case 'removeEffect': {
+      const [nodeId, effect] = action.args;
+      return `Effect removed: "${effect.toString()}" from step ${nodeId}`;
+    }
+    case 'toggleCompleted': {
+      const [nodeId] = action.args;
+      return `Step ${args[0].step.toString()}: ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
+    }
   }
-
-  return details;
 };
+
+const getErrorDetails = (
+    action: AllActions,
+    success: Effect  | undefined,
+    error: any
+): {error: string} => {
+  switch (action.name) {
+    case 'addEffect': {
+      const [nodeId, effect] = action.args;
+      return `Error while adding effect: "${effect.toString()}" to step ${nodeId}`;
+    }
+    case 'removeEffect': {
+      const [nodeId, effect] = action.args;
+      return `Error while removing effect: "${effect.toString()}" from step ${nodeId}`;
+    }
+    case 'toggleCompleted': {
+      const [nodeId, effect] = action.args;
+      return `Error while changing the state of step: ${args[0].step.toString()} to ${args[0].step.completed ? 'Completed' : 'Incomplete'}`;
+    }
+  }
+};
+*/
 
 </script>
 

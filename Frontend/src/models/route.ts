@@ -1,14 +1,15 @@
 import { PlayerState } from './playerState';
 import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
-import { StepTreeNode } from './stepTreeNode';
+import { type BaseStepTreeNode, RootStepTreeNode, StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
 import { validatePropertyType } from '@/utils/parsingValidators';
 import type { Effect } from './effect';
+import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
-    rootNode: StepTreeNode = new StepTreeNode(-1);
+    rootNode: RootStepTreeNode = new RootStepTreeNode(-1);
     currentNode: StepTreeNode | undefined; // Current step is considered already executed
 
     addEffect(node: StepTreeNode, effect: Effect) {
@@ -26,15 +27,16 @@ export class Route {
     }
 
     addStep(newStep: Step, previousNode?: StepTreeNode): StepTreeNode {
-        const newNode: StepTreeNode = new StepTreeNode(previousNode?.parent ? previousNode?.parent?.depth + 1 : 0, newStep);
+        let newNode: StepTreeNode;
         if (previousNode) {
+            newNode = new StepTreeNode(previousNode.parent.depth + 1, newStep, previousNode.parent);
             if (!previousNode.parent) throw new Error('previousNode doesn\'t have a parent');
             const previousNodeIndex = previousNode.parent.children.indexOf(previousNode);
             previousNode.parent.children.splice(previousNodeIndex + 1, 0, newNode);
             newNode.parent = previousNode.parent;
         } else {
+            newNode = new StepTreeNode(0, newStep, this.rootNode);
             this.rootNode.children.push(newNode);
-            newNode.parent = this.rootNode;
         }
         newNode.depth = newNode.parent.depth + 1;
         this.updateChildrenLabel(newNode.parent);
@@ -42,7 +44,7 @@ export class Route {
         return newNode;
     }
 
-    addSubStep(newStep: Step, parentNode: StepTreeNode): StepTreeNode {
+    addSubStep(newStep: Step, parentNode: BaseStepTreeNode): StepTreeNode {
         const newNode = new StepTreeNode(parentNode.depth + 1, newStep, parentNode);
         parentNode.children.splice(0, 0, newNode);
         this.updateChildrenLabel(newNode.parent);
@@ -50,7 +52,7 @@ export class Route {
         return newNode;
     }
 
-    removeNode(nodeToRemove: StepTreeNode | undefined) {
+    removeNode(nodeToRemove: StepTreeNode) {
         this.invalidateNextNodes(nodeToRemove);
         if (nodeToRemove?.parent) {
             const nodeIndex = nodeToRemove.parent.children.indexOf(nodeToRemove);
@@ -62,7 +64,7 @@ export class Route {
     }
 
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
-        if (nodeToMove?.step?.id === previousNode?.step?.id)
+        if (nodeToMove.step.id === previousNode.step.id)
             throw ('Both nodes need to be different');
         if (!nodeToMove?.parent || !previousNode?.parent)
             throw ('Both nodes need to have a parent');
@@ -78,17 +80,15 @@ export class Route {
         return nodeToMove;
     }
 
-    moveToSubNode(nodeToMove: StepTreeNode, parentNode: StepTreeNode): StepTreeNode {
-        if (nodeToMove?.step?.id === parentNode?.step?.id)
+    moveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): StepTreeNode {
+        if (parentNode instanceof StepTreeNode && nodeToMove.step.id === parentNode.step.id)
             throw ('Both nodes need to be different');
-        if (!nodeToMove?.parent)
-            throw ('The node to move needs to have a parent');
-        nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
+        nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step.id != nodeToMove.step.id);
         nodeToMove.parent = parentNode;
         parentNode.children.splice(0, 0, nodeToMove);
         this.updateChildrenDepth(nodeToMove);
         this.updateChildrenLabel(this.rootNode);
-        this.invalidateNextNodes(this.rootNode);
+        this.invalidateNextNodes(this.getFirstNode());
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
     }
@@ -106,28 +106,33 @@ export class Route {
         }
     }
 
-    updateChildrenLabel(parentNode: StepTreeNode | undefined) {
-        if (!parentNode) return;
-        const baseLabel: string = (parentNode.step) ? `${parentNode.step?.label}.` : '';
+    updateChildrenLabel(parentNode: BaseStepTreeNode) {
+        let baseLabel: string;
+        if (parentNode instanceof StepTreeNode) {
+            baseLabel = parentNode.step.label;
+        } else {
+            baseLabel = '';
+        }
         for (let i = 0; i < parentNode.children.length; i++) {
             const childNode = parentNode.children[i];
             if (childNode.step)
                 childNode.step.label = baseLabel + (i + 1);
             this.updateChildrenLabel(childNode);
         }
-
     }
 
-    getPreviousNode(node: StepTreeNode | undefined): StepTreeNode {
-        if (node?.children.length) // The node has a child
+    getPreviousNode(node: StepTreeNode): StepTreeNode | undefined {
+        if (node.children.length) // The node has a child
             return node.children[node.children.length - 1];
-        while (node?.parent) { // The node has a parent
+        while (node.parent) { // The node has a parent
             const nodeIndex = node.parent.children.indexOf(node);
             if (nodeIndex > 0) // The node has an immediate brother
                 return node.parent.children[nodeIndex - 1];
+            if (node.parent instanceof RootStepTreeNode)
+                break;
             node = node.parent;
         }
-        return node || this.rootNode;
+        return undefined;
     }
 
     executeOnNextNodes(node: StepTreeNode, func: (node: StepTreeNode) => void) {
@@ -141,7 +146,7 @@ export class Route {
                         node = node.children[0];
                     }
                 } else {
-                    if (!node.parent?.step)
+                    if (node.parent instanceof RootStepTreeNode)
                         return false;
                     node = node.parent;
                 }
@@ -154,8 +159,9 @@ export class Route {
     }
 
     invalidateNextNodes(node: StepTreeNode | undefined) {
-        if (node)
-            this.executeOnNextNodes(node, (node: StepTreeNode) => { if (node?.step) node.step.resultingState = undefined; });
+        if (!node)
+            return;
+        this.executeOnNextNodes(node, (node: StepTreeNode) => { node.step.resultingState = undefined; });
     }
 
     /**
@@ -166,19 +172,22 @@ export class Route {
         if (this.currentNode?.step)
             this.currentNode.step.resultingState = this.playerState.clone();
         if (!this.currentNode) { // Find and execute the first node
-            this.currentNode = this.rootNode;
-            while (this.currentNode.children.length) {
+            this.currentNode = this.rootNode.children[0];
+            while (this.currentNode?.children.length) {
                 this.currentNode = this.currentNode.children[0];
             }
-        } else if (this.currentNode.parent) { // Execute the next node
+        } else { // Execute the next node
             const currentNodeIndex = this.currentNode.parent.children.indexOf(this.currentNode);
+            if (currentNodeIndex === -1) {
+                throw new Error('Node was not found in parent\'s children');
+            }
             if (this.currentNode.parent.children.length > currentNodeIndex + 1) {
                 this.currentNode = this.currentNode.parent.children[currentNodeIndex + 1];
                 while (this.currentNode.children.length) {
                     this.currentNode = this.currentNode.children[0];
                 }
             } else {
-                if (!this.currentNode.parent?.step)
+                if (this.currentNode.parent instanceof RootStepTreeNode)
                     return false;
                 this.currentNode = this.currentNode.parent;
             }
@@ -191,9 +200,8 @@ export class Route {
         return false;
     }
 
-    completeNode(node: StepTreeNode | undefined) {
-        if (node?.step) // Complete node
-            node.step.completed = true;
+    completeNode(node: StepTreeNode) {
+        node.step.completed = true;
         // if (node?.parent) { // Complete all previous brothers recursively
         //     const nodeIndex = node.parent.children.indexOf(node);
         //     if (nodeIndex > 0)
@@ -206,25 +214,24 @@ export class Route {
         }
     }
 
-    uncompleteNode(node: StepTreeNode | undefined) {
-        if (node?.step) // Complete node
-            node.step.completed = false;
+    uncompleteNode(node: StepTreeNode) {
+        node.step.completed = false;
 
-        let parentNode = node?.parent;
-        while (parentNode && parentNode.step?.completed) { // Uncomplete the direct parent and grand-parents
+        let parentNode = node.parent;
+        while (parentNode instanceof StepTreeNode && parentNode.step.completed) { // Uncomplete the direct parent and grand-parents
             parentNode.step.completed = false;
-            parentNode = node?.parent;
+            parentNode = node.parent;
         }
-        if (node?.children?.length) { // Uncomplete all children recursively
+        if (node.children.length) { // Uncomplete all children recursively
             for (const childNode of node.children)
                 this.uncompleteNode(childNode);
         }
     }
 
-    toggleNodeCompletion(node: StepTreeNode | undefined) {
-        if (node?.step?.completed === true)
+    toggleNodeCompletion(node: StepTreeNode) {
+        if (node.step.completed === true)
             this.uncompleteNode(node);
-        else if (node?.step?.completed === false)
+        else if (node.step.completed === false)
             this.completeNode(node);
     }
 
@@ -233,24 +240,26 @@ export class Route {
      * @param step Once this step is executed, will return.
      */
     setCurrentNode(node: StepTreeNode | undefined) {
-        if (node?.step?.resultingState) { // Load pre-processed step
+        if (node?.step.resultingState) { // Load pre-processed step
             if (this.currentNode?.step)
                 this.currentNode.step.resultingState = this.playerState.clone();
             this.playerState = node.step.resultingState;
             this.currentNode = node;
             return;
-        } if (!this.getCurrentStep()?.resultingState) { // Re-process all steps
+        }
+
+        if (!this.getCurrentStep()?.resultingState) { // Re-process all steps
             this.playerState = new PlayerState();
             this.currentNode = undefined;
         }
 
         let wasStepExecuted = true;
-        while (node?.step?.id !== this.getCurrentStep()?.id && wasStepExecuted) {
+        while (node?.step.id !== this.getCurrentStep()?.id && wasStepExecuted) {
             wasStepExecuted = this.stepOnce();
         }
     }
 
-    getStepCount(fromNode: StepTreeNode, filter?: (node: StepTreeNode) => boolean): number {
+    getStepCount(fromNode: BaseStepTreeNode, filter?: (node: StepTreeNode) => boolean): number {
         let total = 0;
         for (const node of fromNode.children) {
             total += ((filter?.(node) ?? true) ? 1 : 0) + this.getStepCount(node, filter);
@@ -258,21 +267,23 @@ export class Route {
         return total;
     }
 
-    getFirstNode(): StepTreeNode {
+    getFirstNode(): StepTreeNode | undefined {
         if (!this.rootNode.children.length)
-            return this.rootNode;
+            return undefined;
         return this.rootNode.children[0];
     }
 
-    getLastNode(): StepTreeNode {
-        let node = this.rootNode;
+    getLastNode(): StepTreeNode | undefined {
+        if (!this.rootNode.children.length)
+            return undefined;
+        let node = this.rootNode.children[this.rootNode.children.length - 1];
         while (node.children.length)
             node = node.children[this.rootNode.children.length - 1];
         return node;
     }
 
     getFirstStep(): Step | undefined {
-        return this.getFirstNode().step;
+        return this.getFirstNode()?.step;
     }
 
     getCurrentStep(): Step | undefined {
@@ -280,7 +291,7 @@ export class Route {
     }
 
     getLastStep(): Step | undefined {
-        return this.getLastNode().step;
+        return this.getLastNode()?.step;
     }
 
     getPlayerState(): PlayerState {
@@ -291,15 +302,16 @@ export class Route {
         return Route.toString(this.rootNode);
     }
 
-    static toString(node: StepTreeNode): string {
+    static toString(node: BaseStepTreeNode): string {
         let result: string = '';
-        if (!node.step) result += 'root';
-        else if (node.step) { // Relevant info to display about the node
+        if (node instanceof StepTreeNode) {
             result += `${node.step.label} ${node.step.description}`
                 + `, depth:${node.depth}`
                 + `${node.step.effects.length ? `, ${node.step.effects.length} effects` : ''}`
                 + `${node.step.completed ? ', completed' : ''}`
                 + `${node.step.resultingState ? ', generated' : ''}`;
+        } else {
+            result += 'root';
         }
         for (const childNode of node.children) {
             const isLastChild = node.children[node.children.length - 1] === childNode;
@@ -312,16 +324,20 @@ export class Route {
     }
 
     toJSON() {
-        return { rootNode: this.rootNode };
+        return { rootNode: this.rootNode.toJSON() };
     }
 
     static fromJSON(jsonObject: { [key: string]: any }): Route {
         validatePropertyType(Route, jsonObject, 'rootNode', 'object');
         const route: Route = new Route();
-        route.rootNode = StepTreeNode.fromJSON(jsonObject.rootNode);
-        route.updateChildrenParent(route.rootNode);
-        route.updateChildrenLabel(route.rootNode);
-        return route;
+        try {
+            route.rootNode = RootStepTreeNode.fromJSON(jsonObject.rootNode);
+            route.updateChildrenLabel(route.rootNode);
+            return route;
+        }
+        catch (e) {
+            throw new InvalidRouteJsonError(e);
+        }
     }
 
     initializeSomeSteps() {

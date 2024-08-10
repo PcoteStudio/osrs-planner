@@ -4,50 +4,44 @@ import { computed, ref } from 'vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
 import type { Effect } from '@/models/effect';
 import type { TreeTableFilterMeta } from 'primevue/treetable';
+import fuzzySort from 'fuzzysort';
+import _ from 'lodash';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 
 const state = useGlobalStore();
 
-const filters = ref({});
+const filter = ref();
 
-const nodes = computed(() => {
-  return state.currentRoute.rootNode.children.map(e => getRouteNodes(e));
+const nodeList = computed(() => {
+  const test = state.currentRoute.rootNode.toFlatList();
+  console.log(test);
+  return test;
 });
-const getRouteNodes = (node: StepTreeNode) => {
-  let children = [];
-  if (node.children) {
-    for (const child of node.children) {
-      children.push(getRouteNodes(child));
-    }
-  }
 
-  return {
-    key: node.step?.id,
-    data: {
-      ...node.step,
-      stringEffects: node.step?.effects.map(e => e.toString()).join(','),
-      stepNode: node,
-    },
-    children,
-  };
-};
+const fuzzySearchKeys = [
+  'step.description',
+  'step.label'
+];
+
+const filteredNodeList = computed(() => {
+  return fuzzySort.go(filter.value, nodeList.value, { keys: fuzzySearchKeys, all: true });
+});
 
 const addEffect = (node: StepTreeNode) => {
-  state.openEffectModal(node);
+  state.openEffectModal(node.step.id);
 };
 
 const removeEffect = (node: StepTreeNode, effect: Effect) => {
-  state.removeEffect(node, effect);
+  state.removeEffect(node.step.id, effect);
 };
 
 const toggleCompleted = (node: StepTreeNode) => {
-  state.toggleCompleted(node);
+  state.toggleCompleted(node.step.id);
 };
 
 const postFilter = (event: TreeTableFilterMeta) => {
   console.log(event);
 };
-
 </script>
 
 <template>
@@ -58,10 +52,8 @@ const postFilter = (event: TreeTableFilterMeta) => {
   >
     <template #container="{ closeCallback }">
       <div class="content">
-        <TreeTable :value="nodes"
-                   :filters="filters"
+        <DataTable :value="nodeList"
                    size="small"
-                   @filter="postFilter"
                    class="flex flex-col overflow-hidden"
         >
           <template #header>
@@ -69,7 +61,7 @@ const postFilter = (event: TreeTableFilterMeta) => {
               <span class="p-dialog-title">Steps</span>
               <IconField>
                 <InputIcon class="pi pi-search" />
-                <InputText v-model="filters['global']" placeholder="Search" />
+                <InputText v-model="filter" placeholder="Search" />
               </IconField>
               <Button @click="closeCallback"
                       icon="pi pi-times"
@@ -80,48 +72,38 @@ const postFilter = (event: TreeTableFilterMeta) => {
               />
             </div>
           </template>
-          <Column field="label" header="Step" :style="{ paddingRight: 0 }"></Column>
-          <Column expander :style="{ padding: 0 }"></Column>
+          <Column field="step.label" header="Step" :style="{ paddingRight: 0 }"></Column>
+          <Column field="step.description" header="Description" :style="{ width: '40%' }"></Column>
 
-          <Column field="description" key="description" header="Description" :style="{ width: '40%' }">
-            <template #body="{ node, column }">
-              {{ node.data[column.key] }}
-            </template>
-            <!--            <template #editor="{ node, column }">-->
-            <!--              <InputText v-model="node[column.key]" autofocus fluid />-->
-            <!--            </template>-->
-          </Column>
-
-          <Column field="effects" key="effects" filterField="stringEffects" header="Effects" :style="{ width: '40%' }">
-            <template #body="{ node, column }">
+          <Column field="step.effects" key="effects" header="Effects" :style="{ width: '40%' }">
+            <template #body="{ data, field }">
               <div class="flex flex-wrap gap-1 items-center">
                 <EffectBadgeComponent
-                    v-for="(effect, index) in node.data[column.key]"
+                    v-for="(effect, index) in _.get(data, field)"
                     :key="index"
                     :effect="effect"
                     :removable="true"
-                    :command="() => removeEffect(node.data['stepNode'], effect)"
+                    :command="() => removeEffect(data, effect)"
                 />
                 <Button type="button" icon="pi pi-plus" rounded severity="primary" outlined
                         :style="{ height: '2em', width: '2em', fontSize: '0.9em'}" size="small"
-                        @click="addEffect(node.data['stepNode'])"
+                        @click="addEffect(data)"
                 />
               </div>
             </template>
           </Column>
 
-          <Column :style="{ width: '10%' }">
-            <template #body="{ node }">
+          <Column field="step.completed" :style="{ width: '10%' }">
+            <template #body="{ data, field }">
               <Button rounded
                       size="small"
-                      :severity="node.data['completed'] ? 'primary' : 'secondary'"
+                      :severity=" _.get(data, field) ? 'primary' : 'secondary'"
                       icon="pi pi-check"
-                      @click="toggleCompleted(node.data['stepNode'])"
+                      @click="toggleCompleted(data)"
               />
-              <Button type="button" icon="pi pi-pencil" rounded severity="secondary" />
             </template>
           </Column>
-        </TreeTable>
+        </DataTable>
       </div>
     </template>
   </Dialog>

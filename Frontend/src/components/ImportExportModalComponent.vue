@@ -55,14 +55,7 @@ const importSave = () => {
 
   const result = parseRouteJson(importData.value);
   if(result.success) {
-    state.currentRoute = Route.fromJSON(JSON.parse(importData.value));
-    const firstNode = state.currentRoute.getFirstNode();
-    state.currentRoute.setCurrentNode(firstNode);
-    toast.add({
-      severity: 'info',
-      detail: 'New route imported',
-      life: 5000,
-    });
+    state.setCurrentRoute(Route.fromJSON(JSON.parse(importData.value)));
   } else {
     toast.add({
       severity: 'error',

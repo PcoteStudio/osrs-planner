@@ -70,7 +70,7 @@ const addEffect = () => {
     return;
 
   const newEffect = new SkillEffect(selectedSkill.value.type, Number(experience.value));
-  state.addEffect(props.node, newEffect);
+  state.addEffect(props.node.step.id, newEffect);
   state.effectState.showModal = false;
 };
 

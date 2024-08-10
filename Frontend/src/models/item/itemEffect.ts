@@ -18,7 +18,8 @@ export class ItemEffect extends Effect {
                 playerState.addWarning(playerState.inventory.moveItem(this.item, -this.quantity));
                 break;
             case ItemContainers.Equipment:
-                playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
+                if (this.item.equipmentSlot)
+                    playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
                 break;
             default:
                 break;
@@ -31,11 +32,16 @@ export class ItemEffect extends Effect {
                 playerState.addWarning(playerState.inventory.moveItem(this.item, this.quantity));
                 break;
             case ItemContainers.Equipment:
-                playerState.equipment.swapSlot(this.item.equipmentSlot, this.item);
+                if (this.item.equipmentSlot)
+                    playerState.equipment.swapSlot(this.item.equipmentSlot, this.item);
                 break;
             default:
                 break;
         }
+    }
+
+    public toJSON(): object {
+        return { ...super.toJSON(), source: this.source, item: this.item, quantity: this.quantity };
     }
 
     public toString(): string[] {

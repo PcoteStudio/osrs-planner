@@ -12,7 +12,9 @@ describe('Route load test', () => {
             const timestampStart = performance.now();
             for (let i = 0; i < 200_000; i++) {
                 const step = new Step(i.toString());
-                step.addEffect(new SkillEffect(SkillsEnum.Cooking, i % 1000));
+                const skillKeys = Object.keys(SkillsEnum) as Array<keyof typeof SkillsEnum>;
+                const skill = SkillsEnum[skillKeys[i % skillKeys.length]];
+                step.addEffect(new SkillEffect(skill, i % 1000));
                 lastNode = route.addStep(step, lastNode);
             }
             const timestampBuilt = performance.now();

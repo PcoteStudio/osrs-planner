@@ -48,7 +48,7 @@ export class Step {
     }
 
     toJSON() {
-        return { id: this.id, description: this.description, effects: this.effects, completed: this.completed };
+        return { id: this.id, description: this.description, effects: this.effects.map(e => e.toJSON()), completed: this.completed };
     }
 
     static fromJSON(jsonObject: { [key: string]: any }): Step {

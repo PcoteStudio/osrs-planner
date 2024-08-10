@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { StepTreeNode } from '@/models/route';
 
 const props = withDefaults(defineProps<{
   minWidth?: string;

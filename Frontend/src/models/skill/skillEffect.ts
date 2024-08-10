@@ -19,6 +19,10 @@ export class SkillEffect extends Effect {
         return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
     }
 
+    public toJSON(): object {
+        return { ...super.toJSON(), skill: this.skill.toString(), experience: this.experience };
+    }
+
     public static fromJSON(jsonObject: { [key: string]: any }): SkillEffect {
         validateEnumProperty(SkillEffect, jsonObject, 'skill', SkillsEnum);
         validatePropertyType(SkillEffect, jsonObject, 'experience', 'number');

@@ -5,10 +5,10 @@ import { Item } from '@/models/item/item';
 describe('Bank', () => {
     let bank: Bank;
     const itemId = 42;
+    let item: Item;
 
     beforeAll(() => {
-        const item = new Item();
-        item.id = itemId;
+        item = new Item(itemId, 'some-item-name');
         Item.set(item);
     });
 
@@ -22,24 +22,24 @@ describe('Bank', () => {
 
     describe('moveItem', () => {
         it('should be able to deposit items', () => {
-            expect(bank.moveItem(itemId, 4)).toEqual(undefined);
-            expect(bank.moveItem(itemId, 7)).toEqual(undefined);
+            expect(bank.moveItem(item, 4)).toEqual(undefined);
+            expect(bank.moveItem(item, 7)).toEqual(undefined);
         });
 
         it('should be able to empty the bank in multiple moves', () => {
-            bank.moveItem(itemId, 10);
+            bank.moveItem(item, 10);
             for (let i = 0; i < 10; i++)
-                expect(bank.moveItem(itemId, -1)).toEqual(undefined);
+                expect(bank.moveItem(item, -1)).toEqual(undefined);
         });
 
         it('should return an error when withdrawing missing items from the inventory', () => {
-            expect(bank.moveItem(itemId, - 1)).toBeInstanceOf(BankMissingItemWarning);
+            expect(bank.moveItem(item, - 1)).toBeInstanceOf(BankMissingItemWarning);
         });
     });
 
     describe('clear', () => {
         it('should remove all items from the bank', () => {
-            bank.moveItem(itemId, 12);
+            bank.moveItem(item, 12);
             bank.clear();
             expect(bank.usedSlots()).toEqual(0);
         });
@@ -51,12 +51,12 @@ describe('Bank', () => {
         });
 
         it('should return 0 for a bank missing items', () => {
-            bank.moveItem(itemId, -3);
+            bank.moveItem(item, -3);
             expect(bank.usedSlots()).toEqual(0);
         });
 
         it('should accurately unstackable items as 1', () => {
-            bank.moveItem(itemId, 11);
+            bank.moveItem(item, 11);
             expect(bank.usedSlots()).toEqual(1);
         });
     });

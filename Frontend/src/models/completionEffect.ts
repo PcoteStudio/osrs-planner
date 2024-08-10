@@ -1,7 +1,7 @@
-import { Effect } from './effect';
+import { Effect, EffectTypeEnum } from './effect';
 
 export abstract class CompletionEffect extends Effect {
-    constructor(public name: string, public autocompleted: boolean) {
-        super();
+    constructor(type: EffectTypeEnum, public name: string, public autocompleted: boolean) {
+        super(type);
     }
 }

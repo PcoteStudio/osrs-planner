@@ -20,8 +20,8 @@ const isFirstChild = computed(() =>  state.currentRoute.getFirstStep() === props
 const isLastChild = computed(() =>  state.currentRoute.getLastStep() === props.node.step);
 const isCompleted = computed(() => props.node.step?.completed);
 
-const setCurrentNode = (node: StepTreeNode) => state.setCurrentNode(node);
-const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node);
+const setCurrentNode = (node: StepTreeNode) => state.setCurrentNode(node.step?.id);
+const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node.step?.id);
 
 watch(isCurrentStep, () => {
   showEffects.value = isCurrentStep.value;
