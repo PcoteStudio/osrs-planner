@@ -1,45 +1,16 @@
 import { defineStore } from 'pinia';
-import { type BaseStepTreeNode, StepTreeNode } from '@/models/stepTreeNode';
+import { RootStepTreeNode, StepTreeNode } from '@/models/stepTreeNode';
 import { Route } from '@/models/route';
 import { PlayerState } from '@/models/playerState';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { Effect, EffectTypeEnum } from '@/models/effect';
-
-type Notification =
-    AddEffectNotification
-    | RemoveEffectNotification
-    | toggleCompleted
-    ;
-type AddEffectNotification = {
-    action: 'addEffect';
-    data: {
-        effect: Effect;
-        stepLabel: string;
-    }
-}
-
-type RemoveEffectNotification = {
-    action: 'removeEffect';
-    data: {
-        effect: Effect;
-        stepLabel: string;
-    }
-}
-
-type toggleCompleted = {
-    action: 'toggleCompleted';
-    data: {
-        stepLabel: string;
-        completed: boolean;
-    }
-}
+import { type Notification } from '@/components/Notification/notificationTypes';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
         const playerState: PlayerState = new PlayerState();
         const currentRoute = new Route();
         currentRoute.playerState = playerState;
-
 
         const effectState = {
             showModal: false,
@@ -78,7 +49,15 @@ export const useGlobalStore = defineStore('globalStore', {
         setCurrentRoute(newRoute: Route) {
             this.currentRoute = newRoute;
             this.currentRoute.setCurrentNode(this.currentRoute.getFirstNode());
-            //TODO: Add log when imported
+
+            const nbSteps = newRoute.getStepCount(this.currentRoute.rootNode as RootStepTreeNode);
+
+            this.addNotification({
+                action: 'setCurrentRoute',
+                data: {
+                    nbSteps: nbSteps
+                }
+            });
         },
         toggleCompleted(nodeId: string) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
@@ -110,11 +89,7 @@ export const useGlobalStore = defineStore('globalStore', {
         addEffect(nodeId: string, newEffect: Effect) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
 
-            node.step.addEffect(newEffect);
-            this.currentRoute.invalidateNextNodes(node);
-            const currentNode = this.currentRoute.currentNode || this.currentRoute.getFirstNode();
-            if (currentNode)
-                this.setCurrentNode(currentNode.step.id);
+            this.currentRoute.addEffect(node, newEffect);
 
             this.addNotification({
                 action: 'addEffect',
@@ -127,11 +102,7 @@ export const useGlobalStore = defineStore('globalStore', {
         removeEffect(nodeId: string, effect: Effect) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
 
-            node.step.removeEffect(effect);
-            this.currentRoute.invalidateNextNodes(node);
-            const currentNode = this.currentRoute.currentNode || this.currentRoute.getFirstNode();
-            if (currentNode)
-                this.setCurrentNode(currentNode.step.id);
+            this.currentRoute.removeEffect(node, effect);
 
             this.addNotification({
                 action: 'removeEffect',
@@ -155,14 +126,6 @@ export const useGlobalStore = defineStore('globalStore', {
                 this.effectState.skill = skill;
             }
             this.effectState.showModal = true;
-        },
-        addEffect(node: StepTreeNode, newEffect: Effect) {
-            this.currentRoute.addEffect(node, newEffect);
-        },
-        removeEffect(node: StepTreeNode, effect: Effect) {
-            node.step?.removeEffect(effect);
-            this.currentRoute.invalidateNextNodes(node);
-            this.currentRoute.setCurrentNode(this.currentRoute.currentNode);
         },
         openImportExportModal(type?: string) {
             this.importExportState.type = type;
