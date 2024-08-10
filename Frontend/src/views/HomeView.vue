@@ -5,7 +5,7 @@ import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from '@/components/DebugComponent.vue';
 import InventoryComponent from '@/components/SkillTabComponent.vue';
 import { ref } from 'vue';
-import AddEffectModalComponent from '@/components/AddEffectModalComponent.vue';
+import AddEffectModalComponent from '@/components/EffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
 import ImportExportModalComponent from '@/components/ImportExportModalComponent.vue';

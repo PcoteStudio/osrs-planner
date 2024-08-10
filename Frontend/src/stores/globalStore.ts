@@ -6,6 +6,7 @@ import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { type Notification } from '@/components/Notification/notificationTypes';
 import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
+import { SkillEffect } from '@/models/skill/skillEffect';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
@@ -14,10 +15,12 @@ export const useGlobalStore = defineStore('globalStore', {
         currentRoute.playerState = playerState;
 
         const effectState = {
-            showModal: false,
+            showModal: true,
             node: undefined as StepTreeNode | undefined,
-            type: undefined as EffectTypeEnum | undefined,
-            skill: undefined as SkillsEnum | undefined,
+            // type: undefined as EffectTypeEnum | undefined,
+            // skill: undefined as SkillsEnum | undefined,
+            type: EffectTypeEnum.Skill,
+            skill: SkillsEnum.Ranged,
         };
 
         const importExportState = {
@@ -33,8 +36,6 @@ export const useGlobalStore = defineStore('globalStore', {
 
         return {
             currentRoute: currentRoute,
-            currentPlayerState: playerState,
-            currentWarnings: playerState.warnings,
             effectState: effectState,
             importExportState: importExportState,
             stepState: stepState,
@@ -45,8 +46,34 @@ export const useGlobalStore = defineStore('globalStore', {
         getImportExportState: (state) => {
             return state.importExportState;
         },
+        getEffectState: (state) => {
+            return state.effectState;
+        },
         getCurrentRoute: (state) => {
             return state.currentRoute;
+        },
+        getNodeList: (state) : StepTreeNode[] => {
+            return state.currentRoute.rootNode.toFlatList();
+        },
+        getNodeById: (state) => {
+            return (nodeId: string) : StepTreeNode | undefined =>
+                state.currentRoute.rootNode.findNodeById(nodeId);
+        },
+        getCurrentSkillExp: (state) => {
+            return (skill: SkillsEnum) : number => state.currentRoute.getPlayerState().getSkillExperience(skill);
+        },
+        findEffect: (state) => {
+            return (nodeId: string, effectType: EffectTypeEnum, skillType?: SkillsEnum) : Effect | undefined => {
+                const node = state.currentRoute.rootNode.findRequiredNodeById(nodeId);
+
+                switch (effectType) {
+                    case EffectTypeEnum.Skill: {
+                        return node.step.effects.find(
+                            e => e instanceof SkillEffect && e.skill === skillType
+                        );
+                    }
+                }
+            };
         }
     },
     actions: {
@@ -135,6 +162,9 @@ export const useGlobalStore = defineStore('globalStore', {
                 this.effectState.skill = skill;
             }
             this.effectState.showModal = true;
+        },
+        closeEffectModal() {
+            this.effectState.showModal = false;
         },
         openImportExportModal(type?: string) {
             this.importExportState.type = type;

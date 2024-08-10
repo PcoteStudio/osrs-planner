@@ -13,10 +13,10 @@ const props = withDefaults(defineProps<{
   isVisible: true,
 });
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
 
-const item = state.currentPlayerState.equipment.slots[props.type];
+const item = store.getCurrentRoute.playerState.equipment.slots[props.type];
 
 const isPlaceholder = computed(() => !item?.imageUrl);
 let slotImage = computed(() => {

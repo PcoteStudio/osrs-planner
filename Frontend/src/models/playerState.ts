@@ -29,6 +29,10 @@ export class PlayerState {
         );
     }
 
+    getSkillExperience(skill: SkillsEnum) : number {
+        return this.skills[skill] || 0;
+    }
+
     getTotalExperience(): number {
         return Object.entries(this.skills).reduce((total, [, experience]) => {
             return total + (experience || 0);

@@ -3,15 +3,16 @@ import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
 
 import { useGlobalStore } from '@/stores/globalStore';
-import { computed, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { EffectTypeEnum, getEffectTypes } from '@/models/effect';
 import SkillEffectModal from '@/components/SkillEffectModal.vue';
-import type { StepTreeNode } from '@/models/stepTreeNode';
+import CompletionEffectModal from '@/components/CompletionEffectModal.vue';
+import ItemEffectModal from '@/components/ItemEffectModal.vue';
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
 const selectedEffectType = ref();
-const selectedNodeKey = ref();
+const selectedNode = ref();
 
 const title = computed(() => {
   if (selectedEffectType.value)
@@ -20,60 +21,41 @@ const title = computed(() => {
 });
 
 const effectTypes = computed(() => getEffectTypes());
-const nodes = computed(() => state.currentRoute.rootNode.children.map(n => getRouteNodes(n)));
-const selectedNode = computed(() => nodes.value.find(n =>
-    selectedNodeKey.value &&
-    Object.keys(selectedNodeKey.value).length > 0 &&
-    n.key === Object.keys(selectedNodeKey.value)[0]).value
-);
+const nodes = ref(store.getNodeList);
 
-const getRouteNodes = (node: StepTreeNode) : any[] => {
-  let children = [];
-  if (node.children) {
-    for (const child of node.children) {
-      children.push(getRouteNodes(child));
-    }
-  }
-
-  return {
-    key: node.step?.id,
-    label: `${node.step?.label} - ${node.step?.description}`,
-    value: node,
-    children,
-  };
-};
-
-const setNodeKey = (node: StepTreeNode) => {
-  const defaultValue = {};
-  if (node?.step?.id)
-    defaultValue[node?.step?.id] = true;
-  else if (state.currentRoute.currentNode?.step?.id)
-    defaultValue[state.currentRoute.currentNode?.step?.id] = true;
-
-  return defaultValue;
-};
-
-watch(state.effectState, (effectState) => {
-  selectedEffectType.value = effectTypes.value.find(e => e.type === effectState.type);
-  selectedNodeKey.value = setNodeKey(effectState.node);
+watch(store.getEffectState, (state) => {
+  selectedEffectType.value = effectTypes.value.find(e => e.type === state.type);
+  selectedNode.value = state.node || store.getCurrentRoute.currentNode;
 }, { immediate: true });
+
 </script>
 
 <template>
   <Dialog modal
-          v-model:visible="state.effectState.showModal"
+          v-model:visible="store.getEffectState.showModal"
           :header="title"
           :style="{ width: '25rem' }"
   >
     <div class="content">
       <FloatLabel>
-        <TreeSelect v-model="selectedNodeKey"
-                id="node"
-                :options="nodes"
-                optionLabel="name"
-                placeholder="Select an step"
-                class="w-full"
-        ></TreeSelect>
+          <Select v-model="selectedNode"
+                  id="node"
+                  :options="nodes"
+                  placeholder="Select a step"
+                  class="w-full"
+          >
+            <template #value="{ value, placeholder }">
+              <span v-if="value">
+                <b>{{ value.step.label }}</b> - {{ value.step.description }}
+              </span>
+              <span v-else>
+                {{ placeholder }}
+              </span>
+            </template>
+            <template #option="{ option }">
+              <span>{{ option.step.label }} {{ option.step.description }}</span>
+            </template>
+          </Select>
         <label for="effectTypes">Step</label>
       </FloatLabel>
       <FloatLabel>
@@ -91,7 +73,7 @@ watch(state.effectState, (effectState) => {
                    class="mr-2"
                    style="width: 18px"
               />
-              <div>{{ slotProps.value.name }}</div>
+              <span>{{ slotProps.value.name }}</span>
             </div>
             <span v-else>
                 {{ slotProps.placeholder }}
@@ -104,12 +86,14 @@ watch(state.effectState, (effectState) => {
                    class="mr-2"
                    style="width: 18px"
               />
-              <div>{{ slotProps.option.name }}</div>
+              <span>{{ slotProps.option.name }}</span>
             </div>
           </template>
         </Select>
         <label for="effectTypes">Effect type</label>
       </FloatLabel>
+      <CompletionEffectModal v-if="selectedEffectType?.type === EffectTypeEnum.Completion" :node="selectedNode" />
+      <ItemEffectModal v-if="selectedEffectType?.type === EffectTypeEnum.Item" :node="selectedNode" />
       <SkillEffectModal v-if="selectedEffectType?.type === EffectTypeEnum.Skill" :node="selectedNode" />
     </div>
   </Dialog>
