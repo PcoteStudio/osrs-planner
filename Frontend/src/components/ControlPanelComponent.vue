@@ -1,8 +1,11 @@
 <script setup lang="ts">
 
 import { useGlobalStore } from '@/stores/globalStore';
+import { ref } from 'vue';
 
-const state = useGlobalStore();
+const store = useGlobalStore();
+
+const currentStep = ref(store.getCurrentRoute.getCurrentStep());
 
 const buttons = [
   {
@@ -12,13 +15,17 @@ const buttons = [
         label: 'Complete step',
         type: 'primary',
         icon: 'pi pi-check',
-        action: () => state.toggleCompleted(state.currentRoute.currentNode),
+        disabled: !currentStep,
+        action: () => {
+          if (currentStep.value)
+            store.toggleCompleted(currentStep.value.id);
+          },
       },
       {
         label: 'Edit step',
         type: 'secondary',
         icon: 'pi pi-pen-to-square',
-        action: () => state.stepState.showModal = true,
+        action: () => store.openStepModal(),
       },
       {
         label: 'Add step',
@@ -43,7 +50,7 @@ const buttons = [
         label: 'Add effect',
         type: 'secondary',
         icon: 'pi pi-plus',
-        action: () => state.openEffectModal()
+        action: () => store.openEffectModal()
       },
       {
         label: 'Edit effect',
@@ -120,13 +127,13 @@ const buttons = [
         label: 'Import current route',
         type: 'secondary',
         icon: 'pi pi-file-import',
-        action: () => state.openImportExportModal('Import'),
+        action: () => store.openImportExportModal('Import'),
       },
       {
         label: 'Export current route',
         type: 'secondary',
         icon: 'pi pi-save',
-        action: () => state.openImportExportModal('Export')
+        action: () => store.openImportExportModal('Export')
       }
     ]
   }

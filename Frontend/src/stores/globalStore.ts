@@ -177,6 +177,12 @@ export const useGlobalStore = defineStore('globalStore', {
         importRoute(data: string) {
             const newRoute = parseRouteJson(data);
             this.setCurrentRoute(newRoute);
-        }
+        },
+        openStepModal() {
+            this.stepState.showModal = true;
+        },
+        closeStepModal() {
+            this.stepState.showModal = false;
+        },
     },
 });
