@@ -14,13 +14,10 @@ const importDataErrors = ref();
 const exportData = ref();
 
 const importMode = ref();
-const importOptions = ref([
-  { label: 'Export', value: 'export' },
-  { label: 'Import', value: 'import' }
-]);
+const importOptions = ref(['Export', 'Import']);
 
 watch(store.importExportState, (state) => {
-  importMode.value = importOptions.value.find(o => o.value === state.type) || { label: 'Export', value: 'export' };
+  importMode.value = importOptions.value.find(o => o === state.type) || 'Export';
   importData.value = undefined;
   exportData.value = undefined;
 }, { immediate: true });
@@ -89,9 +86,9 @@ const validateImportData = (data: string) => {
   >
     <div class="content">
       <div class="toggle">
-        <SelectButton v-model="importMode" optionLabel="label" dataKey="label" :options="importOptions" />
+        <SelectButton v-model="importMode" :options="importOptions" :allowEmpty="false "/>
       </div>
-      <div v-if="importMode.value === 'import'" class="import">
+      <div v-if="importMode === 'Import'" class="import">
         <FloatLabel class="w-full">
           <Textarea v-model="importData" rows="5" class="w-full" />
           <label>JSON of an export</label>
@@ -100,7 +97,7 @@ const validateImportData = (data: string) => {
         <Button label="Import" icon="pi pi-file-import" :disabled="!importData || importDataErrors" @click="importSave()" />
       </div>
 
-      <div v-if="importMode.value === 'export'"  class="export">
+      <div v-if="importMode === 'Export'"  class="export">
         <Button label="Generate route export" @click="generateExport()"/>
         <FloatLabel v-if="exportData" class="w-full">
           <Textarea v-model="exportData" rows="5" class="w-full" />

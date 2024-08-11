@@ -15,12 +15,10 @@ export const useGlobalStore = defineStore('globalStore', {
         currentRoute.playerState = playerState;
 
         const effectState = {
-            showModal: true,
+            showModal: false,
             node: undefined as StepTreeNode | undefined,
-            // type: undefined as EffectTypeEnum | undefined,
-            // skill: undefined as SkillsEnum | undefined,
-            type: EffectTypeEnum.Skill,
-            skill: SkillsEnum.Ranged,
+            type: undefined as EffectTypeEnum | undefined,
+            skill: undefined as SkillsEnum | undefined,
         };
 
         const importExportState = {
