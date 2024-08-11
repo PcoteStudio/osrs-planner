@@ -78,6 +78,9 @@ export const useGlobalStore = defineStore('globalStore', {
         getCurrentSkills: (state) => {
             return state.currentRoute.getPlayerState().skills;
         },
+        getStepModalState: (state) => {
+            return state.stepState;
+        }
     },
     actions: {
         setCurrentNode(nodeId: string) {

@@ -86,3 +86,9 @@ img {
 .p-treetable-thead {
   top: 0;
 }
+
+.highlight-match {
+  color: black;
+  font-weight: bold;
+  background-color: #fffa66;
+}

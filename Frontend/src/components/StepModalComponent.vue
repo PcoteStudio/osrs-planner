@@ -3,58 +3,82 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { computed, ref } from 'vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
 import type { Effect } from '@/models/effect';
-import type { TreeTableFilterMeta } from 'primevue/treetable';
 import fuzzySort from 'fuzzysort';
 import _ from 'lodash';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
+import { FilterMatchMode } from '@primevue/core/api';
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
-const filter = ref();
+const nodeList = computed(() => store.getNodeList);
 
-const nodeList = computed(() => {
-  const test = state.currentRoute.rootNode.toFlatList();
-  console.log(test);
-  return test;
-});
+const addEffect = (node: StepTreeNode) => {
+  store.openEffectModal(node.step.id);
+};
+
+const removeEffect = (node: StepTreeNode, effect: Effect) => {
+  store.removeEffect(node.step.id, effect);
+};
+
+const toggleCompleted = (node: StepTreeNode) => {
+  store.toggleCompleted(node.step.id);
+};
 
 const fuzzySearchKeys = [
   'step.description',
   'step.label'
 ];
+const filter = ref();
 
-const filteredNodeList = computed(() => {
-  return fuzzySort.go(filter.value, nodeList.value, { keys: fuzzySearchKeys, all: true });
+const filteredNodeList = computed(() =>
+    fuzzySort.go(
+        filter.value,
+        nodeList.value,
+        { keys: fuzzySearchKeys, all: true }
+    ));
+
+const datatableFilters = computed(() => {
+  const results = filteredNodeList.value.map(r => r.obj.step.id);
+
+  return {
+    global: {
+      value: results,
+      matchMode: FilterMatchMode.IN
+    }
+  };
 });
 
-const addEffect = (node: StepTreeNode) => {
-  state.openEffectModal(node.step.id);
-};
+const highlight = (key: string, id: string) => {
+  const results = filteredNodeList.value.find(r => r.obj.step.id === id);
+  if (!results)
+    return;
 
-const removeEffect = (node: StepTreeNode, effect: Effect) => {
-  state.removeEffect(node.step.id, effect);
-};
+  const elements = results[fuzzySearchKeys.indexOf(key)]
+      .highlight((m: string, i: number) =>
+        `<span class="highlight-match" key=${i}>${m}</span>`);
 
-const toggleCompleted = (node: StepTreeNode) => {
-  state.toggleCompleted(node.step.id);
-};
+  if (elements && elements.length > 0) {
+    return elements.join('');
+  }
 
-const postFilter = (event: TreeTableFilterMeta) => {
-  console.log(event);
+  return _.get(results.obj, key);
 };
 </script>
 
 <template>
   <Dialog modal
-          v-model:visible="state.stepState.showModal"
+          v-model:visible="store.getStepModalState.showModal"
           header="Steps"
           :style="{ width: '50rem' }"
   >
     <template #container="{ closeCallback }">
+
       <div class="content">
         <DataTable :value="nodeList"
                    size="small"
                    class="flex flex-col overflow-hidden"
+                   editMode="cell"
+                   :filters="datatableFilters"
         >
           <template #header>
             <div class="flex justify-between">
@@ -72,10 +96,22 @@ const postFilter = (event: TreeTableFilterMeta) => {
               />
             </div>
           </template>
-          <Column field="step.label" header="Step" :style="{ paddingRight: 0 }"></Column>
-          <Column field="step.description" header="Description" :style="{ width: '40%' }"></Column>
+          <Column field="step.id" hidden></Column>
+          <Column field="step.label" header="Step" :style="{ paddingRight: 0 }">
+            <template #body="{ data, field }">
+              <span v-html="highlight(field, data.step.id)" />
+            </template>
+          </Column>
+          <Column field="step.description" header="Description" :style="{ width: '40%' }">
+            <template #editor="{ data }">
+              <Textarea class="editor" rows="1"  autoResize v-model:="data.step.description" />
+            </template>
+            <template #body="{ data, field }">
+              <span v-html="highlight(field, data.step.id)" />
+            </template>
+          </Column>
 
-          <Column field="step.effects" key="effects" header="Effects" :style="{ width: '40%' }">
+          <Column field="step.effects" header="Effects" :style="{ width: '40%' }">
             <template #body="{ data, field }">
               <div class="flex flex-wrap gap-1 items-center">
                 <EffectBadgeComponent
@@ -93,13 +129,13 @@ const postFilter = (event: TreeTableFilterMeta) => {
             </template>
           </Column>
 
-          <Column field="step.completed" :style="{ width: '10%' }">
+          <Column field="obj.step.completed" :style="{ width: '10%' }">
             <template #body="{ data, field }">
               <Button rounded
                       size="small"
                       :severity=" _.get(data, field) ? 'primary' : 'secondary'"
                       icon="pi pi-check"
-                      @click="toggleCompleted(data)"
+                      @click="toggleCompleted(data.obj)"
               />
             </template>
           </Column>
@@ -110,6 +146,10 @@ const postFilter = (event: TreeTableFilterMeta) => {
 </template>
 
 <style scoped>
+.editor {
+  width: 100%;
+  height: 10em;
+}
   .content {
     padding: 1.25rem;
     display: flex;
