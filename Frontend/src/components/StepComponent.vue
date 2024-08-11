@@ -46,7 +46,7 @@ onMounted(() => {
 
 <template>
   <div class="step" v-if="step">
-    <div class="content" :class="{
+    <div :id="isCurrentStep ? 'current': undefined" class="content" :class="{
       'first-child': isFirstChild,
       'last-child': isLastChild,
       'current': isCurrentStep,

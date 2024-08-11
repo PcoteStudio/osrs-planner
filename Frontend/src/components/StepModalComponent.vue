@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
 import type { Effect } from '@/models/effect';
 import fuzzySort from 'fuzzysort';
 import _ from 'lodash';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import { FilterMatchMode } from '@primevue/core/api';
+import type { DataTableCellEditCompleteEvent } from 'primevue/datatable';
 
 const store = useGlobalStore();
 
-const nodeList = computed(() => store.getNodeList);
+const nodeList = ref();
+
+onMounted(() => {
+  nodeList.value = store.getNodeList;
+});
 
 const addEffect = (node: StepTreeNode) => {
   store.openEffectModal(node.step.id);
@@ -117,7 +122,9 @@ const highlight = (key: string, id: string) => {
           </Column>
           <Column field="step.description" header="Description" :style="{ width: '40%' }">
             <template #editor="{ data }">
-              <Textarea class="editor" rows="1"  autoResize v-model:="data.step.description" />
+              <Textarea class="editor" rows="1" autoResize
+                        v-model:="data.step.description"
+              />
             </template>
             <template #body="{ data, field }">
               <span v-html="highlight(field, data.step.id)" />
@@ -142,13 +149,13 @@ const highlight = (key: string, id: string) => {
             </template>
           </Column>
 
-          <Column field="obj.step.completed" :style="{ width: '10%' }">
+          <Column field="step.completed" :style="{ width: '10%' }">
             <template #body="{ data, field }">
               <Button rounded
                       size="small"
                       :severity=" _.get(data, field) ? 'primary' : 'secondary'"
                       icon="pi pi-check"
-                      @click="toggleCompleted(data.obj)"
+                      @click="toggleCompleted(data)"
               />
             </template>
           </Column>

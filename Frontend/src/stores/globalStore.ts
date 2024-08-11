@@ -85,7 +85,6 @@ export const useGlobalStore = defineStore('globalStore', {
     actions: {
         setCurrentNode(nodeId: string) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
-
             this.currentRoute.setCurrentNode(node);
         },
         setCurrentRoute(newRoute: Route) {
@@ -108,9 +107,9 @@ export const useGlobalStore = defineStore('globalStore', {
 
             // Set current step to the next step
             if (this.currentRoute.getCurrentStep() === node.step) {
-                do {
+                while (this.currentRoute.getCurrentStep()?.completed) {
                     this.currentRoute.stepOnce();
-                } while (this.currentRoute.getCurrentStep()?.completed);
+                }
             }
 
             this.addNotification({
@@ -120,6 +119,9 @@ export const useGlobalStore = defineStore('globalStore', {
                     completed: node.step.completed,
                 }
             });
+            setTimeout(() => {
+                document.getElementById('current')?.scrollIntoView({ behavior: 'smooth' });
+            }, 10);
         },
         addNotification(notification: Notification) {
             this.notifications.push(notification);
