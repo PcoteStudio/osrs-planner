@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
 
 import { useGlobalStore } from '@/stores/globalStore';
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { EffectTypeEnum, getEffectTypes } from '@/models/effect';
 import SkillEffectModal from '@/components/SkillEffectModal.vue';
 import CompletionEffectModal from '@/components/CompletionEffectModal.vue';

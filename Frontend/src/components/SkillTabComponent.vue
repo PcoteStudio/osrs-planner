@@ -4,13 +4,14 @@ import { computed, ref } from 'vue';
 import SkillComponent from '@/components/SkillComponent.vue';
 import { Skill } from '@/models/skill/skill';
 import ContextMenu from 'primevue/contextmenu';
+import type { SkillsEnum } from '@/models/skill/skillsEnum';
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
 const skills = computed(() => {
   const skillList : Skill[] = [];
-  for (const [key, value] of Object.entries(state.currentRoute.getPlayerState().skills)) {
-    skillList.push(new Skill(key, value));
+  for (const [key, value] of Object.entries(store.getCurrentSkills)) {
+    skillList.push(new Skill(key as SkillsEnum, value || 0));
   }
   return skillList.sort((a, b) => a.order - b.order);
 });
@@ -20,7 +21,7 @@ const items = ref([
   {
     label: 'effect',
     icon: 'pi pi-plus',
-    command: () => state.openEffectModal(undefined, selectedSkill.value.type),
+    command: () => store.openEffectModal(undefined, selectedSkill.value.type),
   }
 ]);
 
@@ -41,8 +42,8 @@ const openContextMenu = (event : MouseEvent, skill: Skill) => {
         @click="openContextMenu($event, skill)"
     />
     <SkillComponent
-        :level="state.currentRoute.playerState.getTotalLevel()"
-        :experience="state.currentRoute.playerState.getTotalExperience()"
+        :level="store.getCurrentRoute.getPlayerState().getTotalLevel()"
+        :experience="store.getCurrentRoute.getPlayerState().getTotalExperience()"
     />
 
     <ContextMenu ref="menu" :model="items" @hide="selectedSkill = null">

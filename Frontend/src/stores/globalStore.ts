@@ -72,7 +72,10 @@ export const useGlobalStore = defineStore('globalStore', {
                     }
                 }
             };
-        }
+        },
+        getCurrentSkills: (state) => {
+            return state.currentRoute.getPlayerState().skills;
+        },
     },
     actions: {
         setCurrentNode(nodeId : string) {

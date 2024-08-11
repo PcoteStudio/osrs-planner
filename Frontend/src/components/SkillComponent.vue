@@ -5,8 +5,9 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { computed } from 'vue';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { formatNumber } from '@/utils/formaters';
+import { EffectTypeEnum } from '@/models/effect';
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
 const props = defineProps<{
   skill?: Skill;
@@ -16,11 +17,12 @@ const props = defineProps<{
 
 const xpTable = new XpTable(99); // TODO move table to static util
 
-const currentStep = computed(() => state.currentRoute.currentNode?.step);
+const currentStep = computed(() => store.getCurrentRoute.getCurrentStep());
 const hasEffect = computed(() => {
-  return currentStep.value?.effects.find(
-      e => e instanceof SkillEffect && e.skill === props.skill?.type
-  ) as SkillEffect | undefined;
+  if (currentStep.value)
+    return store.findEffect(currentStep.value.id, EffectTypeEnum.Skill, props.skill?.type) as SkillEffect;
+
+  return undefined;
 });
 
 const computedExperience = computed(() => {
@@ -52,7 +54,7 @@ const skillTooltip = computed(() => {
       :class="{'has-effect': hasEffect}"
       v-tooltip.top="{ value: skillTooltip, escape: false }"
   >
-    <img v-if="skill?.icon" :src="skill.icon">
+    <img v-if="skill?.icon" :src="skill.icon" :alt="skill.type">
     <span class="label">
         {{ computedLevel }}
     </span>
