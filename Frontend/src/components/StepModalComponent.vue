@@ -26,23 +26,36 @@ const toggleCompleted = (node: StepTreeNode) => {
 
 const fuzzySearchKeys = [
   'step.description',
-  'step.label'
+  'step.label',
+  'step.effects',
 ];
 const filter = ref();
+
+const targets = computed(() => {
+  return nodeList.value.map(n => {
+    return {
+      step: {
+        id: n.step.id,
+        completed: n.step.completed,
+        description: n.step.description,
+        label: n.step.label,
+        effects: n.step.effects.map(e => e.toString()).join('')
+      }
+    };
+  });
+});
 
 const filteredNodeList = computed(() =>
     fuzzySort.go(
         filter.value,
-        nodeList.value,
+        targets.value,
         { keys: fuzzySearchKeys, all: true }
     ));
 
 const datatableFilters = computed(() => {
-  const results = filteredNodeList.value.map(r => r.obj.step.id);
-
   return {
     global: {
-      value: results,
+      value: filteredNodeList.value.map(r => r.obj.step.id),
       matchMode: FilterMatchMode.IN
     }
   };
