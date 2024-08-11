@@ -5,18 +5,18 @@ export type ScrapedItem = {
     wiki_url: string;
     icon: string;
     cost: number;
-    lowalch?: number;
-    highalch?: number;
+    lowalch?: number | null;
+    highalch?: number | null;
     members: boolean;
     tradeable: boolean;
     tradeable_on_ge: boolean
     stackable: boolean;
-    stacked?: number;
+    stacked?: number | null;
     noted: boolean;
     noteable: boolean;
-    linked_id_item?: number;
-    linked_id_noted?: number;
-    linked_id_placeholder?: number;
+    linked_id_item?: number | null;
+    linked_id_noted?: number | null;
+    linked_id_placeholder?: number | null;
     placeholder: boolean;
     equipable_by_player: boolean;
     duplicate: boolean;

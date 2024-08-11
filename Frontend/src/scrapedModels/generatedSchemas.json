@@ -16,7 +16,10 @@
                     "type": "boolean"
                 },
                 "highalch": {
-                    "type": "number"
+                    "type": [
+                        "null",
+                        "number"
+                    ]
                 },
                 "icon": {
                     "type": "string"
@@ -25,16 +28,28 @@
                     "type": "number"
                 },
                 "linked_id_item": {
-                    "type": "number"
+                    "type": [
+                        "null",
+                        "number"
+                    ]
                 },
                 "linked_id_noted": {
-                    "type": "number"
+                    "type": [
+                        "null",
+                        "number"
+                    ]
                 },
                 "linked_id_placeholder": {
-                    "type": "number"
+                    "type": [
+                        "null",
+                        "number"
+                    ]
                 },
                 "lowalch": {
-                    "type": "number"
+                    "type": [
+                        "null",
+                        "number"
+                    ]
                 },
                 "members": {
                     "type": "boolean"
@@ -55,7 +70,10 @@
                     "type": "boolean"
                 },
                 "stacked": {
-                    "type": "number"
+                    "type": [
+                        "null",
+                        "number"
+                    ]
                 },
                 "tradeable": {
                     "type": "boolean"
@@ -71,3 +89,4 @@
         }
     }
 }
+

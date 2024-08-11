@@ -16,7 +16,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write src/",
-    "generate:schemas": "cd .. && typescript-json-schema ./Frontend/src/scrapedModels/*.ts * -o ./Frontend/src/scrapedModels/generatedSchemas.json"
+    "generate:schemas": "cd .. && typescript-json-schema ./Frontend/src/scrapedModels/*.ts * -o ./Frontend/src/scrapedModels/generatedSchemas.json --strictNullChecks"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
