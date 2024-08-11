@@ -4,13 +4,7 @@ import { StepTreeNode } from '@/models/stepTreeNode';
 
 const props = defineProps<{
   nodes: StepTreeNode[];
-  indexPrefix?: string;
 }>();
-
-let prefix = '';
-if (props.indexPrefix) {
-  prefix = `${props.indexPrefix}.`;
-}
 
 </script>
 
@@ -19,7 +13,7 @@ if (props.indexPrefix) {
     <div class="task-list">
       <ol>
         <li :key="index" v-for="(node, index) in nodes">
-          <StepComponent :index="prefix + (index + 1)" :node="node" />
+          <StepComponent :index="node.step.label" :node="node" />
         </li>
       </ol>
     </div>

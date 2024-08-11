@@ -53,6 +53,9 @@ export const useGlobalStore = defineStore('globalStore', {
         getNodeList: (state) : StepTreeNode[] => {
             return state.currentRoute.rootNode.toFlatList();
         },
+        getNodeTree: (state) : StepTreeNode[] => {
+          return state.currentRoute.rootNode.children;
+        },
         getNodeById: (state) => {
             return (nodeId: string) : StepTreeNode | undefined =>
                 state.currentRoute.rootNode.findNodeById(nodeId);

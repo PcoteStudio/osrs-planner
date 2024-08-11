@@ -4,7 +4,7 @@ import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from '@/components/DebugComponent.vue';
 import InventoryComponent from '@/components/SkillTabComponent.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import AddEffectModalComponent from '@/components/EffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
@@ -12,15 +12,18 @@ import ImportExportModalComponent from '@/components/ImportExportModalComponent.
 import StepModalComponent from '@/components/StepModalComponent.vue';
 import NotificationComponent from '@/components/Notification/NotificationComponent.vue';
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
-state.currentRoute.initializeSomeSteps();
+store.getCurrentRoute.initializeSomeSteps();
 
-const rootNode = ref(state.currentRoute.rootNode.children);
+const nodeList = ref(store.getNodeTree);
 
 //TODO: Current step is set to the 1st step for testing
-if (state.currentRoute.currentNode.step.id)
-  state.setCurrentNode(state.currentRoute.currentNode.step.id);
+onMounted(() => {
+  const currentStep = store.getCurrentRoute.getCurrentStep();
+  if (currentStep)
+    store.setCurrentNode(currentStep.id);
+});
 
 </script>
 
@@ -36,7 +39,7 @@ if (state.currentRoute.currentNode.step.id)
 
     <!--  Regular components  -->
     <TabComponent :min-width="'24rem'" max-width="30rem">
-      <StepList :nodes="rootNode" id="stepsRoot" class="first-child" />
+      <StepList :nodes="nodeList" id="stepsRoot" class="first-child" />
     </TabComponent>
     <TabComponent :max-width="'24rem'">
       <ControlPanelComponent />

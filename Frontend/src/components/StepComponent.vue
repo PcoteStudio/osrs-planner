@@ -3,45 +3,49 @@ import StepListComponent from '@/components/StepListComponent.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
 import { useGlobalStore } from '@/stores/globalStore';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  index: string;
   node: StepTreeNode;
 }>();
 
-const state = useGlobalStore();
+const store = useGlobalStore();
 
 const collapseSubStepList = ref(false);
 const showEffects = ref(false);
 
-const isCurrentStep = computed(() => state.currentRoute.getCurrentStep() === props.node.step);
-const isFirstChild = computed(() =>  state.currentRoute.getFirstStep() === props.node.step);
-const isLastChild = computed(() =>  state.currentRoute.getLastStep() === props.node.step);
-const isCompleted = computed(() => props.node.step?.completed);
+const step = computed(() => props.node.step);
+const isCurrentStep = computed(() => store.currentRoute.getCurrentStep() === step.value);
+const isFirstChild = computed(() =>  store.currentRoute.getFirstStep() === step.value);
+const isLastChild = computed(() =>  store.currentRoute.getLastStep() === step.value);
+const isCompleted = computed(() => step.value.completed);
+const displayStepLabel = computed(()=> {
+  const currentNodeDepth = store.getCurrentRoute.currentNode?.depth || 0;
+  return props.node.depth <= (currentNodeDepth + 1);
+});
+const hasChildren = computed(() => props.node.children.length > 0);
 
-const setCurrentNode = (node: StepTreeNode) => state.setCurrentNode(node.step?.id);
-const toggleCompleted = (node: StepTreeNode) => state.toggleCompleted(node.step?.id);
+const setCurrentNode = () => store.setCurrentNode(step.value.id);
+const toggleCompleted = () => store.toggleCompleted(step.value.id);
 
 watch(isCurrentStep, () => {
   showEffects.value = isCurrentStep.value;
 });
-if (isCurrentStep.value) {
-  showEffects.value = true;
-}
 
 watch(isCompleted, () => {
   if (isCompleted.value)
     collapseSubStepList.value = true;
 });
 
-if (!props.node.step) {
-  throw new Error(`The node does not have a step: ${props.node}`);
-}
+onMounted(() => {
+  if (isCurrentStep.value) {
+    showEffects.value = true;
+  }
+});
 </script>
 
 <template>
-  <div class="step" v-if="node.step">
+  <div class="step" v-if="step">
     <div class="content" :class="{
       'first-child': isFirstChild,
       'last-child': isLastChild,
@@ -49,43 +53,38 @@ if (!props.node.step) {
       'completed': isCompleted
     }">
       <div class="tag"
-           @click="setCurrentNode(node)"
-           v-tooltip="index"
+           @click="setCurrentNode"
+           v-tooltip="step.label"
       >
         <div class="icon">
-          <span class="label" v-if="node.depth <= 1">
-            {{ index }}
+          <span class="label" v-if="displayStepLabel">
+            {{ step.label }}
           </span>
         </div>
       </div>
       <div class="label">
         <div class="header">
           <div class="actions">
-            <Button
-                @click="showEffects = !showEffects"
-                size="small"
-                :severity="showEffects ? 'primary' : 'secondary'"
-            >
-              Effects
-            </Button>
-            <Button rounded
+            <Button @click="showEffects = !showEffects"
                     size="small"
-                    @click="toggleCompleted(node)"
+                    :severity="showEffects ? 'primary' : 'secondary'"
+                    :label="'Effects'"
+            />
+            <Button @click="toggleCompleted"
                     :severity="isCompleted ? 'primary' : 'secondary'"
-            >
-              <font-awesome-icon icon="check" />
-            </Button>
+                    rounded
+                    size="small"
+                    icon="pi pi-check"
+            />
           </div>
         </div>
         <div class="body">
-          {{ node.step.description }}
+          {{ step.description }}
         </div>
         <div class="footer">
-          <div class="effects"
-               :style="{ display: showEffects ? 'flex' : 'none' }"
-          >
+          <div class="effects" :style="{ display: showEffects ? 'flex' : 'none' }">
             <EffectBadgeComponent
-              v-for="(effect, index) in node.step.effects"
+              v-for="(effect, index) in step.effects"
               :key="index"
               :effect="effect"
             />
@@ -94,13 +93,12 @@ if (!props.node.step) {
         <hr/>
       </div>
     </div>
-    <div class="sub-step-list" v-if="node.children.length">
+    <div class="sub-step-list" v-if="hasChildren">
       <div class="toggle" @click="collapseSubStepList = !collapseSubStepList">
         <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
       </div>
       <StepListComponent
           :nodes="node.children"
-          :indexPrefix="index"
           :class="{
             'sub-step': node.depth < 1,
             'deep-step': node.depth >= 1,

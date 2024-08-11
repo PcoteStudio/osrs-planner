@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
 import { useGlobalStore } from '@/stores/globalStore';
-import { ref } from 'vue';
+import { computed } from 'vue';
 
 const store = useGlobalStore();
 
-const currentStep = ref(store.getCurrentRoute.getCurrentStep());
+const currentStep = computed(() => store.getCurrentRoute.getCurrentStep());
 
 const buttons = [
   {
@@ -15,7 +15,7 @@ const buttons = [
         label: 'Complete step',
         type: 'primary',
         icon: 'pi pi-check',
-        disabled: !currentStep,
+        disabled: !currentStep.value,
         action: () => {
           if (currentStep.value)
             store.toggleCompleted(currentStep.value.id);
@@ -51,13 +51,6 @@ const buttons = [
         type: 'secondary',
         icon: 'pi pi-plus',
         action: () => store.openEffectModal()
-      },
-      {
-        label: 'Edit effect',
-        type: 'danger',
-        icon: 'pi pi-pen-to-square',
-        disabled: true,
-        outlined: true,
       },
       {
         label: 'Remove effect',
