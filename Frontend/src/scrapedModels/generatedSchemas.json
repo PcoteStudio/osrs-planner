@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ScrapedItem": {
+            "properties": {
+                "bankable": {
+                    "type": "boolean"
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "duplicate": {
+                    "type": "boolean"
+                },
+                "equipable_by_player": {
+                    "type": "boolean"
+                },
+                "highalch": {
+                    "type": "number"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "number"
+                },
+                "linked_id_item": {
+                    "type": "number"
+                },
+                "linked_id_noted": {
+                    "type": "number"
+                },
+                "linked_id_placeholder": {
+                    "type": "number"
+                },
+                "lowalch": {
+                    "type": "number"
+                },
+                "members": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "noteable": {
+                    "type": "boolean"
+                },
+                "noted": {
+                    "type": "boolean"
+                },
+                "placeholder": {
+                    "type": "boolean"
+                },
+                "stackable": {
+                    "type": "boolean"
+                },
+                "stacked": {
+                    "type": "number"
+                },
+                "tradeable": {
+                    "type": "boolean"
+                },
+                "tradeable_on_ge": {
+                    "type": "boolean"
+                },
+                "wiki_url": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    }
+}

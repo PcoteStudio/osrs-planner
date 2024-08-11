@@ -336,7 +336,8 @@ export class Route {
             return route;
         }
         catch (e) {
-            throw new InvalidRouteJsonError(e);
+            if (e instanceof Error)
+                throw new InvalidRouteJsonError(e.message);
         }
     }
 

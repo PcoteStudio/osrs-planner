@@ -1,5 +1,8 @@
 import { validatePropertyType } from '@/utils/parsingValidators';
 import type { EquipmentSlotTypes } from './equipmentSlot';
+import { Ajv } from 'ajv';
+import * as schemas from '../../scrapedModels/generatedSchemas.json';
+import type { ScrapedItem } from '@/scrapedModels/scrapedItem';
 
 const itemsDb: { [id: number]: Item } = {};
 
@@ -49,6 +52,12 @@ export class Item {
     }
 
     static fromJSON(jsonObject: { [key: string]: any }): Item {
+        const ajv = new Ajv();
+        const validate = ajv.compile(schemas.definitions.ScrapedItem);
+        const valid = validate(jsonObject);
+        if (!valid) throw new Error(validate.errors?.reduce((output, error) => `${output + JSON.stringify(error.schemaPath)} ${error.message}\n`, ''));
+        jsonObject = jsonObject as ScrapedItem;
+
         validatePropertyType(Item, jsonObject, 'id', 'number');
         validatePropertyType(Item, jsonObject, 'name', 'string');
         const item = new Item(jsonObject.id, jsonObject.name);
