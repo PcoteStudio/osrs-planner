@@ -109,7 +109,7 @@ export class Route {
     updateChildrenLabel(parentNode: BaseStepTreeNode) {
         let baseLabel: string;
         if (parentNode instanceof StepTreeNode) {
-            baseLabel = parentNode.step.label;
+            baseLabel = `${parentNode.step.label}.`;
         } else {
             baseLabel = '';
         }
@@ -278,7 +278,7 @@ export class Route {
             return undefined;
         let node = this.rootNode.children[this.rootNode.children.length - 1];
         while (node.children.length)
-            node = node.children[this.rootNode.children.length - 1];
+            node = node.children[node.children.length - 1];
         return node;
     }
 

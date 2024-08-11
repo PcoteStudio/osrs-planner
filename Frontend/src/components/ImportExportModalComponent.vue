@@ -4,7 +4,7 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { ref, watch } from 'vue';
 import { downloadAsFile } from '@/utils/webHelpers';
 import { useToast } from 'primevue/usetoast';
-import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
+import { Route } from '@/models/route';
 
 const toast = useToast();
 const store = useGlobalStore();
@@ -70,7 +70,7 @@ const validateImportData = (data: string) => {
     return;
 
   try {
-    parseRouteJson(data);
+    Route.fromJSON(JSON.parse(data));
   } catch (e) {
     importDataErrors.value = e;
   }

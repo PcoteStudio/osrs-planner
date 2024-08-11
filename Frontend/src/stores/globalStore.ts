@@ -5,13 +5,12 @@ import { PlayerState } from '@/models/playerState';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { type Notification } from '@/components/Notification/notificationTypes';
-import { parseRouteJson } from '@/models/apiHelper/jsonApiHelper';
 import { SkillEffect } from '@/models/skill/skillEffect';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
         const playerState: PlayerState = new PlayerState();
-        const currentRoute : Route = new Route();
+        const currentRoute: Route = new Route();
         currentRoute.playerState = playerState;
 
         const effectState = {
@@ -50,21 +49,21 @@ export const useGlobalStore = defineStore('globalStore', {
         getCurrentRoute: (state) => {
             return state.currentRoute;
         },
-        getNodeList: (state) : StepTreeNode[] => {
+        getNodeList: (state): StepTreeNode[] => {
             return state.currentRoute.rootNode.toFlatList();
         },
-        getNodeTree: (state) : StepTreeNode[] => {
-          return state.currentRoute.rootNode.children;
+        getNodeTree: (state): StepTreeNode[] => {
+            return state.currentRoute.rootNode.children;
         },
         getNodeById: (state) => {
-            return (nodeId: string) : StepTreeNode | undefined =>
+            return (nodeId: string): StepTreeNode | undefined =>
                 state.currentRoute.rootNode.findNodeById(nodeId);
         },
         getCurrentSkillExp: (state) => {
-            return (skill: SkillsEnum) : number => state.currentRoute.getPlayerState().getSkillExperience(skill);
+            return (skill: SkillsEnum): number => state.currentRoute.getPlayerState().getSkillExperience(skill);
         },
         findEffect: (state) => {
-            return (nodeId: string, effectType: EffectTypeEnum, skillType?: SkillsEnum) : Effect | undefined => {
+            return (nodeId: string, effectType: EffectTypeEnum, skillType?: SkillsEnum): Effect | undefined => {
                 const node = state.currentRoute.rootNode.findRequiredNodeById(nodeId);
 
                 switch (effectType) {
@@ -81,7 +80,7 @@ export const useGlobalStore = defineStore('globalStore', {
         },
     },
     actions: {
-        setCurrentNode(nodeId : string) {
+        setCurrentNode(nodeId: string) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
 
             this.currentRoute.setCurrentNode(node);
@@ -175,10 +174,10 @@ export const useGlobalStore = defineStore('globalStore', {
             this.importExportState.showModal = true;
         },
         closeImportExportModal() {
-          this.importExportState.showModal = false;
+            this.importExportState.showModal = false;
         },
         importRoute(data: string) {
-            const newRoute = parseRouteJson(data);
+            const newRoute = Route.fromJSON(JSON.parse(data));
             this.setCurrentRoute(newRoute);
         },
         openStepModal() {
