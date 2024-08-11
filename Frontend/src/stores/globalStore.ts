@@ -106,9 +106,10 @@ export const useGlobalStore = defineStore('globalStore', {
             this.currentRoute.toggleNodeCompletion(node);
 
             // Set current step to the next step
+            let result = true;
             if (this.currentRoute.getCurrentStep() === node.step) {
-                while (this.currentRoute.getCurrentStep()?.completed) {
-                    this.currentRoute.stepOnce();
+                while (result && this.currentRoute.getCurrentStep()?.completed) {
+                    result = this.currentRoute.stepOnce();
                 }
             }
 
