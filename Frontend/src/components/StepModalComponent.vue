@@ -135,8 +135,8 @@ const highlight = (key: string, id: string) => {
             <template #body="{ data, field }">
               <div class="flex flex-wrap gap-1 items-center">
                 <EffectBadgeComponent
-                    v-for="(effect, index) in _.get(data, field)"
-                    :key="index"
+                    v-for="effect in _.get(data, field)"
+                    :key="effect"
                     :effect="effect"
                     :removable="true"
                     :command="() => removeEffect(data, effect)"

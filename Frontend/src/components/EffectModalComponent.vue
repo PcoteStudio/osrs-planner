@@ -8,24 +8,24 @@ import { EffectTypeEnum, getEffectTypes } from '@/models/effect';
 import SkillEffectModal from '@/components/SkillEffectModal.vue';
 import CompletionEffectModal from '@/components/CompletionEffectModal.vue';
 import ItemEffectModal from '@/components/ItemEffectModal.vue';
+import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 
 const store = useGlobalStore();
 
 const selectedEffectType = ref();
 const selectedNode = ref();
 
-const title = computed(() => {
-  if (selectedEffectType.value)
-    return `Add ${selectedEffectType.value?.name} Effect`;
-  return 'Add Effect';
-});
-
 const effectTypes = computed(() => getEffectTypes());
 const nodes = ref(store.getNodeList);
+const effectList = computed(() => nodes.value.find(n => n.step.id === selectedNode.value.step.id)?.step.effects);
 
-watch(store.getEffectState, (state) => {
-  selectedEffectType.value = effectTypes.value.find(e => e.type === state.type);
-  selectedNode.value = state.node || store.getCurrentRoute.currentNode;
+const showModal = computed(() => store.getEffectState.showModal);
+watch(showModal, () => {
+  if (!showModal.value)
+    return;
+
+  selectedEffectType.value = effectTypes.value.find(e => e.type === store.getEffectState.type);
+  selectedNode.value = store.getEffectState.node || store.getCurrentRoute.currentNode;
 }, { immediate: true });
 
 </script>
@@ -33,10 +33,17 @@ watch(store.getEffectState, (state) => {
 <template>
   <Dialog modal
           v-model:visible="store.getEffectState.showModal"
-          :header="title"
+          header="Edit effects"
           :style="{ width: '25rem' }"
   >
     <div class="content">
+      <div class="effect-list">
+        <EffectBadgeComponent v-for="effect in effectList" :key="effect"
+                              :effect="effect"
+                              :removable="true"
+                              :command="() => store.removeEffect(selectedNode.step.id, effect)"
+        />
+      </div>
       <FloatLabel>
           <Select v-model="selectedNode"
                   id="node"
@@ -104,7 +111,16 @@ watch(store.getEffectState, (state) => {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    margin-top: 1.5em;
+
+    .effect-list {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      & > * {
+        width: auto;
+      }
+    }
 
     * {
       width: 100%;

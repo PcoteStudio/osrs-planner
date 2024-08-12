@@ -13,7 +13,7 @@ const buttons = [
     options: [
       {
         label: 'Complete step',
-        type: 'primary',
+        type: 'secondary',
         icon: 'pi pi-check',
         disabled: !currentStep.value,
         action: () => {
@@ -34,30 +34,16 @@ const buttons = [
         disabled: true,
         outlined: true,
       },
-      {
-        label: 'Remove step',
-        type: 'danger',
-        icon: 'pi pi-trash',
-        disabled: true,
-        outlined: true,
-      },
     ]
   },
   {
     label: 'Effects',
     options: [
       {
-        label: 'Add effect',
+        label: 'Edit effect',
         type: 'secondary',
-        icon: 'pi pi-plus',
+        icon: 'pi pi-pen-to-square',
         action: () => store.openEffectModal()
-      },
-      {
-        label: 'Remove effect',
-        type: 'danger',
-        icon: 'pi pi-trash',
-        disabled: true,
-        outlined: true,
       },
     ],
   },

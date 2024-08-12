@@ -64,7 +64,6 @@ const addEffect = () => {
 
   const newEffect = new SkillEffect(selectedSkill.value.type, Number(experience.value));
   store.addEffect(props.node.step.id, newEffect);
-  store.closeEffectModal();
 };
 
 const currentAppliedEffect = computed(() => store.findEffect(props.node.step.id, EffectTypeEnum.Skill, selectedSkill.value?.name));

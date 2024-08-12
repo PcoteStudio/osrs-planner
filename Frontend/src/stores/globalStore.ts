@@ -133,6 +133,7 @@ export const useGlobalStore = defineStore('globalStore', {
         },
         addEffect(nodeId: string, newEffect: Effect) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
+            this.getEffectState.skill = undefined;
 
             this.currentRoute.addEffect(node, newEffect);
 

@@ -84,8 +84,8 @@ onMounted(() => {
         <div class="footer">
           <div class="effects" :style="{ display: showEffects ? 'flex' : 'none' }">
             <EffectBadgeComponent
-              v-for="(effect, index) in step.effects"
-              :key="index"
+              v-for="effect in step.effects"
+              :key="effect"
               :effect="effect"
             />
           </div>
