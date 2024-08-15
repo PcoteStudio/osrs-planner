@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateEnumProperty, validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
+import { validateEnumProperty, validatePropertyIterability, validatePropertyType } from '@/utils/jsonHelper';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { Step } from '@/models/step';

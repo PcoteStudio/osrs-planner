@@ -3,7 +3,7 @@ import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
 import { type BaseStepTreeNode, RootStepTreeNode, StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
-import { validatePropertyType } from '@/utils/parsingValidators';
+import { validatePropertyType } from '@/utils/jsonHelper';
 import type { Effect } from './effect';
 import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
 

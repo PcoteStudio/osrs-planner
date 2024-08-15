@@ -1,4 +1,4 @@
-import { validatePropertyIterability, validatePropertyType } from '@/utils/parsingValidators';
+import { validatePropertyIterability, validatePropertyType } from '@/utils/jsonHelper';
 import { Step } from './step';
 
 
@@ -42,7 +42,7 @@ export abstract class AbstractStepTreeNode {
 }
 
 
-export class RootStepTreeNode extends AbstractStepTreeNode{
+export class RootStepTreeNode extends AbstractStepTreeNode {
 
     static fromJSON(jsonObject: Record<string, any>): RootStepTreeNode {
         validatePropertyType(RootStepTreeNode, jsonObject, 'depth', 'number');

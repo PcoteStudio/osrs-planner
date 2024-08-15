@@ -1,4 +1,4 @@
-import { validateEnumProperty, validatePropertyType } from '@/utils/parsingValidators';
+import { validateEnumProperty, validatePropertyType } from '@/utils/jsonHelper';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { PlayerState } from '@/models/playerState';
 import { StateWarning } from '@/models/stateWarning';
