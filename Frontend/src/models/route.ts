@@ -1,7 +1,7 @@
 import { PlayerState } from './playerState';
 import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
-import { type BaseStepTreeNode, RootStepTreeNode, StepTreeNode } from './stepTreeNode';
+import { AbstractStepTreeNode, type BaseStepTreeNode, RootStepTreeNode, StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
 import { validatePropertyType } from '@/utils/jsonHelper';
 import type { Effect } from './effect';
@@ -52,15 +52,14 @@ export class Route {
         return newNode;
     }
 
-    removeNode(nodeToRemove: StepTreeNode) {
-        this.invalidateNextNodes(nodeToRemove);
-        if (nodeToRemove?.parent) {
-            const nodeIndex = nodeToRemove.parent.children.indexOf(nodeToRemove);
-            nodeToRemove.parent.children.splice(nodeIndex, 1);
-            this.updateChildrenLabel(nodeToRemove.parent);
-        } else if (nodeToRemove?.children.length) {
-            nodeToRemove.children = [];
-        }
+    removeNode(node: StepTreeNode) {
+        const previousNode = this.getPreviousNode(node);
+        const nextNode = this.getNextNode(node);
+        if (!previousNode && !nextNode) throw new Error('Cannot remove the only node');
+        this.invalidateNextNodes(node);
+        const nodeIndex = node.parent.children.indexOf(node);
+        node.parent.children.splice(nodeIndex, 1);
+        this.updateChildrenLabel(node.parent);
     }
 
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
@@ -136,26 +135,32 @@ export class Route {
     }
 
     executeOnNextNodes(node: StepTreeNode, func: (node: StepTreeNode) => void) {
-        while (node !== undefined) {
-            func(node);
-            if (node.parent) { // Find the next node
-                const currentNodeIndex = node.parent.children.indexOf(node);
-                if (node.parent.children.length > currentNodeIndex + 1) {
-                    node = node.parent.children[currentNodeIndex + 1];
-                    while (node.children.length) {
-                        node = node.children[0];
-                    }
-                } else {
-                    if (node.parent instanceof RootStepTreeNode)
-                        return false;
-                    node = node.parent;
+        func(node);
+        const nextNode = this.getNextNode(node);
+        if (nextNode)
+            this.executeOnNextNodes(nextNode, func);
+    }
+
+    getNextNode(node: AbstractStepTreeNode): StepTreeNode | undefined {
+        let currentNode = node;
+        if (currentNode instanceof StepTreeNode) {
+            const currentNodeIndex = currentNode.parent.children.indexOf(currentNode);
+            if (currentNode.parent.children.length > currentNodeIndex + 1) {
+                currentNode = currentNode.parent.children[currentNodeIndex + 1];
+                while (currentNode.children.length) {
+                    currentNode = currentNode.children[0];
                 }
             } else {
-                while (node.children.length) {
-                    node = node.children[0];
-                }
+                if (currentNode.parent instanceof RootStepTreeNode)
+                    return undefined;
+                currentNode = currentNode.parent;
+            }
+        } else {
+            while (currentNode.children.length) {
+                currentNode = currentNode.children[0];
             }
         }
+        return (currentNode !== node) ? currentNode as StepTreeNode : undefined;
     }
 
     invalidateNextNodes(node: StepTreeNode | undefined) {
@@ -171,33 +176,12 @@ export class Route {
     stepOnce(): boolean {
         if (this.currentNode?.step)
             this.currentNode.step.resultingState = this.playerState.clone();
-        if (!this.currentNode) { // Find and execute the first node
-            this.currentNode = this.rootNode.children[0];
-            while (this.currentNode?.children.length) {
-                this.currentNode = this.currentNode.children[0];
-            }
-        } else { // Execute the next node
-            const currentNodeIndex = this.currentNode.parent.children.indexOf(this.currentNode);
-            if (currentNodeIndex === -1) {
-                throw new Error('Node was not found in parent\'s children');
-            }
-            if (this.currentNode.parent.children.length > currentNodeIndex + 1) {
-                this.currentNode = this.currentNode.parent.children[currentNodeIndex + 1];
-                while (this.currentNode.children.length) {
-                    this.currentNode = this.currentNode.children[0];
-                }
-            } else {
-                if (this.currentNode.parent instanceof RootStepTreeNode)
-                    return false;
-                this.currentNode = this.currentNode.parent;
-            }
-        }
 
-        if (this.currentNode.step) {
-            this.currentNode.step.applyEffects(this.playerState);
-            return true;
-        }
-        return false;
+        const nextNode = this.getNextNode(this.currentNode ?? this.rootNode);
+        if (!nextNode) return false;
+        this.currentNode = nextNode;
+        this.currentNode.step.applyEffects(this.playerState);
+        return true;
     }
 
     completeNode(node: StepTreeNode) {

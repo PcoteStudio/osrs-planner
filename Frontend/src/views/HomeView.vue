@@ -9,7 +9,6 @@ import AddEffectModalComponent from '@/components/EffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
 import ImportExportModalComponent from '@/components/ImportExportModalComponent.vue';
-import StepModalComponent from '@/components/StepModalComponent.vue';
 import NotificationComponent from '@/components/Notification/NotificationComponent.vue';
 
 const store = useGlobalStore();

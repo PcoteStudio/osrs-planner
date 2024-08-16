@@ -1,5 +1,5 @@
 import type { EquipmentSlotTypes } from './equipmentSlot';
-import * as schemas from '../../generatedSchemas.json';
+import schemas from '../../generatedSchemas.json';
 import type { ScrapedItem } from '@/scrapedModels/scrapedItem';
 import { JsonHelper } from '@/utils/jsonHelper';
 
