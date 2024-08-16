@@ -93,7 +93,7 @@ const remove = () => store.removeStep(step.value.id);
         </div>
       </div>
       <div class="label">
-        <div v-if="!editable" class="header">
+        <div class="header">
           <div class="actions">
             <Button @click="showEffects = !showEffects"
                     size="small"
@@ -105,6 +105,22 @@ const remove = () => store.removeStep(step.value.id);
                     rounded
                     size="small"
                     icon="pi pi-check"
+            />
+            <Button @click="openContextMenu($event)"
+                    @contextmenu="openContextMenu($event)"
+                    v-if="editable"
+                    :severity="'secondary'"
+                    rounded outlined
+                    size="small"
+                    icon="pi pi-plus"
+            />
+            <Button @click="remove"
+                    v-if="editable"
+                    :severity="'secondary'"
+                    rounded outlined
+                    size="small"
+                    icon="pi pi-trash"
+                    class="remove-button"
             />
           </div>
         </div>
@@ -129,30 +145,6 @@ const remove = () => store.removeStep(step.value.id);
             />
           </div>
         </div>
-      </div>
-      <div class="flex flex-col gap-2 items-center" v-if="editable">
-        <Button @click="toggleCompleted"
-                :severity="isCompleted ? 'primary' : 'secondary'"
-                rounded
-                size="small"
-                icon="pi pi-check"
-        />
-        <Button @click="openContextMenu($event)"
-                @contextmenu="openContextMenu($event)"
-                :severity="'secondary'"
-                rounded outlined
-                size="small"
-                icon="pi pi-plus"
-                :style="{ width: '2rem', height: '2rem'}"
-        />
-        <Button @click="remove"
-                :severity="'secondary'"
-                rounded outlined
-                size="small"
-                icon="pi pi-trash"
-                class="remove-button"
-                :style="{ width: '2rem', height: '2rem'}"
-        />
       </div>
     </div>
     <hr>
@@ -201,6 +193,7 @@ hr {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-left: 2rem;
 
     .header {
       display: flex;
@@ -230,12 +223,12 @@ hr {
   }
 
   .tag {
+    position: absolute;
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    aspect-ratio: 1/1;
+    height: 2.5rem;
 
     .icon {
       background-color: #242424;
@@ -243,15 +236,16 @@ hr {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
+      border-radius: 2rem;
+      min-width: 2.5rem;
 
       .label {
         color: white;
         text-decoration: none;
         font-weight: bolder;
         text-align: center;
+        padding: 0.5em;
+        margin-left: 0;
       }
 
       &:hover {
@@ -297,23 +291,12 @@ hr {
   }
 }
 
-.sub-step {
-  .content {
-    background: linear-gradient(90deg, transparent 1.75rem, #1a1a1a 1.75rem);
-    .tag > .icon {
-      font-size: smaller;
-      width: 90%;
-    }
-  }
+.sub-step .content {
+  background: linear-gradient(90deg, transparent 1.75rem, #1a1a1a 1.75rem);
 }
 
-.deep-step {
-  .content{
-    background: linear-gradient(90deg, transparent 1.75rem, #111111 1.75rem);
-    .tag > .icon {
-      width: 80%;
-    }
-  }
+.deep-step .content {
+  background: linear-gradient(90deg, transparent 1.75rem, #111111 1.75rem);
 }
 
 .sub-step-list {
