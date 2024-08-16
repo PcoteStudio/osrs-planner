@@ -5,9 +5,8 @@ import type { StepTreeNode } from '@/models/stepTreeNode';
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { Effect } from '@/models/effect';
-import SkillComponent from '@/components/SkillComponent.vue';
-import { Skill } from '@/models/skill/skill';
 import ContextMenu from 'primevue/contextmenu';
+import { useDragStore } from '@/stores/dragStore';
 
 const props = withDefaults(defineProps<{
   node: StepTreeNode;
@@ -17,6 +16,7 @@ const props = withDefaults(defineProps<{
 });
 
 const store = useGlobalStore();
+const dragStore = useDragStore();
 
 const collapseSubStepList = ref(false);
 const showEffects = ref(false);
@@ -63,10 +63,54 @@ const addEffect = () => store.openEffectModal(step.value.id);
 const removeEffect = (effect: Effect) => store.removeEffect(step.value.id, effect);
 const openContextMenu = (event : MouseEvent) => menu.value.show(event);
 const remove = () => store.removeStep(step.value.id);
+
+const content = ref();
+
+watch(dragStore, () => {
+  if (dragStore.isDragging) {
+    content.value.classList.add('no-drag');
+  }
+  else {
+    content.value.classList.remove('no-drag');
+  }
+});
+
+const dragStart = (event: DragEvent) => {
+  dragStore.dragFrom = step.value.id;
+  dragStore.isDragging = true;
+};
+
+const dragend = (event: DragEvent) => {
+  dragStore.isDragging = false;
+
+  if (dragStore.dragFrom && dragStore.dragTarget)
+    store.moveNode(dragStore.dragFrom, dragStore.dragTarget);
+};
+
+const dragenter = (event: DragEvent) => {
+  if (!(event.target instanceof HTMLElement))
+    return;
+
+  dragStore.dragTarget = step.value.id;
+  event.target.classList.add('dragover');
+};
+
+const dragleave = (event: DragEvent) => {
+  if (!(event.target instanceof HTMLElement))
+    return;
+
+  event.target.classList.remove('dragover');
+};
 </script>
 
 <template>
-  <div class="step" v-if="step">
+  <div :id="step.id"
+       class="step"
+       v-if="step"
+       draggable="true"
+       @dragstart="dragStart"
+       @dragend="dragend"
+  >
     <ContextMenu ref="menu" :model="items">
       <template #item="{ item, props }">
         <a v-ripple class="flex items-center" v-bind="props.action">
@@ -76,12 +120,18 @@ const remove = () => store.removeStep(step.value.id);
       </template>
     </ContextMenu>
 
-    <div :id="isCurrentStep ? 'current': undefined" class="content" :class="{
-      'first-child': isFirstChild,
-      'last-child': isLastChild,
-      'current': isCurrentStep,
-      'completed': isCompleted
-    }">
+    <div :id="isCurrentStep ? 'current': undefined"
+         class="content"
+         :class="{
+           'first-child': isFirstChild,
+           'last-child': isLastChild,
+           'current': isCurrentStep,
+           'completed': isCompleted
+         }"
+         @dragleave="dragleave"
+         @dragenter="dragenter"
+         ref="content"
+    >
       <div class="tag"
            @click="setCurrentNode"
            v-tooltip="step.label"
@@ -93,7 +143,7 @@ const remove = () => store.removeStep(step.value.id);
         </div>
       </div>
       <div class="label">
-        <div class="header">
+        <div v-if="!dragStore.isDragging" class="header">
           <div class="actions">
             <Button @click="showEffects = !showEffects"
                     size="small"
@@ -130,7 +180,7 @@ const remove = () => store.removeStep(step.value.id);
             {{ step.description }}
           </span>
         </div>
-        <div class="footer" :style="{ alignItems: editable ? 'flex-start' : 'flex-end' }">
+        <div v-if="!dragStore.isDragging" class="footer" :style="{ alignItems: editable ? 'flex-start' : 'flex-end' }">
           <div class="effects" :style="{ display: (showEffects || editable) ? 'flex' : 'none' }">
             <EffectBadgeComponent
               v-for="effect in step.effects"
@@ -145,11 +195,12 @@ const remove = () => store.removeStep(step.value.id);
             />
           </div>
         </div>
+        <div v-if="dragStore.isDragging" class="dropzone"></div>
       </div>
     </div>
     <hr>
     <div class="sub-step-list" v-if="hasChildren">
-      <div class="toggle" @click="collapseSubStepList = !collapseSubStepList">
+      <div v-if="!dragStore.isDragging" class="toggle" @click="collapseSubStepList = !collapseSubStepList">
         <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
       </div>
       <StepListComponent
@@ -165,6 +216,12 @@ const remove = () => store.removeStep(step.value.id);
   </div>
 </template>
 <style scoped>
+.no-drag {
+  * {
+    pointer-events: none;
+  }
+}
+
 hr {
   margin-left: 1.75rem;
   background-color: #303030;
@@ -178,6 +235,18 @@ hr {
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.5rem;
+
+  .dropzone {
+    width: 90%;
+    height: 2rem;
+    border: rgba(0, 191, 255, 0.3) 3px dashed;
+  }
+
+  &.dragover {
+    .dropzone {
+      border-color: deepskyblue;
+    }
+  }
 
   .body, .label {
     width: 100%;

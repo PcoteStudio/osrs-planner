@@ -4,7 +4,7 @@ import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from '@/components/DebugComponent.vue';
 import InventoryComponent from '@/components/SkillTabComponent.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import AddEffectModalComponent from '@/components/EffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
@@ -15,15 +15,12 @@ const store = useGlobalStore();
 
 store.getCurrentRoute.initializeSomeSteps();
 
-const nodeList = ref(store.getNodeTree);
-
 //TODO: Current step is set to the 1st step for testing
 onMounted(() => {
   const currentStep = store.getCurrentRoute.getCurrentStep();
   if (currentStep)
     store.setCurrentNode(currentStep.id);
 });
-
 </script>
 
 <template>
@@ -37,7 +34,7 @@ onMounted(() => {
 
     <!--  Regular components  -->
     <TabComponent :min-width="'36rem'" max-width="30rem">
-      <StepList :nodes="nodeList" id="stepsRoot" class="first-child" :editable="store.getStepState.isEditing" />
+      <StepList :nodes="store.getNodeTree" id="stepsRoot" class="first-child" :editable="store.getStepState.isEditing" />
     </TabComponent>
     <TabComponent :min-width="'24rem'">
       <DebugComponent />

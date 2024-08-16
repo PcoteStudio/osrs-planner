@@ -2,8 +2,10 @@
 import { useGlobalStore } from '@/stores/globalStore';
 import { XpTable } from '@/models/skill/xpTable';
 import { ref } from 'vue';
+import { useDragStore } from '@/stores/dragStore';
 
 const state = useGlobalStore();
+const dragStore = useDragStore();
 const xpTable = new XpTable(99); // TODO move table to static util
 
 const levels = ref([]);
@@ -15,6 +17,7 @@ for (let i = 1; i <= 99; i++) {
 <template>
 <div class="debug">
   <pre>
+Dragging: {{ dragStore.isDragging }}
 {{ state.currentRoute.toString(state.currentRoute.rootNode) }}
 {{ state.currentRoute.getCurrentStep() }}
 {{ state.currentRoute.getPlayerState().skills }}

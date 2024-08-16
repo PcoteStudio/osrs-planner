@@ -205,6 +205,12 @@ export const useGlobalStore = defineStore('globalStore', {
         removeStep(nodeId: string) {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
             this.currentRoute.removeNode(node);
-        }
+        },
+        moveNode(nodeIdToMove: string, previousNodeId: string) {
+            const nodeToMove = this.currentRoute.rootNode.findRequiredNodeById(nodeIdToMove);
+            const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
+
+            this.getCurrentRoute.moveAfterNode(nodeToMove, previousNode);
+        },
     },
 });
