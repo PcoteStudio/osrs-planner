@@ -52,10 +52,12 @@ export class Route {
         return newNode;
     }
 
+    canRemoveNode(node: StepTreeNode) {
+        return this.getPreviousNode(node) || this.getNextNode(node);
+    }
+
     removeNode(node: StepTreeNode) {
-        const previousNode = this.getPreviousNode(node);
-        const nextNode = this.getNextNode(node);
-        if (!previousNode && !nextNode) throw new Error('Cannot remove the only node');
+        if (!this.canRemoveNode(node)) throw new Error('Cannot remove the only node');
         this.invalidateNextNodes(node);
         const nodeIndex = node.parent.children.indexOf(node);
         node.parent.children.splice(nodeIndex, 1);

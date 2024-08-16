@@ -1,9 +1,11 @@
-import { nanoid } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 import { PlayerState } from './playerState';
 import { Effect } from '@/models/effect';
 import { validatePropertyIterability, validatePropertyType } from '@/utils/jsonHelper';
 import { EffectFactory } from './effectFactory';
 import { SkillEffect } from './skill/skillEffect';
+
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
 
 export class Step {
     id: string = nanoid();
