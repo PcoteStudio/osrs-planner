@@ -29,6 +29,7 @@
     "autoprefixer": "^10.4.20",
     "fuzzysort": "^3.0.2",
     "lodash": "^4.17.21",
+    "lorem-ipsum": "^2.0.8",
     "nanoid": "^5.0.7",
     "pinia": "^2.1.7",
     "postcss": "^8.4.41",

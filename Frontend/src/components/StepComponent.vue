@@ -4,29 +4,43 @@ import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, onMounted, ref, watch } from 'vue';
+import type { Effect } from '@/models/effect';
+import SkillComponent from '@/components/SkillComponent.vue';
+import { Skill } from '@/models/skill/skill';
+import ContextMenu from 'primevue/contextmenu';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   node: StepTreeNode;
-}>();
+  editable: boolean;
+}>(), {
+  editable: false,
+});
 
 const store = useGlobalStore();
 
 const collapseSubStepList = ref(false);
 const showEffects = ref(false);
+const menu = ref();
+
+const items = ref([
+  {
+    label: 'Step',
+    icon: 'pi pi-plus',
+    command: () => store.addStep(step.value.id)
+  },
+  {
+    label: 'Sub-Step',
+    icon: 'pi pi-plus-circle',
+    command: () => store.addSubStep(step.value.id)
+  }
+]);
 
 const step = computed(() => props.node.step);
 const isCurrentStep = computed(() => store.currentRoute.getCurrentStep() === step.value);
 const isFirstChild = computed(() =>  store.currentRoute.getFirstStep() === step.value);
 const isLastChild = computed(() =>  store.currentRoute.getLastStep() === step.value);
 const isCompleted = computed(() => step.value.completed);
-const displayStepLabel = computed(()=> {
-  const currentNodeDepth = store.getCurrentRoute.currentNode?.depth || 0;
-  return props.node.depth <= (currentNodeDepth + 1);
-});
 const hasChildren = computed(() => props.node.children.length > 0);
-
-const setCurrentNode = () => store.setCurrentNode(step.value.id);
-const toggleCompleted = () => store.toggleCompleted(step.value.id);
 
 watch(isCurrentStep, () => {
   showEffects.value = isCurrentStep.value;
@@ -42,10 +56,26 @@ onMounted(() => {
     showEffects.value = true;
   }
 });
+
+const setCurrentNode = () => store.setCurrentNode(step.value.id);
+const toggleCompleted = () => store.toggleCompleted(step.value.id);
+const addEffect = () => store.openEffectModal(step.value.id);
+const removeEffect = (effect: Effect) => store.removeEffect(step.value.id, effect);
+const openContextMenu = (event : MouseEvent) => menu.value.show(event);
+const remove = () => store.removeStep(step.value.id);
 </script>
 
 <template>
   <div class="step" v-if="step">
+    <ContextMenu ref="menu" :model="items">
+      <template #item="{ item, props }">
+        <a v-ripple class="flex items-center" v-bind="props.action">
+          <span :class="item.icon" />
+          <span class="ml-2">{{ item.label }}</span>
+        </a>
+      </template>
+    </ContextMenu>
+
     <div :id="isCurrentStep ? 'current': undefined" class="content" :class="{
       'first-child': isFirstChild,
       'last-child': isLastChild,
@@ -57,13 +87,13 @@ onMounted(() => {
            v-tooltip="step.label"
       >
         <div class="icon">
-          <span class="label" v-if="displayStepLabel">
+          <span class="label">
             {{ step.label }}
           </span>
         </div>
       </div>
       <div class="label">
-        <div class="header">
+        <div v-if="!editable" class="header">
           <div class="actions">
             <Button @click="showEffects = !showEffects"
                     size="small"
@@ -79,26 +109,60 @@ onMounted(() => {
           </div>
         </div>
         <div class="body">
-          {{ step.description }}
+          <EditTextarea v-if="editable" v-model="step.description" />
+          <span v-else>
+            {{ step.description }}
+          </span>
         </div>
-        <div class="footer">
-          <div class="effects" :style="{ display: showEffects ? 'flex' : 'none' }">
+        <div class="footer" :style="{ alignItems: editable ? 'flex-start' : 'flex-end' }">
+          <div class="effects" :style="{ display: (showEffects || editable) ? 'flex' : 'none' }">
             <EffectBadgeComponent
               v-for="effect in step.effects"
               :key="effect"
               :effect="effect"
+              :removable="editable"
+              :command="() => removeEffect(effect)"
+            />
+            <Button v-if="editable" type="button" icon="pi pi-plus" rounded severity="primary" outlined
+                    :style="{ height: '2em', width: '2em', fontSize: '0.9em' }" size="small"
+                    @click="addEffect"
             />
           </div>
         </div>
-        <hr/>
+      </div>
+      <div class="flex flex-col gap-2 items-center" v-if="editable">
+        <Button @click="toggleCompleted"
+                :severity="isCompleted ? 'primary' : 'secondary'"
+                rounded
+                size="small"
+                icon="pi pi-check"
+        />
+        <Button @click="openContextMenu($event)"
+                @contextmenu="openContextMenu($event)"
+                :severity="'secondary'"
+                rounded outlined
+                size="small"
+                icon="pi pi-plus"
+                :style="{ width: '2rem', height: '2rem'}"
+        />
+        <Button @click="remove"
+                :severity="'secondary'"
+                rounded outlined
+                size="small"
+                icon="pi pi-trash"
+                class="remove-button"
+                :style="{ width: '2rem', height: '2rem'}"
+        />
       </div>
     </div>
+    <hr>
     <div class="sub-step-list" v-if="hasChildren">
       <div class="toggle" @click="collapseSubStepList = !collapseSubStepList">
         <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
       </div>
       <StepListComponent
           :nodes="node.children"
+          :editable="editable"
           :class="{
             'sub-step': node.depth < 1,
             'deep-step': node.depth >= 1,
@@ -109,15 +173,28 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
+hr {
+  margin-left: 1.75rem;
+  background-color: #303030;
+  height: 2px;
+  border: 0;
+}
+
 .content {
   position: relative;
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.5rem;
   padding: 0.5rem;
 
   .body, .label {
     width: 100%;
+  }
+
+  .remove-button:hover {
+    color: #ff0000;
+    border-color: #a10000;
+    background-color: rgba(161, 0, 0, 0.2);
   }
 
   .label {
@@ -145,17 +222,11 @@ onMounted(() => {
 
       .effects {
         flex-wrap: wrap;
-        align-items: flex-end;
+        align-items: center;
         gap: 0.3rem;
       }
     }
 
-    hr {
-      margin: 0.5rem -0.5rem -0.5rem -1.75rem;
-      background-color: #303030;
-      height: 2px;
-      border: 0;
-    }
   }
 
   .tag {
@@ -228,19 +299,19 @@ onMounted(() => {
 
 .sub-step {
   .content {
-    background-color: #1a1a1a;
+    background: linear-gradient(90deg, transparent 1.75rem, #1a1a1a 1.75rem);
     .tag > .icon {
       font-size: smaller;
-      width: 75%;
+      width: 90%;
     }
   }
 }
 
 .deep-step {
   .content{
-    background-color: #111;
+    background: linear-gradient(90deg, transparent 1.75rem, #111111 1.75rem);
     .tag > .icon {
-      width: 50%;
+      width: 80%;
     }
   }
 }
@@ -251,7 +322,6 @@ onMounted(() => {
   .hidden {
     grid-template-rows: 0fr;
     opacity: 0;
-    z-index: 0;
   }
 
   .toggle {

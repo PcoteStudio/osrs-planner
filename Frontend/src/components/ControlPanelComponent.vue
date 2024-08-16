@@ -7,116 +7,118 @@ const store = useGlobalStore();
 
 const currentStep = computed(() => store.getCurrentRoute.getCurrentStep());
 
-const buttons = [
-  {
-    label: 'Current Step',
-    options: [
-      {
-        label: 'Complete step',
-        type: 'secondary',
-        icon: 'pi pi-check',
-        disabled: !currentStep.value,
-        action: () => {
-          if (currentStep.value)
-            store.toggleCompleted(currentStep.value.id);
+const buttons = computed(() => {
+  return [
+    {
+      label: 'Current Step',
+      options: [
+        {
+          label: 'Complete step',
+          type: 'secondary',
+          icon: 'pi pi-check',
+          disabled: !currentStep.value,
+          action: () => {
+            if (currentStep.value)
+              store.toggleCompleted(currentStep.value.id);
           },
-      },
-      {
-        label: 'Edit step',
-        type: 'secondary',
-        icon: 'pi pi-pen-to-square',
-        action: () => store.openStepModal(),
-      },
-      {
-        label: 'Add step',
-        type: 'danger',
-        icon: 'pi pi-plus',
-        disabled: true,
-        outlined: true,
-      },
-    ]
-  },
-  {
-    label: 'Effects',
-    options: [
-      {
-        label: 'Edit effect',
-        type: 'secondary',
-        icon: 'pi pi-pen-to-square',
-        action: () => store.openEffectModal()
-      },
-    ],
-  },
-  {
-    label: 'Inventory',
-    options: [
-      {
-        label: 'Add inventory',
-        type: 'danger',
-        icon: 'pi pi-plus',
-        disabled: true,
-        outlined: true,
-      },
-      {
-        label: 'Reset inventory',
-        type: 'danger',
-        icon: 'pi pi-refresh',
-        disabled: true,
-        outlined: true,
-      },
-      {
-        label: 'Clear inventory',
-        type: 'danger',
-        icon: 'pi pi-trash',
-        disabled: true,
-        outlined: true,
-      },
-    ],
-  },
-  {
-    label: 'Equipment',
-    options: [
-      {
-        label: 'Add equipment',
-        type: 'danger',
-        icon: 'pi pi-plus',
-        disabled: true,
-        outlined: true,
-      },
-      {
-        label: 'Reset equipment',
-        type: 'danger',
-        icon: 'pi pi-refresh',
-        disabled: true,
-        outlined: true,
-      },
-      {
-        label: 'Clear equipment',
-        type: 'danger',
-        icon: 'pi pi-trash',
-        disabled: true,
-        outlined: true,
-      },
-    ]
-  },
-  {
-    label: 'Route',
-    options: [
-      {
-        label: 'Import current route',
-        type: 'secondary',
-        icon: 'pi pi-file-import',
-        action: () => store.openImportExportModal('Import'),
-      },
-      {
-        label: 'Export current route',
-        type: 'secondary',
-        icon: 'pi pi-save',
-        action: () => store.openImportExportModal('Export')
-      }
-    ]
-  }
-];
+        },
+        {
+          label: 'Edit step',
+          type: store.getStepState.isEditing ? 'primary' : 'secondary',
+          icon: 'pi pi-pen-to-square',
+          action: store.toggleIsEditingSteps,
+        },
+        {
+          label: 'Add step',
+          type: 'danger',
+          icon: 'pi pi-plus',
+          disabled: true,
+          outlined: true,
+        },
+      ]
+    },
+    {
+      label: 'Effects',
+      options: [
+        {
+          label: 'Edit effect',
+          type: 'secondary',
+          icon: 'pi pi-pen-to-square',
+          action: () => store.openEffectModal()
+        },
+      ],
+    },
+    {
+      label: 'Inventory',
+      options: [
+        {
+          label: 'Add inventory',
+          type: 'danger',
+          icon: 'pi pi-plus',
+          disabled: true,
+          outlined: true,
+        },
+        {
+          label: 'Reset inventory',
+          type: 'danger',
+          icon: 'pi pi-refresh',
+          disabled: true,
+          outlined: true,
+        },
+        {
+          label: 'Clear inventory',
+          type: 'danger',
+          icon: 'pi pi-trash',
+          disabled: true,
+          outlined: true,
+        },
+      ],
+    },
+    {
+      label: 'Equipment',
+      options: [
+        {
+          label: 'Add equipment',
+          type: 'danger',
+          icon: 'pi pi-plus',
+          disabled: true,
+          outlined: true,
+        },
+        {
+          label: 'Reset equipment',
+          type: 'danger',
+          icon: 'pi pi-refresh',
+          disabled: true,
+          outlined: true,
+        },
+        {
+          label: 'Clear equipment',
+          type: 'danger',
+          icon: 'pi pi-trash',
+          disabled: true,
+          outlined: true,
+        },
+      ]
+    },
+    {
+      label: 'Route',
+      options: [
+        {
+          label: 'Import current route',
+          type: 'secondary',
+          icon: 'pi pi-file-import',
+          action: () => store.openImportExportModal('Import'),
+        },
+        {
+          label: 'Export current route',
+          type: 'secondary',
+          icon: 'pi pi-save',
+          action: () => store.openImportExportModal('Export')
+        }
+      ]
+    }
+  ];
+});
 
 </script>
 

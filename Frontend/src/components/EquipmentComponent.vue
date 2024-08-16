@@ -42,7 +42,6 @@ store.getCurrentRoute.getPlayerState().equipment.swapSlot(EquipmentSlotTypes.Hea
 
 <style scoped>
 .equipment {
-  background-color: var(--color-background-soft);
   display: flex;
   flex-direction: column;
   gap: 3%;

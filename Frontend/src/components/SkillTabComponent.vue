@@ -60,7 +60,6 @@ const openContextMenu = (event : MouseEvent, skill: Skill) => {
 
 <style scoped>
   .skill-tab {
-    background-color: var(--color-background-soft);
     padding: 1rem;
     display: grid;
     grid-template-columns: repeat(3, 1fr);

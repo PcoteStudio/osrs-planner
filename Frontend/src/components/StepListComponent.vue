@@ -2,9 +2,12 @@
 import StepComponent from '@/components/StepComponent.vue';
 import { StepTreeNode } from '@/models/stepTreeNode';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   nodes: StepTreeNode[];
-}>();
+  editable?: boolean;
+}>(), {
+  editable: false,
+});
 
 </script>
 
@@ -13,7 +16,7 @@ const props = defineProps<{
     <div class="task-list">
       <ol>
         <li :key="index" v-for="(node, index) in nodes">
-          <StepComponent :index="node.step.label" :node="node" />
+          <StepComponent :index="node.step.label" :node="node" :editable="editable" />
         </li>
       </ol>
     </div>
@@ -40,7 +43,6 @@ const props = defineProps<{
 }
 
 .task-list {
-  background-color: var(--color-background-soft);
   overflow: hidden;
 
   ol {

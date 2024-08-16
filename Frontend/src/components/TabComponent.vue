@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
 
 <style scoped>
 .tab {
+  background-color: var(--color-background-soft);
   display: flex;
   flex: 1;
 

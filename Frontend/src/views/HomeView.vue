@@ -35,11 +35,13 @@ onMounted(() => {
     <!--  Modals  -->
     <AddEffectModalComponent />
     <ImportExportModalComponent />
-    <StepModalComponent />
 
     <!--  Regular components  -->
-    <TabComponent :min-width="'24rem'" max-width="30rem">
-      <StepList :nodes="nodeList" id="stepsRoot" class="first-child" />
+    <TabComponent :min-width="'36rem'" max-width="30rem">
+      <StepList :nodes="nodeList" id="stepsRoot" class="first-child" :editable="store.getStepState.isEditing" />
+    </TabComponent>
+    <TabComponent :min-width="'24rem'">
+      <DebugComponent />
     </TabComponent>
     <TabComponent :max-width="'24rem'">
       <ControlPanelComponent />
@@ -49,9 +51,6 @@ onMounted(() => {
     </TabComponent>
     <TabComponent :max-width="'20rem'">
       <InventoryComponent />
-    </TabComponent>
-    <TabComponent>
-      <DebugComponent />
     </TabComponent>
   </main>
 </template>

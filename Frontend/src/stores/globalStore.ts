@@ -6,6 +6,8 @@ import { SkillsEnum } from '@/models/skill/skillsEnum';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { type Notification } from '@/components/Notification/notificationTypes';
 import { SkillEffect } from '@/models/skill/skillEffect';
+import { Step } from '@/models/step';
+import { loremIpsum } from 'lorem-ipsum';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
@@ -26,7 +28,7 @@ export const useGlobalStore = defineStore('globalStore', {
         };
 
         const stepState = {
-            showModal: false,
+            isEditing: false,
         };
 
         const notifications: Notification[] = [];
@@ -78,7 +80,7 @@ export const useGlobalStore = defineStore('globalStore', {
         getCurrentSkills: (state) => {
             return state.currentRoute.getPlayerState().skills;
         },
-        getStepModalState: (state) => {
+        getStepState: (state) => {
             return state.stepState;
         }
     },
@@ -187,11 +189,22 @@ export const useGlobalStore = defineStore('globalStore', {
             const newRoute = Route.fromJSON(JSON.parse(data));
             this.setCurrentRoute(newRoute);
         },
-        openStepModal() {
-            this.stepState.showModal = true;
+        toggleIsEditingSteps() {
+            this.stepState.isEditing = !this.stepState.isEditing;
         },
-        closeStepModal() {
-            this.stepState.showModal = false;
+        addStep(nodeId: string) {
+            const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
+            const newStep = new Step(loremIpsum());
+            this.getCurrentRoute.addStep(newStep, node);
         },
+        addSubStep(nodeId: string) {
+            const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
+            const newStep = new Step(loremIpsum());
+            this.getCurrentRoute.addSubStep(newStep, node);
+        },
+        removeStep(nodeId: string) {
+            const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
+            this.currentRoute.removeNode(node);
+        }
     },
 });

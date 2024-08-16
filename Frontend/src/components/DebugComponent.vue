@@ -15,10 +15,9 @@ for (let i = 1; i <= 99; i++) {
 <template>
 <div class="debug">
   <pre>
-    {{ levels }}
-    {{ '\n'+state.currentRoute.toString(state.currentRoute.rootNode) }}
-    {{ state.currentRoute.getCurrentStep() }}
-    {{ state.currentRoute.getPlayerState().skills }}
+{{ state.currentRoute.toString(state.currentRoute.rootNode) }}
+{{ state.currentRoute.getCurrentStep() }}
+{{ state.currentRoute.getPlayerState().skills }}
   </pre>
 </div>
 </template>
@@ -28,7 +27,6 @@ for (let i = 1; i <= 99; i++) {
   overflow-y: auto;
   margin-left: auto;
 
-  background-color: var(--color-background-soft);
   display: flex;
   flex-direction: column;
   gap: 3%;
