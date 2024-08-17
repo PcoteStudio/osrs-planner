@@ -58,8 +58,11 @@ export const useGlobalStore = defineStore('globalStore', {
             return state.currentRoute.rootNode.children as StepTreeNode[];
         },
         getNodeById: (state) => {
-            return (nodeId: string): StepTreeNode | undefined =>
-                state.currentRoute.rootNode.findNodeById(nodeId);
+            return (nodeId?: string): StepTreeNode | undefined => {
+                if (!nodeId)
+                    return undefined;
+                return state.currentRoute.rootNode.findNodeById(nodeId);
+            };
         },
         getCurrentSkillExp: (state) => {
             return (skill: SkillsEnum): number => state.currentRoute.getPlayerState().getSkillExperience(skill);
@@ -211,6 +214,15 @@ export const useGlobalStore = defineStore('globalStore', {
             const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
 
             this.getCurrentRoute.moveAfterNode(nodeToMove, previousNode);
+        },
+        canMoveAfterNode(nodeIdToMove?: string, previousNodeId?: string) {
+            if (!nodeIdToMove || !previousNodeId)
+                return false;
+
+            const nodeToMove = this.currentRoute.rootNode.findRequiredNodeById(nodeIdToMove);
+            const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
+
+            return this.getCurrentRoute.canMoveAfterNode(nodeToMove, previousNode);
         },
     },
 });

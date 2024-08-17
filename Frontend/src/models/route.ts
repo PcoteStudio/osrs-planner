@@ -5,6 +5,8 @@ import { AbstractStepTreeNode, type BaseStepTreeNode, RootStepTreeNode, StepTree
 import { Step } from './step';
 import { JsonHelper } from '@/utils/jsonHelper';
 import type { Effect } from './effect';
+import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
+import { InvalidNodeMoveAfter } from '@/errors/invalidNodeMoveAfter';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
@@ -76,8 +78,8 @@ export class Route {
     }
 
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
-        if (!Route.canMoveAfterNode(nodeToMove, previousNode))
-            throw new Error('These nodes cannot be moved after one another');
+        if (!this.canMoveAfterNode(nodeToMove, previousNode))
+            throw new InvalidNodeMoveAfter(nodeToMove, previousNode);
         this.invalidateNextNodes(nodeToMove);
         const previousParent = nodeToMove.parent;
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);

@@ -7,6 +7,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import type { Effect } from '@/models/effect';
 import ContextMenu from 'primevue/contextmenu';
 import { useDragStore } from '@/stores/dragStore';
+import EditTextarea from '@/components/EditTextarea.vue';
 
 const props = withDefaults(defineProps<{
   node: StepTreeNode;
@@ -67,6 +68,9 @@ const remove = () => store.removeStep(step.value.id);
 const content = ref();
 
 watch(dragStore, () => {
+  if (!canDragIn.value)
+    return;
+
   if (dragStore.isDragging) {
     content.value.classList.add('no-drag');
   }
@@ -75,20 +79,30 @@ watch(dragStore, () => {
   }
 });
 
+const canDragIn = computed(() => dragStore.isDragging && store.canMoveAfterNode(dragStore.dragFrom, step.value.id));
+
 const dragStart = (event: DragEvent) => {
+  console.log('Start');
   dragStore.dragFrom = step.value.id;
   dragStore.isDragging = true;
+
+  event.dataTransfer?.setDragImage(content.value, 10, 10);
 };
 
 const dragend = (event: DragEvent) => {
-  dragStore.isDragging = false;
+  console.log('Stop');
 
-  if (dragStore.dragFrom && dragStore.dragTarget)
+  if (dragStore.isDragging && dragStore.dragFrom && dragStore.dragTarget &&
+      store.canMoveAfterNode(dragStore.dragFrom, dragStore.dragTarget)
+  ) {
     store.moveNode(dragStore.dragFrom, dragStore.dragTarget);
+  }
+
+  dragStore.isDragging = false;
 };
 
 const dragenter = (event: DragEvent) => {
-  if (!(event.target instanceof HTMLElement))
+  if (!(event.target instanceof HTMLElement) || !canDragIn.value)
     return;
 
   dragStore.dragTarget = step.value.id;
@@ -96,7 +110,7 @@ const dragenter = (event: DragEvent) => {
 };
 
 const dragleave = (event: DragEvent) => {
-  if (!(event.target instanceof HTMLElement))
+  if (!(event.target instanceof HTMLElement) || !canDragIn.value)
     return;
 
   event.target.classList.remove('dragover');
@@ -107,8 +121,6 @@ const dragleave = (event: DragEvent) => {
   <div :id="step.id"
        class="step"
        v-if="step"
-       draggable="true"
-       @dragstart="dragStart"
        @dragend="dragend"
   >
     <ContextMenu ref="menu" :model="items">
@@ -143,7 +155,7 @@ const dragleave = (event: DragEvent) => {
         </div>
       </div>
       <div class="label">
-        <div v-if="!dragStore.isDragging" class="header">
+        <div v-if="!canDragIn" class="header">
           <div class="actions">
             <Button @click="showEffects = !showEffects"
                     size="small"
@@ -172,6 +184,14 @@ const dragleave = (event: DragEvent) => {
                     icon="pi pi-trash"
                     class="remove-button"
             />
+            <Button @dragstart="dragStart"
+                    draggable="true"
+                    v-if="editable"
+                    :severity="'secondary'"
+                    rounded outlined
+                    size="small"
+                    icon="pi pi-arrows-alt"
+            />
           </div>
         </div>
         <div class="body">
@@ -195,12 +215,12 @@ const dragleave = (event: DragEvent) => {
             />
           </div>
         </div>
-        <div v-if="dragStore.isDragging" class="dropzone"></div>
+        <div v-if="canDragIn" class="dropzone"></div>
       </div>
     </div>
     <hr>
     <div class="sub-step-list" v-if="hasChildren">
-      <div v-if="!dragStore.isDragging" class="toggle" @click="collapseSubStepList = !collapseSubStepList">
+      <div v-if="!canDragIn" class="toggle" @click="collapseSubStepList = !collapseSubStepList">
         <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
       </div>
       <StepListComponent

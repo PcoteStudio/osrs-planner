@@ -4,6 +4,7 @@ import { watch } from 'vue';
 import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
 import { useToast } from 'primevue/usetoast';
 import { useGlobalStore } from '@/stores/globalStore';
+import { InvalidNodeMoveAfter } from '@/errors/invalidNodeMoveAfter';
 
 const toast = useToast();
 const state = useGlobalStore();
@@ -66,6 +67,10 @@ function getErrorMessageDetails(error: Error) {
   switch (typeof error) {
     case InvalidRouteJsonError:
       details.message = `The json of the route is invalid: ${error.innerError.message}`;
+      details.logLevel = 'warn';
+      break;
+    case InvalidNodeMoveAfter:
+      details.message = `The step ${error.nodeToMove.step.label} cannot be moved after ${error.previousNode.step.label}`;
       details.logLevel = 'warn';
       break;
     default:
