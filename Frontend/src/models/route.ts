@@ -64,11 +64,21 @@ export class Route {
         this.updateChildrenLabel(node.parent);
     }
 
+    canMoveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): boolean {
+        if(nodeToMove === previousNode) return false;
+        let currentNode : StepTreeNode = previousNode;
+        while (currentNode.parent) {
+            if(currentNode.parent === nodeToMove) return false;
+            if(currentNode.parent instanceof StepTreeNode)
+                currentNode = currentNode.parent;
+            else return true;
+        }
+        return true;
+    }
+
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
-        if (nodeToMove.step.id === previousNode.step.id)
-            throw ('Both nodes need to be different');
-        if (!nodeToMove?.parent || !previousNode?.parent)
-            throw ('Both nodes need to have a parent');
+        if (!this.canMoveAfterNode(nodeToMove, previousNode))
+            throw new Error('These nodes cannot be moved after one another');
         this.invalidateNextNodes(nodeToMove);
         const previousParent = nodeToMove.parent;
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
@@ -81,9 +91,15 @@ export class Route {
         return nodeToMove;
     }
 
+    canMoveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): boolean {
+        if(!(parentNode instanceof StepTreeNode)) // Previous node is root node
+            return true;
+        return this.canMoveAfterNode(nodeToMove, parentNode);
+    }
+
     moveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): StepTreeNode {
-        if (parentNode instanceof StepTreeNode && nodeToMove.step.id === parentNode.step.id)
-            throw ('Both nodes need to be different');
+        if (!this.canMoveToSubNode(nodeToMove, parentNode))
+            throw new Error('These nodes cannot be moved after one another');
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step.id != nodeToMove.step.id);
         nodeToMove.parent = parentNode;
         parentNode.children.splice(0, 0, nodeToMove);
@@ -316,14 +332,9 @@ export class Route {
     static fromJSON(jsonObject: { [key: string]: any }): Route {
         validatePropertyType(Route, jsonObject, 'rootNode', 'object');
         const route: Route = new Route();
-        try {
-            route.rootNode = RootStepTreeNode.fromJSON(jsonObject.rootNode);
-            route.updateChildrenLabel(route.rootNode);
-            return route;
-        }
-        catch (e) {
-            throw new InvalidRouteJsonError(e as Error);
-        }
+        route.rootNode = RootStepTreeNode.fromJSON(jsonObject.rootNode);
+        route.updateChildrenLabel(route.rootNode);
+        return route;
     }
 
     initializeSomeSteps() {

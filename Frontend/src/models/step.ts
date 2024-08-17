@@ -15,7 +15,7 @@ export class Step {
     effects: Effect[] = [];
     completed: boolean = false;
 
-    constructor(description: string) {
+    constructor(description: string = '') {
         this.description = description;
     }
 

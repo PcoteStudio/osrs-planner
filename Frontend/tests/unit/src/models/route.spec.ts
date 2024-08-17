@@ -94,6 +94,27 @@ describe('Route', () => {
             expect(route.rootNode.children[2].depth).toStrictEqual(0);
             expect(route.currentNode).toBe(undefined);
         });
+        
+        it('should throw when trying to move a step after itself', () => {
+            const node1 = route.addStep(new Step());
+
+            expect(() => { route.moveAfterNode(node1, node1); }).toThrow();
+        });
+
+        it('should throw when trying to move a step after its child', () => {
+            const node1 = route.addStep(new Step());
+            const node11 = route.addSubStep(new Step(), node1);
+
+            expect(() => { route.moveAfterNode(node1, node11); }).toThrow();
+        });
+
+        it('should throw when trying to move a step after its grand-child', () => {
+            const node1 = route.addStep(new Step());
+            const node11 = route.addSubStep(new Step(), node1);
+            const node111 = route.addSubStep(new Step(), node11);
+
+            expect(() => { route.moveAfterNode(node1, node111); }).toThrow();
+        });
     });
 
     describe('addSubStep', () => {
@@ -185,6 +206,27 @@ describe('Route', () => {
             expect(route.rootNode.children[2]?.step.description).toStrictEqual('3');
             expect(route.rootNode.children[2]?.depth).toStrictEqual(0);
             expect(route.currentNode).toBe(undefined);
+        });
+
+        it('should throw when trying to move a step under itself', () => {
+            const node1 = route.addStep(new Step());
+
+            expect(() => { route.moveToSubNode(node1, node1); }).toThrow();
+        });
+
+        it('should throw when trying to move a step under its child', () => {
+            const node1 = route.addStep(new Step());
+            const node11 = route.addSubStep(new Step(), node1);
+
+            expect(() => { route.moveToSubNode(node1, node11); }).toThrow();
+        });
+
+        it('should throw when trying to move a step under its grand-child', () => {
+            const node1 = route.addStep(new Step());
+            const node11 = route.addSubStep(new Step(), node1);
+            const node111 = route.addSubStep(new Step(), node11);
+
+            expect(() => { route.moveToSubNode(node1, node111); }).toThrow();
         });
     });
 
