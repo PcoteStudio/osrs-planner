@@ -1,4 +1,4 @@
-import { validatePropertyIterability, validatePropertyType } from '@/utils/jsonHelper';
+import { JsonHelper } from '@/utils/jsonHelper';
 import { Step } from './step';
 
 
@@ -45,10 +45,9 @@ export abstract class AbstractStepTreeNode {
 export class RootStepTreeNode extends AbstractStepTreeNode {
 
     static fromJSON(jsonObject: Record<string, any>): RootStepTreeNode {
-        validatePropertyType(RootStepTreeNode, jsonObject, 'depth', 'number');
-        validatePropertyIterability(RootStepTreeNode, jsonObject, 'children');
-        const rootNode = new RootStepTreeNode(jsonObject.depth);
-        for (const child of jsonObject.children) {
+        const parsedNode = JsonHelper.parseWithSchema<RootStepTreeNode>('RootStepTreeNode', jsonObject);
+        const rootNode = new RootStepTreeNode(parsedNode.depth);
+        for (const child of parsedNode.children) {
             const childNode = StepTreeNode.fromJSON(child, rootNode);
             rootNode.children.push(childNode);
         }
@@ -92,11 +91,9 @@ export class StepTreeNode extends AbstractStepTreeNode {
     }
 
     static fromJSON(jsonObject: Record<string, any>, parent: BaseStepTreeNode): StepTreeNode {
-        validatePropertyType(StepTreeNode, jsonObject, 'depth', 'number');
-        validatePropertyType(StepTreeNode, jsonObject, 'step', 'object');
-        validatePropertyIterability(StepTreeNode, jsonObject, 'children');
-        const node = new StepTreeNode(jsonObject.depth, Step.fromJSON(jsonObject.step), parent);
-        for (const child of jsonObject.children) {
+        const parsedNode = JsonHelper.parseWithSchema<StepTreeNode>('StepTreeNode', jsonObject);
+        const node = new StepTreeNode(parsedNode.depth, Step.fromJSON(parsedNode.step), parent);
+        for (const child of parsedNode.children) {
             const childNode = StepTreeNode.fromJSON(child, node);
             node.children.push(childNode);
         }

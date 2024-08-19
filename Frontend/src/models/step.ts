@@ -1,7 +1,7 @@
 import { customAlphabet } from 'nanoid';
 import { PlayerState } from './playerState';
 import { Effect } from '@/models/effect';
-import { validatePropertyIterability, validatePropertyType } from '@/utils/jsonHelper';
+import { JsonHelper } from '@/utils/jsonHelper';
 import { EffectFactory } from './effectFactory';
 import { SkillEffect } from './skill/skillEffect';
 
@@ -50,19 +50,15 @@ export class Step {
     }
 
     toJSON() {
-        return { id: this.id, description: this.description, effects: this.effects.map(e => e.toJSON()), completed: this.completed };
+        return { description: this.description, effects: this.effects.map(e => e.toJSON()), completed: this.completed };
     }
 
     static fromJSON(jsonObject: { [key: string]: any }): Step {
-        validatePropertyType(Step, jsonObject, 'id', 'string'); // TODO remove ID from export and update tests
-        validatePropertyType(Step, jsonObject, 'description', 'string');
-        validatePropertyType(Step, jsonObject, 'completed', 'boolean');
-        validatePropertyIterability(Step, jsonObject, 'effects');
-        const step = new Step(jsonObject.description);
-        step.completed = jsonObject.completed;
-        step.id = jsonObject.id;
-        for (const effect of jsonObject.effects)
-            step.addEffect(EffectFactory.fromJSON(effect));
+        const parsedStep = JsonHelper.parseWithSchema<Step>('Step', jsonObject);
+        const step = new Step(parsedStep.description);
+        Object.assign(step, parsedStep);
+        for (let i = 0; i < step.effects.length; i++)
+            step.effects[i] = EffectFactory.fromJSON(step.effects[i]);   
         return step;
     }
 

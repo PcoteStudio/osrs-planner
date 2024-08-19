@@ -1,16 +1,16 @@
-import Ajv, { type SchemaObject } from 'ajv';
+import Ajv from 'ajv';
+import * as schemas from '../adaptedSchemas.json';
 
 const uselessVariable = typeof (1 as any);
 type validType = typeof uselessVariable;
 type classType = { prototype: { constructor: { name: string } } };
 
 export class JsonHelper {
-    private static readonly ajv = new Ajv();
+    private static readonly ajv = new Ajv({ strictSchema: true, schemas: schemas.definitions, addUsedSchema: true });
 
-    static parseWithSchema<T>(schema: SchemaObject, jsonObject: { [key: string]: unknown }): T {
-        const validate = JsonHelper.ajv.compile(schema);
-        const valid = validate(jsonObject);
-        if (!valid) throw new Error(JsonHelper.ajv.errorsText(validate.errors));
+    static parseWithSchema<T>(schemaId: string, jsonObject: { [key: string]: unknown }): T {
+        const valid = JsonHelper.ajv.validate(schemaId, jsonObject);
+        if (!valid) throw new Error(JsonHelper.ajv.errorsText(JsonHelper.ajv.errors));
         return jsonObject as T;
     }
 }

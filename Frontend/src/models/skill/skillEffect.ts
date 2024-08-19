@@ -1,4 +1,4 @@
-import { validateEnumProperty, validatePropertyType } from '@/utils/jsonHelper';
+import { JsonHelper } from '@/utils/jsonHelper';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { PlayerState } from '@/models/playerState';
 import { StateWarning } from '@/models/stateWarning';
@@ -24,9 +24,7 @@ export class SkillEffect extends Effect {
     }
 
     public static fromJSON(jsonObject: { [key: string]: any }): SkillEffect {
-        validateEnumProperty(SkillEffect, jsonObject, 'skill', SkillsEnum);
-        validatePropertyType(SkillEffect, jsonObject, 'experience', 'number');
-        const skill = SkillsEnum[jsonObject.skill as SkillsEnum];
-        return new SkillEffect(skill, jsonObject.experience);
+        const parsedSkillEffect = JsonHelper.parseWithSchema<SkillEffect>('SkillEffect', jsonObject);
+        return new SkillEffect(parsedSkillEffect.skill, parsedSkillEffect.experience);
     }
 }

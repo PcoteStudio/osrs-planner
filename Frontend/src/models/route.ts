@@ -3,9 +3,8 @@ import { SkillEffect } from './skill/skillEffect';
 import { SkillsEnum } from './skill/skillsEnum';
 import { AbstractStepTreeNode, type BaseStepTreeNode, RootStepTreeNode, StepTreeNode } from './stepTreeNode';
 import { Step } from './step';
-import { validatePropertyType } from '@/utils/jsonHelper';
+import { JsonHelper } from '@/utils/jsonHelper';
 import type { Effect } from './effect';
-import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
 
 export class Route {
     playerState: PlayerState = new PlayerState();
@@ -52,19 +51,19 @@ export class Route {
         return newNode;
     }
 
-    canRemoveNode(node: StepTreeNode) {
-        return this.getPreviousNode(node) || this.getNextNode(node);
+    static canRemoveNode(node: StepTreeNode) {
+        return Route.getPreviousNode(node) || Route.getNextNode(node);
     }
 
     removeNode(node: StepTreeNode) {
-        if (!this.canRemoveNode(node)) throw new Error('Cannot remove the only node');
+        if (!Route.canRemoveNode(node)) throw new Error('Cannot remove the only node');
         this.invalidateNextNodes(node);
         const nodeIndex = node.parent.children.indexOf(node);
         node.parent.children.splice(nodeIndex, 1);
         this.updateChildrenLabel(node.parent);
     }
 
-    canMoveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): boolean {
+    static canMoveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): boolean {
         if(nodeToMove === previousNode) return false;
         let currentNode : StepTreeNode = previousNode;
         while (currentNode.parent) {
@@ -77,7 +76,7 @@ export class Route {
     }
 
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
-        if (!this.canMoveAfterNode(nodeToMove, previousNode))
+        if (!Route.canMoveAfterNode(nodeToMove, previousNode))
             throw new Error('These nodes cannot be moved after one another');
         this.invalidateNextNodes(nodeToMove);
         const previousParent = nodeToMove.parent;
@@ -91,14 +90,14 @@ export class Route {
         return nodeToMove;
     }
 
-    canMoveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): boolean {
+    static canMoveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): boolean {
         if(!(parentNode instanceof StepTreeNode)) // Previous node is root node
             return true;
-        return this.canMoveAfterNode(nodeToMove, parentNode);
+        return Route.canMoveAfterNode(nodeToMove, parentNode);
     }
 
     moveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): StepTreeNode {
-        if (!this.canMoveToSubNode(nodeToMove, parentNode))
+        if (!Route.canMoveToSubNode(nodeToMove, parentNode))
             throw new Error('These nodes cannot be moved after one another');
         nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step.id != nodeToMove.step.id);
         nodeToMove.parent = parentNode;
@@ -138,7 +137,7 @@ export class Route {
         }
     }
 
-    getPreviousNode(node: StepTreeNode): StepTreeNode | undefined {
+    static getPreviousNode(node: StepTreeNode): StepTreeNode | undefined {
         if (node.children.length) // The node has a child
             return node.children[node.children.length - 1];
         while (node.parent) { // The node has a parent
@@ -154,12 +153,12 @@ export class Route {
 
     executeOnNextNodes(node: StepTreeNode, func: (node: StepTreeNode) => void) {
         func(node);
-        const nextNode = this.getNextNode(node);
+        const nextNode = Route.getNextNode(node);
         if (nextNode)
             this.executeOnNextNodes(nextNode, func);
     }
 
-    getNextNode(node: AbstractStepTreeNode): StepTreeNode | undefined {
+    static getNextNode(node: AbstractStepTreeNode): StepTreeNode | undefined {
         let currentNode = node;
         if (currentNode instanceof StepTreeNode) {
             const currentNodeIndex = currentNode.parent.children.indexOf(currentNode);
@@ -195,7 +194,7 @@ export class Route {
         if (this.currentNode?.step)
             this.currentNode.step.resultingState = this.playerState.clone();
 
-        const nextNode = this.getNextNode(this.currentNode ?? this.rootNode);
+        const nextNode = Route.getNextNode(this.currentNode ?? this.rootNode);
         if (!nextNode) return false;
         this.currentNode = nextNode;
         this.currentNode.step.applyEffects(this.playerState);
@@ -272,7 +271,7 @@ export class Route {
     getFirstNode(): StepTreeNode | undefined {
         if (!this.rootNode.children.length)
             return undefined;
-        return this.rootNode.children[0];
+        return Route.getNextNode(this.rootNode);
     }
 
     getLastNode(): StepTreeNode | undefined {
@@ -330,7 +329,7 @@ export class Route {
     }
 
     static fromJSON(jsonObject: { [key: string]: any }): Route {
-        validatePropertyType(Route, jsonObject, 'rootNode', 'object');
+        JsonHelper.parseWithSchema<Route>('Route', jsonObject);
         const route: Route = new Route();
         route.rootNode = RootStepTreeNode.fromJSON(jsonObject.rootNode);
         route.updateChildrenLabel(route.rootNode);

@@ -1,0 +1,872 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "AbstractStepTreeNode": {
+            "anyOf": [
+                {
+                    "$ref": "RootStepTreeNode"
+                },
+                {
+                    "$ref": "StepTreeNode"
+                }
+            ]
+        },
+        "AddEffectNotification": {
+            "properties": {
+                "action": {
+                    "const": "addEffect",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepLabel": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "Bank": {
+            "properties": {
+                "items": {
+                    "additionalProperties": false,
+                    "patternProperties": {
+                        "^[0-9]+$": {
+                            "$ref": "ContainerItem"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "BankMissingItemWarning": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "BaseStepTreeNode": {
+            "anyOf": [
+                {
+                    "$ref": "StepTreeNode"
+                },
+                {
+                    "$ref": "RootStepTreeNode"
+                }
+            ]
+        },
+        "CompletionEffect": {
+            "properties": {
+                "autocompleted": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "EffectTypeEnum"
+                }
+            },
+            "type": "object"
+        },
+        "ContainerItem": {
+            "properties": {
+                "item": {
+                    "$ref": "Item"
+                },
+                "noted": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "quantity": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "Effect": {
+            "anyOf": [
+                {
+                    "$ref": "SkillEffect"
+                },
+                {
+                    "$ref": "CompletionEffect"
+                },
+                {
+                    "$ref": "ItemEffect"
+                }
+            ]
+        },
+        "EffectFactory": {
+            "type": "object"
+        },
+        "EffectTypeEnum": {
+            "enum": [
+                "Completion",
+                "Item",
+                "Skill"
+            ],
+            "type": "string"
+        },
+        "Equipment": {
+            "properties": {
+                "slots": {
+                    "$ref": "{[x:string]:Item|undefined;}"
+                }
+            },
+            "type": "object"
+        },
+        "EquipmentSlotTypes": {
+            "enum": [
+                "Head",
+                "Cape",
+                "Neck",
+                "Ammunition",
+                "ExtraAmmo",
+                "Weapon",
+                "Shield",
+                "TwoHandedItems",
+                "Body",
+                "Legs",
+                "Hands",
+                "Feet",
+                "Ring",
+                "Extra"
+            ],
+            "type": "string"
+        },
+        "Error": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stack": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "InvalidJsonObjectError": {
+            "properties": {
+                "innerError": {
+                    "$ref": "Error"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stack": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "InvalidRouteJsonError": {
+            "properties": {
+                "innerError": {
+                    "$ref": "Error"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stack": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Inventory": {
+            "properties": {
+                "availableSlots": {
+                    "default": 28,
+                    "type": "number"
+                },
+                "items": {
+                    "additionalProperties": false,
+                    "patternProperties": {
+                        "^[0-9]+$": {
+                            "$ref": "ContainerItem"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "InventoryLimitExceededWarning": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "InventoryMissingItemWarning": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Item": {
+            "properties": {
+                "bankable": {
+                    "default": true,
+                    "type": "boolean"
+                },
+                "cost": {
+                    "default": 0,
+                    "type": "number"
+                },
+                "duplicated": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "equipable": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "equipableWeapon": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "equipmentSlot": {
+                    "enum": [
+                        "Ammunition",
+                        "Body",
+                        "Cape",
+                        "Extra",
+                        "ExtraAmmo",
+                        "Feet",
+                        "Hands",
+                        "Head",
+                        "Legs",
+                        "Neck",
+                        "Ring",
+                        "Shield",
+                        "TwoHandedItems",
+                        "Weapon"
+                    ],
+                    "type": "string"
+                },
+                "geTradeable": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "highAlch": {
+                    "type": "number"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "number"
+                },
+                "imageUrl": {
+                    "type": "string"
+                },
+                "isPlaceholder": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "linkedItem": {
+                    "$ref": "Item"
+                },
+                "linkedItemId": {
+                    "type": "number"
+                },
+                "linkedNoted": {
+                    "$ref": "Item"
+                },
+                "linkedNotedId": {
+                    "type": "number"
+                },
+                "linkedPlaceholder": {
+                    "$ref": "Item"
+                },
+                "linkedPlaceholderId": {
+                    "type": "number"
+                },
+                "lowAlch": {
+                    "type": "number"
+                },
+                "members": {
+                    "default": true,
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "noteable": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "noted": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "stackSize": {
+                    "type": "number"
+                },
+                "stackable": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "tradeable": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "wikiUrl": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ItemContainers": {
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "type": "number"
+        },
+        "ItemEffect": {
+            "properties": {
+                "destination": {
+                    "$ref": "ItemContainers"
+                },
+                "item": {
+                    "$ref": "Item"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "source": {
+                    "$ref": "ItemContainers"
+                },
+                "type": {
+                    "$ref": "EffectTypeEnum"
+                }
+            },
+            "type": "object"
+        },
+        "ItemRequirement": {
+            "type": "object"
+        },
+        "ItemStore": {
+            "type": "object"
+        },
+        "JsonHelper": {
+            "type": "object"
+        },
+        "Notification": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "action": {
+                            "const": "addEffect",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepLabel": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "removeEffect",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepLabel": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "toggleCompleted",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "completed": {
+                                    "type": "boolean"
+                                },
+                                "stepLabel": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "setCurrentRoute",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "nbSteps": {
+                                    "type": "number"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            ]
+        },
+        "PlayerState": {
+            "properties": {
+                "bank": {
+                    "$ref": "Bank"
+                },
+                "equipment": {
+                    "$ref": "Equipment"
+                },
+                "inventory": {
+                    "$ref": "Inventory"
+                },
+                "skills": {
+                    "$ref": "{[x:string]:number|undefined;}"
+                },
+                "warnings": {
+                    "default": [],
+                    "items": {
+                        "$ref": "StateWarning"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "RemoveEffectNotification": {
+            "properties": {
+                "action": {
+                    "const": "removeEffect",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepLabel": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "Requirement": {
+            "anyOf": [
+                {
+                    "$ref": "ItemRequirement"
+                },
+                {
+                    "$ref": "SkillRequirement"
+                }
+            ]
+        },
+        "RootStepTreeNode": {
+            "properties": {
+                "children": {
+                    "default": [],
+                    "items": {
+                        "$ref": "StepTreeNode"
+                    },
+                    "type": "array"
+                },
+                "depth": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "Route": {
+            "properties": {
+                "currentNode": {
+                    "$ref": "StepTreeNode"
+                },
+                "playerState": {
+                    "$ref": "PlayerState"
+                },
+                "rootNode": {
+                    "$ref": "RootStepTreeNode"
+                }
+            },
+            "type": "object"
+        },
+        "ScrapedItem": {
+            "properties": {
+                "bankable": {
+                    "type": "boolean"
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "duplicate": {
+                    "type": "boolean"
+                },
+                "equipable_by_player": {
+                    "type": "boolean"
+                },
+                "highalch": {
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "number"
+                },
+                "linked_id_item": {
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "linked_id_noted": {
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "linked_id_placeholder": {
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "lowalch": {
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "members": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "noteable": {
+                    "type": "boolean"
+                },
+                "noted": {
+                    "type": "boolean"
+                },
+                "placeholder": {
+                    "type": "boolean"
+                },
+                "stackable": {
+                    "type": "boolean"
+                },
+                "stacked": {
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "tradeable": {
+                    "type": "boolean"
+                },
+                "tradeable_on_ge": {
+                    "type": "boolean"
+                },
+                "wiki_url": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Skill": {
+            "properties": {
+                "bgColor": {
+                    "type": "string"
+                },
+                "experience": {
+                    "type": "number"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "number"
+                },
+                "textColor": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "SkillsEnum"
+                }
+            },
+            "type": "object"
+        },
+        "SkillEffect": {
+            "properties": {
+                "experience": {
+                    "type": "number"
+                },
+                "skill": {
+                    "$ref": "SkillsEnum"
+                },
+                "type": {
+                    "$ref": "EffectTypeEnum"
+                }
+            },
+            "type": "object"
+        },
+        "SkillRequirement": {
+            "properties": {
+                "experience": {
+                    "type": "number"
+                },
+                "skill": {
+                    "$ref": "SkillsEnum"
+                }
+            },
+            "type": "object"
+        },
+        "SkillsEnum": {
+            "enum": [
+                "Agility",
+                "Attack",
+                "Construction",
+                "Cooking",
+                "Crafting",
+                "Defence",
+                "Farming",
+                "Firemaking",
+                "Fishing",
+                "Fletching",
+                "Herblore",
+                "Hitpoints",
+                "Hunter",
+                "Magic",
+                "Mining",
+                "Prayer",
+                "Ranged",
+                "Runecraft",
+                "Slayer",
+                "Smithing",
+                "Strength",
+                "Thieving",
+                "Woodcutting"
+            ],
+            "type": "string"
+        },
+        "StateWarning": {
+            "anyOf": [
+                {
+                    "$ref": "BankMissingItemWarning"
+                },
+                {
+                    "$ref": "InventoryLimitExceededWarning"
+                },
+                {
+                    "$ref": "InventoryMissingItemWarning"
+                }
+            ]
+        },
+        "Step": {
+            "properties": {
+                "completed": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "description": {
+                    "default": "",
+                    "type": "string"
+                },
+                "effects": {
+                    "default": [],
+                    "items": {
+                        "$ref": "Effect"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "default": "?",
+                    "type": "string"
+                },
+                "resultingState": {
+                    "$ref": "PlayerState"
+                }
+            },
+            "type": "object"
+        },
+        "StepTreeNode": {
+            "properties": {
+                "children": {
+                    "default": [],
+                    "items": {
+                        "$ref": "StepTreeNode"
+                    },
+                    "type": "array"
+                },
+                "depth": {
+                    "type": "number"
+                },
+                "parent": {
+                    "$ref": "BaseStepTreeNode"
+                },
+                "step": {
+                    "$ref": "Step"
+                }
+            },
+            "type": "object"
+        },
+        "XpHelper": {
+            "type": "object"
+        },
+        "XpTable": {
+            "properties": {
+                "maxLevel": {
+                    "type": "number"
+                },
+                "xpTable": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "classType": {
+            "properties": {
+                "prototype": {
+                    "properties": {
+                        "constructor": {
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "setCurrentRoute": {
+            "properties": {
+                "action": {
+                    "const": "setCurrentRoute",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "nbSteps": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "toggleCompleted": {
+            "properties": {
+                "action": {
+                    "const": "toggleCompleted",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "completed": {
+                            "type": "boolean"
+                        },
+                        "stepLabel": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "validType": {
+            "enum": [
+                "bigint",
+                "boolean",
+                "function",
+                "number",
+                "object",
+                "string",
+                "symbol",
+                "undefined"
+            ],
+            "type": "string"
+        },
+        "{[x:string]:Item|undefined;}": {
+            "type": "object"
+        },
+        "{[x:string]:number|undefined;}": {
+            "type": "object"
+        }
+    }
+}
+

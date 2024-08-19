@@ -1,5 +1,4 @@
 import type { EquipmentSlotTypes } from './equipmentSlot';
-import schemas from '../../generatedSchemas.json';
 import type { ScrapedItem } from '@/scrapedModels/scrapedItem';
 import { JsonHelper } from '@/utils/jsonHelper';
 
@@ -51,7 +50,7 @@ export class Item {
     }
 
     static fromJSON(jsonObject: { [key: string]: unknown }): Item {
-        const jsonItem = JsonHelper.parseWithSchema<ScrapedItem>(schemas.definitions.ScrapedItem, jsonObject);
+        const jsonItem = JsonHelper.parseWithSchema<ScrapedItem>('ScrapedItem', jsonObject);
 
         const item = new Item(jsonItem.id, jsonItem.name);
         item.bankable = jsonItem.bankable ?? item.bankable;

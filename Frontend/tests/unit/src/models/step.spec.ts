@@ -15,8 +15,7 @@ describe('step', () => {
 
             const json = JSON.stringify(step);
             const savedProperties: any = JSON.parse(json);
-            expect(Object.keys(savedProperties).length).toStrictEqual(4);
-            expect(savedProperties.id).not.toBe(undefined);
+            expect(Object.keys(savedProperties).length).toStrictEqual(3);
             expect(savedProperties.description).not.toBe(undefined);
             expect(savedProperties.effects).not.toBe(undefined);
             expect(savedProperties.completed).not.toBe(undefined);
