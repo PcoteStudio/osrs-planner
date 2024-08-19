@@ -16,6 +16,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
+    'class-methods-use-this': 'error',
     'comma-dangle': ['error', 'only-multiline'],
     semi: ['error', 'always'],
     '@stylistic/js/quotes': ['error', 'single'],
