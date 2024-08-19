@@ -453,7 +453,7 @@ describe('Route', () => {
         });
     });
 
-    describe.only('fromJSON', () => {
+    describe('fromJSON', () => {
         it('should rebuild the original object', () => {
             createComplexRoute();
             const firstNode = route.getFirstNode();
