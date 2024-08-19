@@ -4,7 +4,8 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 module.exports = {
   root: true,
   plugins: [
-    '@stylistic/js'
+    '@stylistic/js',
+    'no-only-tests'
   ],
   extends: [
     'plugin:vue/vue3-essential',
@@ -22,6 +23,7 @@ module.exports = {
     '@stylistic/js/quotes': ['error', 'single'],
     '@stylistic/js/object-curly-spacing': ['error', 'always'],
     '@stylistic/js/template-curly-spacing': ['error', 'never'],
+    'no-only-tests/no-only-tests': 'error',
     'prefer-template': 'error',
   },
 };

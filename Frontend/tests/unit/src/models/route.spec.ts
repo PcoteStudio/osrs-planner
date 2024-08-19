@@ -5,10 +5,6 @@ import { StepTreeNode } from '@/models/stepTreeNode';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
 
-import { use } from 'chai';
-import chaiShallowDeepEqual from 'chai-shallow-deep-equal';
-use(chaiShallowDeepEqual);
-
 describe('Route', () => {
     let route: Route;
     beforeEach(() => {

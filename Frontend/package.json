@@ -59,6 +59,7 @@
     "@vue/tsconfig": "^0.5.1",
     "chromedriver": "^126.0.2",
     "eslint": "^8.57.0",
+    "eslint-plugin-no-only-tests": "^3.3.0",
     "eslint-plugin-vue": "^9.23.0",
     "geckodriver": "^4.4.1",
     "jsdom": "^24.1.0",
