@@ -78,7 +78,7 @@ export class Route {
     }
 
     moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
-        if (!this.canMoveAfterNode(nodeToMove, previousNode))
+        if (!Route.canMoveAfterNode(nodeToMove, previousNode))
             throw new InvalidNodeMoveAfter(nodeToMove, previousNode);
         this.invalidateNextNodes(nodeToMove);
         const previousParent = nodeToMove.parent;

@@ -232,7 +232,7 @@ export const useGlobalStore = defineStore('globalStore', {
             const nodeToMove = this.currentRoute.rootNode.findRequiredNodeById(nodeIdToMove);
             const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
 
-            return this.getCurrentRoute.canMoveAfterNode(nodeToMove, previousNode);
+            return Route.canMoveAfterNode(nodeToMove, previousNode);
         },
     },
 });
