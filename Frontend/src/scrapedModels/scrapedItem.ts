@@ -1,3 +1,5 @@
+import type { scrapedItemSlots } from './scrapedItemSlots';
+
 export type ScrapedItem = {
     id: number;
     name: string;
@@ -20,4 +22,5 @@ export type ScrapedItem = {
     placeholder: boolean;
     equipable_by_player: boolean;
     duplicate: boolean;
+    slot: scrapedItemSlots;
 }

@@ -177,6 +177,26 @@
             },
             "type": "object"
         },
+        "InvalidNodeMoveAfter": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nodeToMove": {
+                    "$ref": "#/definitions/StepTreeNode"
+                },
+                "previousNode": {
+                    "$ref": "#/definitions/StepTreeNode"
+                },
+                "stack": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "InvalidRouteJsonError": {
             "properties": {
                 "innerError": {
@@ -615,6 +635,9 @@
                 "placeholder": {
                     "type": "boolean"
                 },
+                "slot": {
+                    "$ref": "#/definitions/scrapedItemSlots"
+                },
                 "stackable": {
                     "type": "boolean"
                 },
@@ -810,6 +833,23 @@
                 }
             },
             "type": "object"
+        },
+        "scrapedItemSlots": {
+            "enum": [
+                "head",
+                "cape",
+                "neck",
+                "ammo",
+                "weapon",
+                "shield",
+                "body",
+                "legs",
+                "hands",
+                "feet",
+                "ring",
+                "2h"
+            ],
+            "type": "string"
         },
         "setCurrentRoute": {
             "properties": {
