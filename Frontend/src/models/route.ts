@@ -5,7 +5,6 @@ import { AbstractStepTreeNode, type BaseStepTreeNode, RootStepTreeNode, StepTree
 import { Step } from './step';
 import { JsonHelper } from '@/utils/jsonHelper';
 import type { Effect } from './effect';
-import { InvalidRouteJsonError } from '@/errors/invalid-route-json-error';
 import { InvalidNodeMoveAfter } from '@/errors/invalidNodeMoveAfter';
 
 export class Route {

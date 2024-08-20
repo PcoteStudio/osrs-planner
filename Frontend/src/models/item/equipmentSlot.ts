@@ -10,6 +10,7 @@ import legsImg from '@/assets/images/icons/legs.webp';
 import handsImg from '@/assets/images/icons/hands.webp';
 import feetImg from '@/assets/images/icons/feet.webp';
 import ringImg from '@/assets/images/icons/ring.webp';
+import { scrapedItemSlots } from '@/scrapedModels/scrapedItemSlots';
 
 export enum EquipmentSlotTypes {
     Head = 'Head',
@@ -26,6 +27,37 @@ export enum EquipmentSlotTypes {
     Feet = 'Feet',
     Ring = 'Ring',
     Extra = 'Extra',
+}
+
+export function toEquipmentSlot(slot: scrapedItemSlots): EquipmentSlotTypes | undefined {
+    switch (slot) {
+        case scrapedItemSlots.head:
+            return EquipmentSlotTypes.Head;
+        case scrapedItemSlots.cape:
+            return EquipmentSlotTypes.Cape;
+        case scrapedItemSlots.neck:
+            return EquipmentSlotTypes.Neck;
+        case scrapedItemSlots.ammo:
+            return EquipmentSlotTypes.Ammunition;
+        case scrapedItemSlots.weapon:
+            return EquipmentSlotTypes.Weapon;
+        case scrapedItemSlots.shield:
+            return EquipmentSlotTypes.Shield;
+        case scrapedItemSlots.two_handed:
+            return EquipmentSlotTypes.TwoHandedItems;
+        case scrapedItemSlots.body:
+            return EquipmentSlotTypes.Body;
+        case scrapedItemSlots.legs:
+            return EquipmentSlotTypes.Legs;
+        case scrapedItemSlots.hands:
+            return EquipmentSlotTypes.Hands;
+        case scrapedItemSlots.feet:
+            return EquipmentSlotTypes.Feet;
+        case scrapedItemSlots.ring:
+            return EquipmentSlotTypes.Ring;
+        default:
+            return undefined;
+    }
 }
 
 export const getPlaceholderSrc = (slotType: EquipmentSlotTypes) => {

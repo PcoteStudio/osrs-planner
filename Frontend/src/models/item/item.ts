@@ -1,4 +1,4 @@
-import type { EquipmentSlotTypes } from './equipmentSlot';
+import { toEquipmentSlot, type EquipmentSlotTypes } from './equipmentSlot';
 import type { ScrapedItem } from '@/scrapedModels/scrapedItem';
 import { JsonHelper } from '@/utils/jsonHelper';
 
@@ -50,28 +50,29 @@ export class Item {
     }
 
     static fromJSON(jsonObject: { [key: string]: unknown }): Item {
-        const jsonItem = JsonHelper.parseWithSchema<ScrapedItem>('ScrapedItem', jsonObject);
+        const parsedItem = JsonHelper.parseWithSchema<ScrapedItem>('ScrapedItem', jsonObject);
 
-        const item = new Item(jsonItem.id, jsonItem.name);
-        item.bankable = jsonItem.bankable ?? item.bankable;
-        item.wikiUrl = jsonItem.wiki_url ?? item.wikiUrl;
-        item.imageUrl = jsonItem.icon ? `data:image/png;base64, ${jsonItem.icon}` : item.imageUrl;
-        item.cost = jsonItem.cost ?? item.cost;
-        item.lowAlch = jsonItem.lowalch ?? item.lowAlch;
-        item.highAlch = jsonItem.highalch ?? item.highAlch;
-        item.members = jsonItem.members ?? item.members;
-        item.tradeable = jsonItem.tradeable ?? item.tradeable;
-        item.geTradeable = jsonItem.tradeable_on_ge ?? item.geTradeable;
-        item.stackable = jsonItem.stackable ?? item.stackable;
-        item.stackSize = jsonItem.stacked ?? item.stackSize;
-        item.noted = jsonItem.noted ?? item.noted;
-        item.noteable = jsonItem.noteable ?? item.noteable;
-        item.linkedItemId = jsonItem.linked_id_item ?? item.linkedItemId;
-        item.linkedNotedId = jsonItem.linked_id_noted ?? item.linkedNotedId;
-        item.linkedPlaceholderId = jsonItem.linked_id_placeholder ?? item.linkedPlaceholderId;
-        item.isPlaceholder = jsonItem.placeholder ?? item.isPlaceholder;
-        item.equipable = jsonItem.equipable_by_player ?? item.equipable;
-        item.duplicated = jsonItem.duplicate ?? item.duplicated;
+        const item = new Item(parsedItem.id, parsedItem.name);
+        item.bankable = parsedItem.bankable ?? item.bankable;
+        item.wikiUrl = parsedItem.wiki_url ?? item.wikiUrl;
+        item.imageUrl = parsedItem.icon ? `data:image/png;base64, ${parsedItem.icon}` : item.imageUrl;
+        item.cost = parsedItem.cost ?? item.cost;
+        item.lowAlch = parsedItem.lowalch ?? item.lowAlch;
+        item.highAlch = parsedItem.highalch ?? item.highAlch;
+        item.members = parsedItem.members ?? item.members;
+        item.tradeable = parsedItem.tradeable ?? item.tradeable;
+        item.geTradeable = parsedItem.tradeable_on_ge ?? item.geTradeable;
+        item.stackable = parsedItem.stackable ?? item.stackable;
+        item.stackSize = parsedItem.stacked ?? item.stackSize;
+        item.noted = parsedItem.noted ?? item.noted;
+        item.noteable = parsedItem.noteable ?? item.noteable;
+        item.linkedItemId = parsedItem.linked_id_item ?? item.linkedItemId;
+        item.linkedNotedId = parsedItem.linked_id_noted ?? item.linkedNotedId;
+        item.linkedPlaceholderId = parsedItem.linked_id_placeholder ?? item.linkedPlaceholderId;
+        item.isPlaceholder = parsedItem.placeholder ?? item.isPlaceholder;
+        item.equipable = parsedItem.equipable_by_player ?? item.equipable;
+        item.duplicated = parsedItem.duplicate ?? item.duplicated;
+        item.equipmentSlot = toEquipmentSlot(parsedItem.slot);
         return item;
     }
 }
