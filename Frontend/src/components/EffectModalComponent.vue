@@ -41,7 +41,6 @@ watch(showModal, () => {
         <EffectBadgeComponent v-for="effect in effectList" :key="effect"
                               :effect="effect"
                               :removable="true"
-                              :command="() => store.removeEffect(selectedNode.step.id, effect)"
         />
       </div>
       <FloatLabel>

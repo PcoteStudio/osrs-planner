@@ -2,17 +2,16 @@
 import { getSkillStyle } from '@/models/skill/skillsEnum';
 import { formatExperience, formatNumber } from '@/utils/formaters';
 import { Effect, EffectTypeEnum } from '@/models/effect';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { SkillEffect } from '@/models/skill/skillEffect';
+import ContextMenu from 'primevue/contextmenu';
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   effect: Effect,
   removable?: boolean,
-  command?: Function,
-}>(), {
-  removable: false,
-  command: () => {},
-});
+  edit?: Function,
+  remove?: Function,
+}>();
 
 const content = computed(() => {
   switch (props.effect.type) {
@@ -31,6 +30,31 @@ const content = computed(() => {
   }
   return {};
 });
+
+
+const menu = ref();
+const items = computed(() => {
+  let actions = [];
+  if (props.edit) {
+    actions.push({
+      label: 'Edit',
+      icon: 'pi pi-pen-to-square',
+      command: props.edit,
+    });
+  }
+
+  if (props.remove) {
+    actions.push({
+      label: 'Remove',
+      icon: 'pi pi-times',
+      command: props.remove,
+    });
+  }
+
+  return actions;
+});
+
+const openContextMenu = (event : MouseEvent) => items.value.length > 0 && menu.value.show(event);
 </script>
 
 <template>
@@ -41,8 +65,18 @@ const content = computed(() => {
     v-tooltip.top="content.tooltip"
     :style="content.badgeStyle"
     class="badge"
-    @remove="command"
+    :class="{editable: items.length > 0}"
+    @contextmenu="openContextMenu($event)"
+    @click="openContextMenu($event)"
   />
+  <ContextMenu ref="menu" :model="items">
+    <template #item="{ item, props }">
+      <a v-ripple class="flex items-center" v-bind="props.action">
+        <span :class="item.icon" />
+        <span class="ml-2">{{ item.label }}</span>
+      </a>
+    </template>
+  </ContextMenu>
 </template>
 
 <style>
@@ -50,14 +84,16 @@ const content = computed(() => {
   height: 1.5rem;
   gap: 0.3em;
 
+  &.editable {
+    cursor: pointer;
+  }
+
+
   & > img {
     height: 100%;
     width: fit-content;
     object-fit: scale-down;
     border-radius: unset;
-  }
-  & > svg {
-    color: unset;
   }
 }
 </style>

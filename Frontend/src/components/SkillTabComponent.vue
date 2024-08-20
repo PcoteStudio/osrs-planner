@@ -21,7 +21,7 @@ const items = ref([
   {
     label: 'effect',
     icon: 'pi pi-plus',
-    command: () => store.openEffectModal(undefined, selectedSkill.value.type),
+    command: () => store.openEffectModal(undefined, selectedSkill.value),
   }
 ]);
 

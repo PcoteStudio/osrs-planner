@@ -82,11 +82,13 @@ watch(dragStore, () => {
 const canDragIn = computed(() => dragStore.isDragging && store.canMoveAfterNode(dragStore.dragFrom, step.value.id));
 
 const dragStart = (event: DragEvent) => {
-  console.log('Start');
-  dragStore.dragFrom = step.value.id;
-  dragStore.isDragging = true;
+  setTimeout(() => {
+    console.log('Start');
+    dragStore.dragFrom = step.value.id;
+    dragStore.isDragging = true;
 
-  event.dataTransfer?.setDragImage(content.value, 10, 10);
+    event.dataTransfer?.setDragImage(content.value, 10, 10);
+  }, 0);
 };
 
 const dragend = (event: DragEvent) => {
@@ -121,7 +123,6 @@ const dragleave = (event: DragEvent) => {
   <div :id="step.id"
        class="step"
        v-if="step"
-       @dragend="dragend"
   >
     <ContextMenu ref="menu" :model="items">
       <template #item="{ item, props }">
@@ -185,6 +186,7 @@ const dragleave = (event: DragEvent) => {
                     class="remove-button"
             />
             <Button @dragstart="dragStart"
+                    @dragend="dragend"
                     draggable="true"
                     v-if="editable"
                     :severity="'secondary'"
@@ -195,7 +197,7 @@ const dragleave = (event: DragEvent) => {
           </div>
         </div>
         <div class="body">
-          <EditTextarea v-if="editable" v-model="step.description" />
+          <EditTextarea v-if="!editable" v-model="step.description" />
           <span v-else>
             {{ step.description }}
           </span>
@@ -206,8 +208,8 @@ const dragleave = (event: DragEvent) => {
               v-for="effect in step.effects"
               :key="effect"
               :effect="effect"
-              :removable="editable"
-              :command="() => removeEffect(effect)"
+              :remove="() => removeEffect(effect)"
+              :edit="() => store.openEffectModal(step.id, effect)"
             />
             <Button v-if="editable" type="button" icon="pi pi-plus" rounded severity="primary" outlined
                     :style="{ height: '2em', width: '2em', fontSize: '0.9em' }" size="small"
@@ -215,7 +217,9 @@ const dragleave = (event: DragEvent) => {
             />
           </div>
         </div>
-        <div v-if="canDragIn" class="dropzone"></div>
+        <div v-if="canDragIn"
+             class="dropzone"
+        ></div>
       </div>
     </div>
     <hr>

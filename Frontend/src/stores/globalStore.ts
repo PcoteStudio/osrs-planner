@@ -8,6 +8,7 @@ import { type Notification } from '@/components/Notification/notificationTypes';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { Step } from '@/models/step';
 import { loremIpsum } from 'lorem-ipsum';
+import { Skill } from '@/models/skill/skill';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
@@ -28,7 +29,7 @@ export const useGlobalStore = defineStore('globalStore', {
         };
 
         const stepState = {
-            isEditing: false,
+            isEditing: true,
         };
 
         const notifications: Notification[] = [];
@@ -163,7 +164,7 @@ export const useGlobalStore = defineStore('globalStore', {
                 }
             });
         },
-        openEffectModal(nodeId?: string, skill?: SkillsEnum) {
+        openEffectModal(nodeId?: string, arg?: Effect | Skill) {
             if (nodeId)
                 this.effectState.node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
             else
@@ -172,10 +173,19 @@ export const useGlobalStore = defineStore('globalStore', {
             this.effectState.type = undefined;
             this.effectState.skill = undefined;
 
-            if (skill) {
-                this.effectState.type = EffectTypeEnum.Skill;
-                this.effectState.skill = skill;
+            if (arg instanceof Effect) {
+                this.effectState.type = arg.type;
             }
+            
+            if (arg instanceof SkillEffect) {
+                this.effectState.skill = arg.skill;
+            }
+
+            if (arg instanceof Skill) {
+                this.effectState.type = EffectTypeEnum.Skill;
+                this.effectState.skill = arg.type;
+            }
+
             this.effectState.showModal = true;
         },
         closeEffectModal() {
