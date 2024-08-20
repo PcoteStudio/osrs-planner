@@ -39,15 +39,15 @@ export class Inventory {
         const warnings: StateWarning[] = []; 
         const containerItem: ContainerItem = this.getItemVariation(item) ?? { item, quantity: 0 };
         containerItem.quantity += quantity;
-        this.items[item.id] = containerItem;
+        this.items[containerItem.item.id] = containerItem;
         const updatedItem = Item.getItemByStackSize(item, containerItem.quantity);
-        if(updatedItem.id != item.id) {
-            delete this.items[item.id];
+        if(updatedItem.id != containerItem.item.id) {
+            delete this.items[containerItem.item.id];
             containerItem.item = updatedItem;
             this.items[updatedItem.id] = containerItem;
         }
         if (containerItem.quantity == 0)
-            delete this.items[item.id];
+            delete this.items[containerItem.item.id];
         if (containerItem.quantity < 0)
             warnings.push(new InventoryMissingItemWarning(item, quantity, containerItem.quantity));
         if (this.usedSlots() > this.maxSlots)
