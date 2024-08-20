@@ -22,6 +22,7 @@ const dragStore = useDragStore();
 const collapseSubStepList = ref(false);
 const showEffects = ref(false);
 const menu = ref();
+const editDescription = ref(false);
 
 const items = ref([
   {
@@ -68,9 +69,6 @@ const remove = () => store.removeStep(step.value.id);
 const content = ref();
 
 watch(dragStore, () => {
-  if (!canDragIn.value)
-    return;
-
   if (dragStore.isDragging) {
     content.value.classList.add('no-drag');
   }
@@ -83,7 +81,6 @@ const canDragIn = computed(() => dragStore.isDragging && store.canMoveAfterNode(
 
 const dragStart = (event: DragEvent) => {
   setTimeout(() => {
-    console.log('Start');
     dragStore.dragFrom = step.value.id;
     dragStore.isDragging = true;
 
@@ -92,8 +89,6 @@ const dragStart = (event: DragEvent) => {
 };
 
 const dragend = (event: DragEvent) => {
-  console.log('Stop');
-
   if (dragStore.isDragging && dragStore.dragFrom && dragStore.dragTarget &&
       store.canMoveAfterNode(dragStore.dragFrom, dragStore.dragTarget)
   ) {
@@ -197,9 +192,19 @@ const dragleave = (event: DragEvent) => {
           </div>
         </div>
         <div class="body">
-          <EditTextarea v-if="!editable" v-model="step.description" />
+          <EditTextarea
+              v-if="editDescription"
+              v-model="step.description"
+              @close="editDescription = false"
+          />
           <span v-else>
             {{ step.description }}
+            <font-awesome-icon
+                v-if="editable"
+                @click="editDescription = true"
+                icon="pen-to-square"
+                class="cursor-pointer hover:text-white ml-1"
+            />
           </span>
         </div>
         <div v-if="!dragStore.isDragging" class="footer" :style="{ alignItems: editable ? 'flex-start' : 'flex-end' }">

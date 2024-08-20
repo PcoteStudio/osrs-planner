@@ -2,15 +2,17 @@
 import { onMounted, ref, watch } from 'vue';
 
 const model = defineModel();
+const emit = defineEmits(['close']);
 
 const content = ref();
 
 const save = () => {
   model.value = content.value;
+  emit('close');
 };
 
-const clear = () => {
-  content.value = '';
+const close = () => {
+  emit('close');
 };
 
 const undo = () => {
@@ -41,7 +43,7 @@ watch(model, () => {
               icon="pi pi-refresh" size="small"
               plain text
       />
-      <Button @click="clear"
+      <Button @click="close"
               icon="pi pi-times" size="small"
               plain text
       />
