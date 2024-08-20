@@ -1,6 +1,6 @@
 import type { Item } from './item';
 
-export class ContainerItem {
-    constructor(public item: Item, public quantity: number, public noted: boolean = false) {
-    }
+export type ContainerItem = {
+    item: Item,
+    quantity: number
 }

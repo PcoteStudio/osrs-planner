@@ -1,5 +1,5 @@
 import { StateWarning } from '../stateWarning';
-import { ContainerItem } from './containerItem';
+import type { ContainerItem } from './containerItem';
 import { Item } from './item';
 
 export class Bank {
@@ -13,15 +13,16 @@ export class Bank {
      * @param quantity Number of item inserted if positive or removed if negative.
      * @returns Detailed warning or `undefined` if the move is valid.
      */
-    moveItem(item: Item, quantity: number): BankMissingItemWarning | undefined {
-        const containerItem: ContainerItem = this.items[item.id] || new ContainerItem(item, 0);
+    moveItem(item: Item, quantity: number): StateWarning[] {
+        const warnings: StateWarning[] = []; 
+        const containerItem: ContainerItem = this.items[item.id] || { item, quantity: 0 };
         containerItem.quantity += quantity;
         this.items[item.id] = containerItem;
         if (containerItem.quantity == 0)
             delete this.items[item.id];
         else if (containerItem.quantity < 0)
-            return new BankMissingItemWarning(item, quantity, containerItem.quantity);
-        return undefined;
+            warnings.push(new BankMissingItemWarning(item, quantity, containerItem.quantity)) ;
+        return warnings;
     }
 
     /**

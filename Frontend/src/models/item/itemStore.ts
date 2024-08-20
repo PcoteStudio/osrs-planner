@@ -10,8 +10,10 @@ export class ItemStore {
             items[item.id] = item;
         }
         Object.values(items).forEach((item) => {
-            if (item.linkedItemId !== undefined)
+            if (item.linkedItemId !== undefined) {
                 item.linkedItem = items[item.linkedItemId];
+                item.linkedItem.linkedStackedItems.push(item);
+            }
             if (item.linkedNotedId !== undefined)
                 item.linkedNoted = items[item.linkedNotedId];
             if (item.linkedPlaceholderId !== undefined)

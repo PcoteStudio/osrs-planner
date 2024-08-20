@@ -2,8 +2,6 @@ import { toEquipmentSlot, type EquipmentSlotTypes } from './equipmentSlot';
 import type { ScrapedItem } from '@/scrapedModels/scrapedItem';
 import { JsonHelper } from '@/utils/jsonHelper';
 
-const itemsDb: { [id: number]: Item } = {};
-
 export class Item {
     bankable: boolean = true;
     cost: number = 0;
@@ -13,7 +11,7 @@ export class Item {
     tradeable: boolean = false;
     geTradeable: boolean = false;
     stackable: boolean = false;
-    stackSize: number | undefined;
+    stackSize: number = 1;
     noted: boolean = false;
     noteable: boolean = false;
     linkedItemId: number | undefined;
@@ -22,6 +20,7 @@ export class Item {
     linkedNoted: Item | undefined;
     linkedPlaceholderId: number | undefined;
     linkedPlaceholder: Item | undefined;
+    linkedStackedItems: Item[] = [];
     imageUrl: string | undefined;
     wikiUrl: string | undefined;
     isPlaceholder: boolean = false;
@@ -36,17 +35,16 @@ export class Item {
     constructor(public id: number, public name: string) {
     }
 
-    static get(itemId: number): Item {
-        return itemsDb[itemId];
-    }
-
-    static set(item: Item): void {
-        itemsDb[item.id] = item;
-    }
-
-    static clear(): void {
-        for (const itemId in itemsDb)
-            delete itemsDb[itemId];
+    static getItemByStackSize(item: Item, quantity: number) {
+        if(item.noted || !item.stackable) return item;
+        const baseItem = item.linkedItem ?? item;
+        const variations = baseItem.linkedStackedItems;
+        if(!variations.length) return baseItem;
+        let currentItem = baseItem;
+        for (const v of variations)
+            if (v.stackSize > currentItem.stackSize && v.stackSize <= quantity)
+                currentItem = v;
+        return currentItem;
     }
 
     static fromJSON(jsonObject: { [key: string]: unknown }): Item {

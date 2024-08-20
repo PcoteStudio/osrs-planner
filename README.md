@@ -6,20 +6,21 @@ This route planner is a powerfull website that will make much easier the process
 
 ### Route features
 
-| Feature                         | Progress      |
-| ------------------------------- | ------------- |
-| Display steps panel             | _Done_        |
-| List all steps in order         | _Done_        |
-| Select a step                   | _Done_        |
-| Mark a step as completed        | _Done_        |
-| Show and hide sub-steps         | _Done_        |
-| Serialize/Deserialize the route | _Done_        |
-| Edit a step's description       | _Done_        |
-| Add a step                      | _Done_        |
-| Add a sub-step                  | _Done_        |
-| Move a step                     | _Implemented_ |
-| Remove a step                   | _Done_        |
-| Export/Import a route           | _Done_        |
+| Feature                          | Progress      |
+| -------------------------------- | ------------- |
+| Display steps panel              | _Done_        |
+| List all steps in order          | _Done_        |
+| Select a step                    | _Done_        |
+| Mark a step as completed         | _Done_        |
+| Show and hide sub-steps          | _Done_        |
+| Serialize/Deserialize the route  | _Done_        |
+| Edit a step's description        | _Done_        |
+| Add a step                       | _Done_        |
+| Add a sub-step                   | _Done_        |
+| Move a step                      | _Implemented_ |
+| Remove a step                    | _Done_        |
+| Export/Import a route            | _Done_        |
+| Navigate through steps with keys |               |
 
 ### Skill features
 
@@ -44,6 +45,7 @@ This route planner is a powerfull website that will make much easier the process
 | Add inventory effect to selected step                          | _Implemented_ |
 | Remove inventory effect from selected step                     | _Implemented_ |
 | Merge similar item effects together                            |               |
+| Add 'note' and 'unnote' inventory effects                      |               |
 | Add 'drop all' inventory effect                                |               |
 | Add 'bank all' inventory effect                                |               |
 | Add issue when missing item from inventory to apply an effect  | _Implemented_ |

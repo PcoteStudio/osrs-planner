@@ -12,10 +12,10 @@ export class ItemEffect extends Effect {
     public apply(playerState: PlayerState) {
         switch (this.source) {
             case ItemContainers.Bank:
-                playerState.addWarning(playerState.bank.moveItem(this.item, -this.quantity));
+                playerState.addWarning(...playerState.bank.moveItem(this.item, -this.quantity));
                 break;
             case ItemContainers.Inventory:
-                playerState.addWarning(playerState.inventory.moveItem(this.item, -this.quantity));
+                playerState.addWarning(...playerState.inventory.moveItem(this.item, -this.quantity));
                 break;
             case ItemContainers.Equipment:
                 if (this.item.equipmentSlot)
@@ -26,10 +26,10 @@ export class ItemEffect extends Effect {
         }
         switch (this.destination) {
             case ItemContainers.Bank:
-                playerState.addWarning(playerState.bank.moveItem(this.item, this.quantity));
+                playerState.addWarning(...playerState.bank.moveItem(this.item, this.quantity));
                 break;
             case ItemContainers.Inventory:
-                playerState.addWarning(playerState.inventory.moveItem(this.item, this.quantity));
+                playerState.addWarning(...playerState.inventory.moveItem(this.item, this.quantity));
                 break;
             case ItemContainers.Equipment:
                 if (this.item.equipmentSlot)

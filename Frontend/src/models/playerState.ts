@@ -18,8 +18,9 @@ export class PlayerState {
         this.skills[SkillsEnum.Hitpoints] = 1154;
     }
 
-    addWarning(warning: StateWarning | undefined) {
-        if (warning instanceof StateWarning) this.warnings.push(warning);
+    addWarning(...warnings: StateWarning[]) {
+        if (!warnings || !warnings.length) return;
+        this.warnings.push(...warnings);
     }
 
     getTotalLevel(): number {
