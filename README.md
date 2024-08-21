@@ -45,7 +45,7 @@ This route planner is a powerfull website that will make much easier the process
 | Add inventory effect to selected step                          | _Implemented_ |
 | Remove inventory effect from selected step                     | _Implemented_ |
 | Merge similar item effects together                            |               |
-| Add 'note' and 'unnote' inventory effects                      |               |
+| Add 'note' and 'unnote' inventory effects                      | _Implemented_ |
 | Add 'drop all' inventory effect                                |               |
 | Add 'bank all' inventory effect                                |               |
 | Add issue when missing item from inventory to apply an effect  | _Implemented_ |

@@ -12,8 +12,9 @@ export class Item {
     geTradeable: boolean = false;
     stackable: boolean = false;
     stackSize: number = 1;
+    maxStack: number = 2_147_483_647;
     noted: boolean = false;
-    noteable: boolean = false;
+    notable: boolean = false;
     linkedItemId: number | undefined;
     linkedItem: Item | undefined;
     linkedNotedId: number | undefined;
@@ -33,6 +34,10 @@ export class Item {
     equipmentSlot: EquipmentSlotTypes | undefined;
 
     constructor(public id: number, public name: string) {
+    }
+
+    toString(includeId = false): string {
+        return `${this.name}${this.noted ? ' (noted)': ''}${includeId ? ` [${this.id}]`: ''}`;
     }
 
     static getItemByStackSize(item: Item, quantity: number) {
@@ -62,8 +67,9 @@ export class Item {
         item.geTradeable = parsedItem.tradeable_on_ge ?? item.geTradeable;
         item.stackable = parsedItem.stackable ?? item.stackable;
         item.stackSize = parsedItem.stacked ?? item.stackSize;
+        if(!item.stackable) item.maxStack = 1;
         item.noted = parsedItem.noted ?? item.noted;
-        item.noteable = parsedItem.noteable ?? item.noteable;
+        item.notable = parsedItem.noteable ?? item.notable;
         item.linkedItemId = parsedItem.linked_id_item ?? item.linkedItemId;
         item.linkedNotedId = parsedItem.linked_id_noted ?? item.linkedNotedId;
         item.linkedPlaceholderId = parsedItem.linked_id_placeholder ?? item.linkedPlaceholderId;

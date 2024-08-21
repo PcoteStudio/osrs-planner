@@ -10,7 +10,7 @@ export class Inventory {
     getSlots(): ContainerItem[] {
         const stacks : ContainerItem[] = [];
         for (const container of Object.values(this.items)) {
-            if(container.item.stackable)
+            if(container.item.stackable || container.item.noted || container.quantity < 0)
                 stacks.push(container);
             else for (let i = 0; i < container.quantity; i++)
                 stacks.push({ ...container, quantity: 1 });
@@ -29,6 +29,25 @@ export class Inventory {
         return this.items[item.id];
     }
 
+    noteItems(item: Item, quantity: number): StateWarning[] {
+        const warnings: StateWarning[] = [];
+        if(!item.notable) throw new Error(`This item is not notable: ${item.toString(true)}`);
+        if(item.noted) throw new Error(`This item is already noted: ${item.toString(true)}`);
+        if(!item.linkedNoted) throw new Error(`This item doesn't have a linked noted varation: ${item.toString(true)}`);
+        warnings.push(...this.moveItem(item, -quantity));
+        warnings.push(...this.moveItem(item.linkedNoted, quantity));
+        return warnings;
+    }
+
+    unnoteItems(item: Item, quantity: number): StateWarning[] {
+        const warnings: StateWarning[] = [];
+        if(!item.noted) throw new Error(`This item is already unnoted: ${item.toString(true)}`);
+        if(!item.linkedItem) throw new Error(`This item doesn't have a linked unnoted varation: ${item.toString(true)}`);
+        warnings.push(...this.moveItem(item, -quantity));
+        warnings.push(...this.moveItem(item.linkedItem, quantity));
+        return warnings;
+    }
+
     /**
      * Move items into or out of the inventory.
      * @param itemId ID of the item moved.
@@ -36,7 +55,7 @@ export class Inventory {
      * @returns Detailed warning or `undefined` if the move is valid.
      */
     moveItem(item: Item, quantity: number): StateWarning[] {
-        const warnings: StateWarning[] = []; 
+        const warnings: StateWarning[] = [];
         const containerItem: ContainerItem = this.getItemVariation(item) ?? { item, quantity: 0 };
         containerItem.quantity += quantity;
         this.items[containerItem.item.id] = containerItem;
@@ -52,8 +71,8 @@ export class Inventory {
             warnings.push(new InventoryMissingItemWarning(item, quantity, containerItem.quantity));
         if (this.usedSlots() > this.maxSlots)
             warnings.push(new InventoryLimitExceededWarning(item, quantity, this.maxSlots, this.usedSlots()) );
-        if (containerItem.item.stackable && containerItem.quantity > containerItem.item.stackSize)
-            warnings.push(new InventoryStackSizeExceededWarning(item, quantity, containerItem.quantity));
+        if (containerItem.item.stackable && containerItem.quantity > containerItem.item.maxStack)
+            warnings.push(new InventoryMaxStackSizeExceededWarning(item, quantity, containerItem.quantity));
         return warnings;
     }
 
@@ -73,7 +92,7 @@ export class Inventory {
         let usedSlot = 0;
         for (const container of Object.values(this.items)) {
             if (container.quantity === 0) continue;
-            if (container.item.stackable || container.quantity < 0) usedSlot++;
+            if (container.item.stackable || container.item.noted || container.quantity < 0) usedSlot++;
             else usedSlot += container.quantity;
         }
         return usedSlot;
@@ -93,7 +112,7 @@ export class InventoryLimitExceededWarning extends StateWarning {
     ) {
         super(
             'InventoryLimitExceededWarning',
-            `Inventory limit has been exceeded (${usedSlots}/${availableSlots}) by inserting ${quantityInserted} ${lastItemInserted.name}.`,
+            `Inventory limit has been exceeded (${usedSlots}/${availableSlots}) by inserting ${quantityInserted} ${lastItemInserted.toString()}.`,
         );
     }
 }
@@ -106,12 +125,12 @@ export class InventoryMissingItemWarning extends StateWarning {
     ) {
         super(
             'InventoryMissingItemWarning',
-            `${quantityWithdrawn} ${itemWithdrawn.name} were withdrawn from the inventory, but only ${quantityWithdrawn - quantityMissing} were available.`,
+            `${quantityWithdrawn} ${itemWithdrawn.toString()} were withdrawn from the inventory, but only ${quantityWithdrawn - quantityMissing} were available.`,
         );
     }
 }
 
-export class InventoryStackSizeExceededWarning extends StateWarning {
+export class InventoryMaxStackSizeExceededWarning extends StateWarning {
     constructor(
         lastItemInserted: Item,
         quantityInserted: number,
@@ -119,7 +138,7 @@ export class InventoryStackSizeExceededWarning extends StateWarning {
     ) {
         super(
             'InventoryStackSizeExceededWarning',
-            `Inventory stack size limit has been exceeded (${totalQuantity}/${lastItemInserted.stackSize}) by inserting ${quantityInserted} ${lastItemInserted.name}.`,
+            `Inventory item max stack size limit has been exceeded (${totalQuantity}/${lastItemInserted.stackSize}) by inserting ${quantityInserted} ${lastItemInserted.toString()}.`,
         );
     }
 }

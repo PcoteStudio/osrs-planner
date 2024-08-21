@@ -4,13 +4,159 @@ import { Item } from '@/models/item/item';
 
 describe('Inventory', () => {
     let inventory: Inventory;
-    const unstackableItem: Item = new Item(3, 'unstackable-item-name');
+    const unstackableItem: Item = new Item(100, 'unstackable item');
     unstackableItem.stackable = false;
-    const stackableItem: Item = new Item(3, 'stackable-item-name');
+    const stackableItem: Item = new Item(200, 'stackable item');
     stackableItem.stackable = true;
+    const unnotableItem: Item = new Item(300, 'unnotable item');
+    unnotableItem.notable = false;
+    const notableItem: Item = new Item(400, 'notable item');
+    notableItem.notable = true;
+    notableItem.stackable = true;
+    const notedItem: Item = new Item(401, 'noted item');
+    notedItem.notable = true;
+    notedItem.noted = true;
+    notedItem.linkedItem = notableItem;
+    notableItem.linkedNoted = notedItem;
+    const unlinkedNotableItem: Item = new Item(402, 'unlinked item');
+    unlinkedNotableItem.notable = true;
+    const unlinkedNotedItem: Item = new Item(403, 'unlinked noted item');
+    unlinkedNotedItem.noted = true;
 
     beforeEach(() => {
         inventory = new Inventory(28);
+    });
+
+    describe('noteItems', () => {
+        it('should replace 1 item with 1 noted item', () => {
+            inventory.moveItem(notableItem, 1);
+            const warnings = inventory.noteItems(notableItem, 1);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(0);
+            expect(slots.length).toStrictEqual(1);
+            expect(slots).toContainEqual({ item: notedItem, quantity: 1 });
+        });
+
+        it('should replace 3 items with 3 noted items', () => {
+            inventory.moveItem(notableItem, 3);
+            const warnings = inventory.noteItems(notableItem, 3);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(0);
+            expect(slots.length).toStrictEqual(1);
+            expect(slots).toContainEqual({ item: notedItem, quantity: 3 });
+        });
+
+        it('should replace 2/3 items with noted items and leave 1 untouched', () => {
+            inventory.moveItem(notableItem, 3);
+            const warnings = inventory.noteItems(notableItem, 2);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(0);
+            expect(slots.length).toStrictEqual(2);
+            expect(slots).toContainEqual({ item: notedItem, quantity: 2 });
+            expect(slots).toContainEqual({ item: notableItem, quantity: 1 });
+        });
+
+        it('should return a warning if the inventory doesn\'t contain the notable item', () => {
+            const warnings = inventory.noteItems(notableItem, 2);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(1);
+            expect(warnings[0]).toBeInstanceOf(InventoryMissingItemWarning);
+            expect(slots.length).toStrictEqual(2);
+            expect(slots).toContainEqual({ item: notedItem, quantity: 2 });
+            expect(slots).toContainEqual({ item: notableItem, quantity: -2 });
+        });
+
+        it('should return a warning if the inventory doesn\'t contain enough of the notable item', () => {
+            inventory.moveItem(notableItem, 2);
+            const warnings = inventory.noteItems(notableItem, 3);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(1);
+            expect(warnings[0]).toBeInstanceOf(InventoryMissingItemWarning);
+            expect(slots.length).toStrictEqual(2);
+            expect(slots).toContainEqual({ item: notedItem, quantity: 3 });
+            expect(slots).toContainEqual({ item: notableItem, quantity: -1 });
+        });
+
+        it('should throw an error if the item is unnotable', () => {
+            inventory.moveItem(stackableItem, 1);
+            expect(() => { inventory.noteItems(stackableItem, 1); } ).toThrowError();
+            expect(inventory.getSlots()).toContainEqual({ item: stackableItem, quantity: 1 });
+        });
+
+        it('should throw an error if the item is already noted', () => {
+            inventory.moveItem(notedItem, 1);
+            expect(() => { inventory.noteItems(notedItem, 1); } ).toThrowError();
+            expect(inventory.getSlots()).toContainEqual({ item: notedItem, quantity: 1 });
+        });
+
+        it('should throw an error if a noted version of the item can\'t be found', () => {
+            inventory.moveItem(unlinkedNotableItem, 1);
+            expect(() => { inventory.noteItems(unlinkedNotableItem, 1); } ).toThrowError();
+            expect(inventory.getSlots()).toContainEqual({ item: unlinkedNotableItem, quantity: 1 });
+        });
+    });
+
+        describe('unnoteItems', () => {
+        it('should replace 1 noted item with 1 item', () => {
+            inventory.moveItem(notedItem, 1);
+            const warnings = inventory.unnoteItems(notedItem, 1);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(0);
+            expect(slots.length).toStrictEqual(1);
+            expect(slots).toContainEqual({ item: notableItem, quantity: 1 });
+        });
+
+        it('should replace 3 noted items with 3 items', () => {
+            inventory.moveItem(notedItem, 3);
+            const warnings = inventory.unnoteItems(notedItem, 3);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(0);
+            expect(slots.length).toStrictEqual(1);
+            expect(slots).toContainEqual({ item: notableItem, quantity: 3 });
+        });
+
+        it('should replace 2/3 noted items with items and leave 1 untouched', () => {
+            inventory.moveItem(notedItem, 3);
+            const warnings = inventory.unnoteItems(notedItem, 2);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(0);
+            expect(slots.length).toStrictEqual(2);
+            expect(slots).toContainEqual({ item: notableItem, quantity: 2 });
+            expect(slots).toContainEqual({ item: notedItem, quantity: 1 });
+        });
+
+        it('should return a warning if the inventory doesn\'t contain the noted item', () => {
+            const warnings = inventory.unnoteItems(notedItem, 2);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(1);
+            expect(warnings[0]).toBeInstanceOf(InventoryMissingItemWarning);
+            expect(slots.length).toStrictEqual(2);
+            expect(slots).toContainEqual({ item: notableItem, quantity: 2 });
+            expect(slots).toContainEqual({ item: notedItem, quantity: -2 });
+        });
+
+        it('should return a warning if the inventory doesn\'t contain enough of the noted item', () => {
+            inventory.moveItem(notableItem, 2);
+            const warnings = inventory.noteItems(notableItem, 3);
+            const slots = inventory.getSlots();
+            expect(warnings.length).toStrictEqual(1);
+            expect(warnings[0]).toBeInstanceOf(InventoryMissingItemWarning);
+            expect(slots.length).toStrictEqual(2);
+            expect(slots).toContainEqual({ item: notedItem, quantity: 3 });
+            expect(slots).toContainEqual({ item: notableItem, quantity: -1 });
+        });
+
+        it('should throw an error if the item is already unnoted', () => {
+            inventory.moveItem(notableItem, 1);
+            expect(() => { inventory.unnoteItems(notableItem, 1); } ).toThrowError();
+            expect(inventory.getSlots()).toContainEqual({ item: notableItem, quantity: 1 });
+        });
+
+        it('should throw an error if an unnoted version of the item can\'t be found', () => {
+            inventory.moveItem(unlinkedNotedItem, 1);
+            expect(() => { inventory.noteItems(unlinkedNotedItem, 1); } ).toThrowError();
+            expect(inventory.getSlots()).toContainEqual({ item: unlinkedNotedItem, quantity: 1 });
+        });
     });
 
     describe('moveItem', () => {
@@ -86,6 +232,16 @@ describe('Inventory', () => {
         it('should accurately count 11 unstackable items', () => {
             inventory.moveItem(unstackableItem, 11);
             expect(inventory.usedSlots()).toStrictEqual(11);
+        });
+
+        it('should accurately count 7 noted items as 1', () => {
+            inventory.moveItem(notedItem, 7);
+            expect(inventory.usedSlots()).toStrictEqual(1);
+        });
+
+        it('should accurately count 9 stackable items as 1', () => {
+            inventory.moveItem(stackableItem, 9);
+            expect(inventory.usedSlots()).toStrictEqual(1);
         });
 
         it('should accurately count a full inventory of unstackable items', () => {
