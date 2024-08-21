@@ -8,6 +8,7 @@ import type { Effect } from '@/models/effect';
 import ContextMenu from 'primevue/contextmenu';
 import { useDragStore } from '@/stores/dragStore';
 import EditTextarea from '@/components/EditTextarea.vue';
+import { ShowEffectTypes } from '@/types/showEffectTypes';
 
 const props = withDefaults(defineProps<{
   node: StepTreeNode;
@@ -20,7 +21,6 @@ const store = useGlobalStore();
 const dragStore = useDragStore();
 
 const collapseSubStepList = ref(false);
-const showEffects = ref(false);
 const menu = ref();
 const editDescription = ref(false);
 
@@ -37,6 +37,13 @@ const items = ref([
   }
 ]);
 
+const showEffects = computed(() => {
+  if (store.getEffectState.showEffects === ShowEffectTypes.showAll)
+    return true;
+
+  return isCurrentStep.value && store.getEffectState.showEffects === ShowEffectTypes.showCurrent;
+});
+
 const step = computed(() => props.node.step);
 const isCurrentStep = computed(() => store.currentRoute.getCurrentStep() === step.value);
 const isFirstChild = computed(() =>  store.currentRoute.getFirstStep() === step.value);
@@ -44,29 +51,27 @@ const isLastChild = computed(() =>  store.currentRoute.getLastStep() === step.va
 const isCompleted = computed(() => step.value.completed);
 const hasChildren = computed(() => props.node.children.length > 0);
 
-watch(isCurrentStep, () => {
-  showEffects.value = isCurrentStep.value;
-});
-
 watch(isCompleted, () => {
   if (isCompleted.value)
     collapseSubStepList.value = true;
 });
 
-onMounted(() => {
-  if (isCurrentStep.value) {
-    showEffects.value = true;
-  }
-});
-
 const setCurrentNode = () => store.setCurrentNode(step.value.id);
-const toggleCompleted = () => store.toggleCompleted(step.value.id);
 const addEffect = () => store.openEffectModal(step.value.id);
 const removeEffect = (effect: Effect) => store.removeEffect(step.value.id, effect);
 const openContextMenu = (event : MouseEvent) => menu.value.show(event);
 const remove = () => store.removeStep(step.value.id);
 
 const content = ref();
+
+watch(content.value, () => {
+});
+
+onMounted(() => {
+  const count = (step.value.label.split('.').length - 1);
+  const color = `hsl(0, 0%, ${10 - count * 3}%)`;
+  content.value.style.background = `linear-gradient(90deg, transparent 1.75rem, ${color} 1.75rem)`;
+});
 
 watch(dragStore, () => {
   if (dragStore.isDragging) {
@@ -151,53 +156,43 @@ const dragleave = (event: DragEvent) => {
         </div>
       </div>
       <div class="label">
-        <div v-if="!canDragIn" class="header">
-          <div class="actions">
-            <Button @click="showEffects = !showEffects"
-                    size="small"
-                    :severity="showEffects ? 'primary' : 'secondary'"
-                    :label="'Effects'"
-            />
-            <Button @click="toggleCompleted"
-                    :severity="isCompleted ? 'primary' : 'secondary'"
-                    rounded
-                    size="small"
-                    icon="pi pi-check"
-            />
-            <Button @click="openContextMenu($event)"
-                    @contextmenu="openContextMenu($event)"
-                    v-if="editable"
-                    :severity="'secondary'"
-                    rounded outlined
-                    size="small"
-                    icon="pi pi-plus"
-            />
-            <Button @click="remove"
-                    v-if="editable"
-                    :severity="'secondary'"
-                    rounded outlined
-                    size="small"
-                    icon="pi pi-trash"
-                    class="remove-button"
-            />
-            <Button @dragstart="dragStart"
-                    @dragend="dragend"
-                    draggable="true"
-                    v-if="editable"
-                    :severity="'secondary'"
-                    rounded outlined
-                    size="small"
-                    icon="pi pi-arrows-alt"
-            />
-          </div>
-        </div>
         <div class="body">
           <EditTextarea
               v-if="editDescription"
               v-model="step.description"
               @close="editDescription = false"
           />
-          <span v-else>
+          <div v-else>
+            <div class="label-padding">
+              {{ step.label }}
+            </div>
+            <div class="actions">
+              <Button @click="openContextMenu($event)"
+                      @contextmenu="openContextMenu($event)"
+                      v-if="editable"
+                      :severity="'secondary'"
+                      rounded outlined
+                      size="small"
+                      icon="pi pi-plus"
+              />
+              <Button @click="remove"
+                      v-if="editable"
+                      :severity="'secondary'"
+                      rounded outlined
+                      size="small"
+                      icon="pi pi-trash"
+                      class="remove-button"
+              />
+              <Button @dragstart="dragStart"
+                      @dragend="dragend"
+                      draggable="true"
+                      v-if="editable"
+                      :severity="'secondary'"
+                      rounded outlined
+                      size="small"
+                      icon="pi pi-arrows-alt"
+              />
+            </div>
             {{ step.description }}
             <font-awesome-icon
                 v-if="editable"
@@ -205,10 +200,10 @@ const dragleave = (event: DragEvent) => {
                 icon="pen-to-square"
                 class="cursor-pointer hover:text-white ml-1"
             />
-          </span>
+          </div>
         </div>
         <div v-if="!dragStore.isDragging" class="footer" :style="{ alignItems: editable ? 'flex-start' : 'flex-end' }">
-          <div class="effects" :style="{ display: (showEffects || editable) ? 'flex' : 'none' }">
+          <div class="effects" :style="{ display: showEffects ? 'flex' : 'none' }">
             <EffectBadgeComponent
               v-for="effect in step.effects"
               :key="effect"
@@ -230,6 +225,7 @@ const dragleave = (event: DragEvent) => {
     <hr>
     <div class="sub-step-list" v-if="hasChildren">
       <div v-if="!canDragIn" class="toggle" @click="collapseSubStepList = !collapseSubStepList">
+        <span class="sub-step-count">{{ store.getChildrenCount(step.id) }} sub steps</span>
         <font-awesome-icon :icon="collapseSubStepList ? 'chevron-down' : 'chevron-up'" />
       </div>
       <StepListComponent
@@ -244,6 +240,7 @@ const dragleave = (event: DragEvent) => {
     </div>
   </div>
 </template>
+
 <style scoped>
 .no-drag {
   * {
@@ -281,6 +278,25 @@ hr {
     width: 100%;
   }
 
+  .body {
+    padding-top: 0.5em;
+    min-height: 2.2em;
+    .label-padding {
+      min-width: 1.2em;
+      height: 1.8em;
+      float: left;
+      color: transparent;
+      user-select: none
+    }
+
+    .actions {
+      float: right;
+      display: flex;
+      gap: 0.3rem;
+      justify-content: flex-end;
+    }
+  }
+
   .remove-button:hover {
     color: #ff0000;
     border-color: #a10000;
@@ -292,19 +308,6 @@ hr {
     flex-direction: column;
     gap: 0.5rem;
     margin-left: 2rem;
-
-    .header {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      justify-content: flex-end;
-
-      .actions {
-        display: flex;
-        gap: 0.3rem;
-        justify-content: flex-end;
-      }
-    }
 
     .footer {
       display: flex;
@@ -389,14 +392,6 @@ hr {
   }
 }
 
-.sub-step .content {
-  background: linear-gradient(90deg, transparent 1.75rem, #1a1a1a 1.75rem);
-}
-
-.deep-step .content {
-  background: linear-gradient(90deg, transparent 1.75rem, #111111 1.75rem);
-}
-
 .sub-step-list {
   position: relative;
 
@@ -414,10 +409,20 @@ hr {
     height: 2rem;
     margin-left: calc(2rem - 4px);
 
+    .sub-step-count {
+      position: absolute;
+      right: 1em;
+      top: 0.1em;
+    }
+
     &:hover {
       background-color: #565656;
       cursor: pointer;
       font-size: larger;
+
+      .sub-step-count {
+        font-size: initial;
+      }
 
       &:before {
         content: "";

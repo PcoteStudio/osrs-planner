@@ -2,6 +2,7 @@
 
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed } from 'vue';
+import { ShowEffectTypes } from '@/types/showEffectTypes';
 
 const store = useGlobalStore();
 
@@ -14,7 +15,7 @@ const buttons = computed(() => {
       options: [
         {
           label: 'Complete step',
-          type: 'secondary',
+          type: store.getCurrentRoute.getCurrentStep()?.completed ? 'primary' : 'secondary',
           icon: 'pi pi-check',
           disabled: !currentStep.value,
           action: () => {
@@ -28,18 +29,18 @@ const buttons = computed(() => {
           icon: 'pi pi-pen-to-square',
           action: store.toggleIsEditingSteps,
         },
-        {
-          label: 'Add step',
-          type: 'danger',
-          icon: 'pi pi-plus',
-          disabled: true,
-          outlined: true,
-        },
       ]
     },
     {
       label: 'Effects',
       options: [
+        {
+          label: 'Toggle effects',
+          type: 'secondary',
+          icon: store.getEffectState.showEffects === ShowEffectTypes.showAll ? 'pi pi-bullseye' :
+              store.getEffectState.showEffects === ShowEffectTypes.showCurrent ? 'pi pi-eye' : 'pi pi-eye-slash',
+                      action: () => store.toggleEffects()
+        },
         {
           label: 'Edit effect',
           type: 'secondary',

@@ -338,7 +338,7 @@ export class Route {
     }
 
     initializeSomeSteps() {
-        let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide.');
+        let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide. Si vous voulez mon avis concernant cette rigueur contextuelle, nous sommes contraints de prendre en considération la plus grande partie des synergies déclinables, pour longtemps.');
         step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
         step.addEffect(new SkillEffect(SkillsEnum.Attack, 100));
         step.addEffect(new SkillEffect(SkillsEnum.Construction, 100));

@@ -9,6 +9,7 @@ import { SkillEffect } from '@/models/skill/skillEffect';
 import { Step } from '@/models/step';
 import { loremIpsum } from 'lorem-ipsum';
 import { Skill } from '@/models/skill/skill';
+import { ShowEffectTypes } from '@/types/showEffectTypes';
 
 export const useGlobalStore = defineStore('globalStore', {
     state: () => {
@@ -17,6 +18,7 @@ export const useGlobalStore = defineStore('globalStore', {
         currentRoute.playerState = playerState;
 
         const effectState = {
+            showEffects: ShowEffectTypes.showCurrent,
             showModal: false,
             node: undefined as StepTreeNode | undefined,
             type: undefined as EffectTypeEnum | undefined,
@@ -29,7 +31,7 @@ export const useGlobalStore = defineStore('globalStore', {
         };
 
         const stepState = {
-            isEditing: true,
+            isEditing: false,
         };
 
         const notifications: Notification[] = [];
@@ -86,6 +88,13 @@ export const useGlobalStore = defineStore('globalStore', {
         },
         getStepState: (state) => {
             return state.stepState;
+        },
+        getChildrenCount: (state) => {
+            return (nodeId: string): number => {
+                const node = state.currentRoute.rootNode.findRequiredNodeById(nodeId);
+
+                return node.toFlatList().length;
+            };
         }
     },
     actions: {
@@ -234,5 +243,13 @@ export const useGlobalStore = defineStore('globalStore', {
 
             return Route.canMoveAfterNode(nodeToMove, previousNode);
         },
+        toggleEffects() {
+            if (this.effectState.showEffects === ShowEffectTypes.showCurrent)
+                this.effectState.showEffects = ShowEffectTypes.showAll;
+            else if (this.effectState.showEffects === ShowEffectTypes.showAll)
+                this.effectState.showEffects = ShowEffectTypes.showNone;
+            else if (this.effectState.showEffects === ShowEffectTypes.showNone)
+                this.effectState.showEffects = ShowEffectTypes.showCurrent;
+        }
     },
 });

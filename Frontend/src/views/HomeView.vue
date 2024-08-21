@@ -36,11 +36,11 @@ onMounted(() => {
     <TabComponent :min-width="'36rem'" max-width="30rem">
       <StepList :nodes="store.getNodeTree" id="stepsRoot" class="first-child" :editable="store.getStepState.isEditing" />
     </TabComponent>
-    <TabComponent :min-width="'24rem'">
-      <DebugComponent />
-    </TabComponent>
     <TabComponent :max-width="'24rem'">
       <ControlPanelComponent />
+    </TabComponent>
+    <TabComponent :min-width="'24rem'">
+      <DebugComponent />
     </TabComponent>
     <TabComponent :max-width="'20rem'">
       <EquipmentComponent />
