@@ -86,6 +86,7 @@ export class Route {
         nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
         this.updateChildrenDepth(nodeToMove);
         this.updateChildrenLabel(previousParent);
+        this.updateChildrenLabel(nodeToMove.parent);
         this.invalidateNextNodes(nodeToMove);
         this.setCurrentNode(this.currentNode);
         return nodeToMove;
