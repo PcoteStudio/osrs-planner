@@ -22,7 +22,7 @@ export class Inventory {
         if(item.noted || item.isPlaceholder) return this.items[item.id];
         const baseItem = item.linkedItem ?? item;
         const variations = baseItem.linkedStackedItems;
-        for (const v of variations) {
+        for (const v of [baseItem, ...variations]) {
             const container = this.items[v.id];
             if (container) return container;
         }
@@ -56,6 +56,7 @@ export class Inventory {
      */
     moveItem(item: Item, quantity: number): StateWarning[] {
         const warnings: StateWarning[] = [];
+        if (quantity === 0) return warnings;
         const containerItem: ContainerItem = this.getItemVariation(item) ?? { item, quantity: 0 };
         containerItem.quantity += quantity;
         this.items[containerItem.item.id] = containerItem;
@@ -69,8 +70,8 @@ export class Inventory {
             delete this.items[containerItem.item.id];
         if (containerItem.quantity < 0)
             warnings.push(new InventoryMissingItemWarning(item, quantity, containerItem.quantity));
-        if (this.usedSlots() > this.maxSlots)
-            warnings.push(new InventoryLimitExceededWarning(item, quantity, this.maxSlots, this.usedSlots()) );
+        if (this.getUsedSlotsCount() > this.maxSlots)
+            warnings.push(new InventoryLimitExceededWarning(item, quantity, this.maxSlots, this.getUsedSlotsCount()) );
         if (containerItem.item.stackable && containerItem.quantity > containerItem.item.maxStack)
             warnings.push(new InventoryMaxStackSizeExceededWarning(item, quantity, containerItem.quantity));
         return warnings;
@@ -88,7 +89,7 @@ export class Inventory {
      * Calculates the number of slots used by the items in the inventory.
      * @returns The number of used slots.
      */
-    usedSlots(): number {
+    getUsedSlotsCount(): number {
         let usedSlot = 0;
         for (const container of Object.values(this.items)) {
             if (container.quantity === 0) continue;
@@ -98,8 +99,8 @@ export class Inventory {
         return usedSlot;
     }
 
-    availableSlots(): number {
-        return this.maxSlots - this.usedSlots();
+    getAvailableSlotsCount(): number {
+        return this.maxSlots - this.getUsedSlotsCount();
     }
 }
 

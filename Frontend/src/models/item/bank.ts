@@ -14,11 +14,11 @@ export class Bank {
     getItemVariation(item: Item): ContainerItem | undefined {
         const baseItem = item.linkedItem ?? item;
         const variations = baseItem.linkedStackedItems;
-        for (const v of variations) {
+        for (const v of [baseItem, ...variations]) {
             const container = this.items[v.id];
             if (container) return container;
         }
-        return this.items[item.id];
+        return this.items[baseItem.id];
     }
 
     /**
@@ -28,7 +28,8 @@ export class Bank {
      * @returns Detailed warning or `undefined` if the move is valid.
      */
     moveItem(item: Item, quantity: number): StateWarning[] {
-        const warnings: StateWarning[] = []; 
+        const warnings: StateWarning[] = [];
+        if (quantity === 0) return warnings;
         const containerItem: ContainerItem =  this.getItemVariation(item) ?? { item, quantity: 0 };
         containerItem.quantity += quantity;
         this.items[containerItem.item.id] = containerItem;
