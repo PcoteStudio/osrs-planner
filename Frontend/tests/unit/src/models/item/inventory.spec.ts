@@ -1,29 +1,32 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Inventory, InventoryLimitExceededWarning, InventoryMissingItemWarning } from '@/models/item/inventory';
 import { Item } from '@/models/item/item';
-import coinsJson from '../../../../data/coins.json';
-import { ItemStore } from '@/models/item/itemStore';
 
 describe('Inventory', () => {
     let inventory: Inventory;
-    const unstackableItem: Item = new Item(100, 'unstackable item');
+    const unstackableItem = new Item(100, 'unstackable item');
     unstackableItem.stackable = false;
-    const stackableItem: Item = new Item(200, 'stackable item');
+    const stackableItem = new Item(200, 'stackable item');
     stackableItem.stackable = true;
-    const unnotableItem: Item = new Item(300, 'unnotable item');
+    const unnotableItem = new Item(300, 'unnotable item');
     unnotableItem.notable = false;
-    const notableItem: Item = new Item(400, 'notable item');
+    const notableItem = new Item(400, 'notable item');
     notableItem.notable = true;
     notableItem.stackable = true;
-    const notedItem: Item = new Item(401, 'noted item');
+    const notedItem = new Item(401, 'noted item');
     notedItem.notable = true;
     notedItem.noted = true;
     notedItem.linkedItem = notableItem;
     notableItem.linkedNoted = notedItem;
-    const unlinkedNotableItem: Item = new Item(402, 'unlinked item');
+    const unlinkedNotableItem = new Item(402, 'unlinked item');
     unlinkedNotableItem.notable = true;
-    const unlinkedNotedItem: Item = new Item(403, 'unlinked noted item');
+    const unlinkedNotedItem = new Item(403, 'unlinked noted item');
     unlinkedNotedItem.noted = true;
+    const stackableItemVariant = new Item(404, 'stackable item variant');
+    stackableItemVariant.stackable = true;
+    stackableItemVariant.stackSize = 1000;
+    stackableItemVariant.linkedItem = stackableItem;
+    stackableItem.linkedStackedItems.push(stackableItemVariant);
 
     beforeEach(() => {
         inventory = new Inventory(28);
@@ -250,6 +253,69 @@ describe('Inventory', () => {
         });
     });
 
+    describe('getSlots ', () => {
+        it('should return an empty array for a new inventory', () => {
+            expect(inventory.getSlots()).toStrictEqual([]);
+        });
+
+         it('should return a slot when the inventory is missing an item', () => {
+            inventory.moveItem(unstackableItem, -1);
+
+            expect(inventory.getSlots()).toStrictEqual([{ item: unstackableItem, quantity: -1 }]);
+        });
+
+        it('should return a single slot when the inventory is missing 3 of an unstackable item', () => {
+            inventory.moveItem(unstackableItem, -3);
+
+            expect(inventory.getSlots()).toStrictEqual([{ item: unstackableItem, quantity: -3 }]);
+        });
+
+        it('should return a single slot when the inventory is missing 3 of a stackable item', () => {
+            inventory.moveItem(stackableItem, -3);
+
+            expect(inventory.getSlots()).toStrictEqual([{ item: stackableItem, quantity: -3 }]);
+        });
+
+        it('should return 11 unstackable items as different slots', () => {
+            inventory.moveItem(unstackableItem, 11);
+            const slots = inventory.getSlots();
+
+            expect(slots.length).toStrictEqual(11);
+            for (const slot of slots)
+                expect(slot).toStrictEqual({ item: unstackableItem, quantity: 1 });
+        });
+
+        it('should return 7 noted items as 1 slot', () => {
+            inventory.moveItem(notedItem, 7);
+
+            expect(inventory.getSlots()).toStrictEqual([{ item: notedItem, quantity: 7 }]);
+        });
+
+        it('should return 9 stackable items as 1 slot', () => {
+            inventory.moveItem(stackableItem, 9);
+
+            expect(inventory.getSlots()).toStrictEqual([{ item: stackableItem, quantity: 9 }]);
+        });
+
+        it('should return a full inventory of unstackable items', () => {
+            inventory.moveItem(unstackableItem, inventory.maxSlots);            
+            const slots = inventory.getSlots();
+
+            expect(slots.length).toStrictEqual(inventory.maxSlots);
+            for (const slot of slots)
+                expect(slot).toStrictEqual({ item: unstackableItem, quantity: 1 });
+        });
+
+        it('should accurately count an inventory exceeding its limit', () => {
+            inventory.moveItem(unstackableItem, inventory.maxSlots * 2);          
+            const slots = inventory.getSlots();
+
+            expect(slots.length).toStrictEqual(inventory.maxSlots * 2);
+            for (const slot of slots)
+                expect(slot).toStrictEqual({ item: unstackableItem, quantity: 1 });
+        });
+    });
+
     describe('getUsedSlotsCount', () => {
         it('should return 0 for a new inventory', () => {
             expect(inventory.getUsedSlotsCount()).toStrictEqual(0);
@@ -305,29 +371,22 @@ describe('Inventory', () => {
     });
 
     describe('getItemVariation', () => {
-        const coinsItems = ItemStore.fromJSON(coinsJson);
-
         it('should return the stored base item if passing a variation of it', () => {
-            const baseCoin = coinsItems[995];
-            const coinVariation = coinsItems[1000];
-            inventory.moveItem(baseCoin, 1);
+            inventory.moveItem(stackableItem, 1);
 
-            expect(inventory.getItemVariation(coinVariation)).toStrictEqual(inventory.getSlots()[0]);
+            expect(inventory.getItemVariation(stackableItemVariant)).toStrictEqual(inventory.getSlots()[0]);
         });
 
         it('should return the stored variation item if passing a its base version', () => {
-            const baseCoin = coinsItems[995];
-            const coinVariation = coinsItems[1000];
-            inventory.moveItem(coinVariation, 25);
+            inventory.moveItem(stackableItemVariant, 1000);
 
-            expect(inventory.getItemVariation(baseCoin)).toStrictEqual(inventory.getSlots()[0]);
+            expect(inventory.getItemVariation(stackableItem)).toStrictEqual(inventory.getSlots()[0]);
         });
 
         it('should return undefined if passing a variation of an item not stored', () => {
-            const coinVariation = coinsItems[1000];
-            inventory.moveItem(stackableItem, 1);
+            inventory.moveItem(unstackableItem, 1);
 
-            expect(inventory.getItemVariation(coinVariation)).toStrictEqual(undefined);
+            expect(inventory.getItemVariation(stackableItemVariant)).toStrictEqual(undefined);
         });
     });
 });
