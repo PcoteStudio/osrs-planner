@@ -36,6 +36,11 @@
   --section-gap: 160px;
 }
 
+@font-face {
+  font-family: 'Runescape';
+  src: url('fonts/runescape.ttf');
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);

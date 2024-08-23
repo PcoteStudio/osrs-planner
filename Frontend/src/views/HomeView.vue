@@ -3,8 +3,8 @@ import EquipmentComponent from '@/components/EquipmentComponent.vue';
 import StepList from '@/components/StepListComponent.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import DebugComponent from '@/components/DebugComponent.vue';
-import InventoryComponent from '@/components/SkillTabComponent.vue';
-import { computed, onMounted, ref } from 'vue';
+import SkillTabComponent from '@/components/SkillTabComponent.vue';
+import { onMounted } from 'vue';
 import AddEffectModalComponent from '@/components/EffectModalComponent.vue';
 import TabComponent from '@/components/TabComponent.vue';
 import ControlPanelComponent from '@/components/ControlPanelComponent.vue';
@@ -20,6 +20,8 @@ onMounted(() => {
   const currentStep = store.getCurrentRoute.getCurrentStep();
   if (currentStep)
     store.setCurrentNode(currentStep.id);
+
+  store.currentRoute.getPlayerState().inventory.initializeSomeSlots();
 });
 </script>
 
@@ -36,6 +38,9 @@ onMounted(() => {
     <TabComponent :min-width="'36rem'" max-width="30rem">
       <StepList :nodes="store.getNodeTree" id="stepsRoot" class="first-child" :editable="store.getStepState.isEditing" />
     </TabComponent>
+    <TabComponent :min-width="'16rem'">
+      <InventoryComponent />
+    </TabComponent>
     <TabComponent :max-width="'24rem'">
       <ControlPanelComponent />
     </TabComponent>
@@ -46,7 +51,7 @@ onMounted(() => {
       <EquipmentComponent />
     </TabComponent>
     <TabComponent :max-width="'20rem'">
-      <InventoryComponent />
+      <SkillTabComponent />
     </TabComponent>
   </main>
 </template>

@@ -268,6 +268,7 @@ const dragLeave = (event: DragEvent, child?: boolean) => {
         </div>
       </div>
     </div>
+    <hr />
     <div class="sub-step-list" v-if="hasChildren">
       <div v-if="!canDragIn" class="toggle" @click="collapseSubStepList = !collapseSubStepList">
         <span class="sub-step-count">{{ store.getChildrenCount(step.id) }} sub steps</span>
