@@ -7,6 +7,20 @@ export class Bank {
 
     constructor() { }
 
+    getSlots(): ContainerItem[] {
+        return Object.values(this.items);
+    }
+
+    getItemVariation(item: Item): ContainerItem | undefined {
+        const baseItem = item.linkedItem ?? item;
+        const variations = baseItem.linkedStackedItems;
+        for (const v of variations) {
+            const container = this.items[v.id];
+            if (container) return container;
+        }
+        return this.items[item.id];
+    }
+
     /**
      * Move items into or out of the bank.
      * @param itemId ID of the item moved.
@@ -15,13 +29,19 @@ export class Bank {
      */
     moveItem(item: Item, quantity: number): StateWarning[] {
         const warnings: StateWarning[] = []; 
-        const containerItem: ContainerItem = this.items[item.id] || { item, quantity: 0 };
+        const containerItem: ContainerItem =  this.getItemVariation(item) ?? { item, quantity: 0 };
         containerItem.quantity += quantity;
-        this.items[item.id] = containerItem;
+        this.items[containerItem.item.id] = containerItem;
+        const updatedItem = Item.getItemByStackSize(item, containerItem.quantity);
+        if(updatedItem.id != containerItem.item.id) {
+            delete this.items[containerItem.item.id];
+            containerItem.item = updatedItem;
+            this.items[updatedItem.id] = containerItem;
+        }
         if (containerItem.quantity == 0)
-            delete this.items[item.id];
+            delete this.items[containerItem.item.id];
         else if (containerItem.quantity < 0)
-            warnings.push(new BankMissingItemWarning(item, quantity, containerItem.quantity)) ;
+            warnings.push(new BankMissingItemWarning(containerItem.item, quantity, containerItem.quantity)) ;
         return warnings;
     }
 
