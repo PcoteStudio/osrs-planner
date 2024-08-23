@@ -2,9 +2,11 @@ import { PlayerState } from './playerState';
 
 export abstract class Effect {
     public abstract apply(playerState: PlayerState): void;
+    public abstract canMergeWith(effect: Effect): boolean;
+    public abstract mergeWith(effect: Effect): void;
     public abstract toString(): string[];
     public toJSON(): object {
-        return { type: this.type };
+      return { type: this.type };
     }
 
     constructor(public readonly type: EffectTypeEnum) {
@@ -18,21 +20,21 @@ export enum EffectTypeEnum {
 }
 
 export const getEffectTypes = () => {
-    return [
-        {
-            name: 'Completion',
-            type: EffectTypeEnum.Completion,
-            icon: 'https://oldschool.runescape.wiki/images/Quest_point_icon.png?dc356',
-        },
-        {
-            name: 'Item',
-            type: EffectTypeEnum.Item,
-            icon: 'https://oldschool.runescape.wiki/images/Potato_with_cheese.png?64f1b',
-        },
-        {
-            name: 'Skill',
-            type: EffectTypeEnum.Skill,
-            icon: 'https://oldschool.runescape.wiki/images/Stats_icon.png?1b467'
-        },
-    ];
+  return [
+    {
+      name: 'Completion',
+      type: EffectTypeEnum.Completion,
+      icon: 'https://oldschool.runescape.wiki/images/Quest_point_icon.png?dc356',
+    },
+    {
+      name: 'Item',
+      type: EffectTypeEnum.Item,
+      icon: 'https://oldschool.runescape.wiki/images/Potato_with_cheese.png?64f1b',
+    },
+    {
+      name: 'Skill',
+      type: EffectTypeEnum.Skill,
+      icon: 'https://oldschool.runescape.wiki/images/Stats_icon.png?1b467'
+    },
+  ];
 };

@@ -2,21 +2,21 @@ import { Item } from './item';
 import { EquipmentSlotTypes } from '@/models/item/equipmentSlot';
 
 export class Equipment {
-    slots: { [slot in EquipmentSlotTypes as string]?: Item } = {};
+  slots: { [slot in EquipmentSlotTypes as string]?: Item } = {};
 
-    constructor() {
-        for (const key in EquipmentSlotTypes) {
-            this.slots[key] = undefined;
-        }
+  constructor() {
+    for (const key in EquipmentSlotTypes) {
+      this.slots[key] = undefined;
     }
+  }
 
-    get(slot: EquipmentSlotTypes): Item | undefined {
-        return this.slots[slot];
-    }
+  get(slot: EquipmentSlotTypes): Item | undefined {
+    return this.slots[slot];
+  }
 
-    swapSlot(slot: EquipmentSlotTypes, item: Item | undefined): Item | undefined {
-        const previousItem = this.slots[slot];
-        this.slots[slot] = item;
-        return previousItem;
-    }
+  swapSlot(slot: EquipmentSlotTypes, item: Item | undefined): Item | undefined {
+    const previousItem = this.slots[slot];
+    this.slots[slot] = item;
+    return previousItem;
+  }
 }

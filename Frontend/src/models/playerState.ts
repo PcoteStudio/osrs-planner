@@ -6,44 +6,44 @@ import { XpHelper } from './skill/xpHelper';
 import { StateWarning } from './stateWarning';
 
 export class PlayerState {
-    skills: { [skill in SkillsEnum as string]?: number } = {};
-    inventory: Inventory = new Inventory(28);
-    equipment: Equipment = new Equipment();
-    bank: Bank = new Bank();
-    warnings: StateWarning[] = [];
+  skills: { [skill in SkillsEnum as string]?: number } = {};
+  inventory: Inventory = new Inventory(28);
+  equipment: Equipment = new Equipment();
+  bank: Bank = new Bank();
+  warnings: StateWarning[] = [];
 
-    constructor() {
-        for (const skill of Object.values(SkillsEnum))
-            this.skills[skill] = 0;
-        this.skills[SkillsEnum.Hitpoints] = 1154;
-    }
+  constructor() {
+    for (const skill of Object.values(SkillsEnum))
+      this.skills[skill] = 0;
+    this.skills[SkillsEnum.Hitpoints] = 1154;
+  }
 
-    addWarning(...warnings: StateWarning[]) {
-        if (!warnings || !warnings.length) return;
-        this.warnings.push(...warnings);
-    }
+  addWarning(...warnings: StateWarning[]) {
+    if (!warnings || !warnings.length) return;
+    this.warnings.push(...warnings);
+  }
 
-    getTotalLevel(): number {
-        return Object.entries(this.skills).reduce(
-            (total, [, experience]) => total + XpHelper.getLevel(experience || 0),
-            0
-        );
-    }
+  getTotalLevel(): number {
+    return Object.entries(this.skills).reduce(
+      (total, [, experience]) => total + XpHelper.getLevel(experience || 0),
+      0
+    );
+  }
 
-    getSkillExperience(skill: SkillsEnum) : number {
-        return this.skills[skill] || 0;
-    }
+  getSkillExperience(skill: SkillsEnum) : number {
+    return this.skills[skill] || 0;
+  }
 
-    getTotalExperience(): number {
-        return Object.entries(this.skills).reduce((total, [, experience]) => {
-            return total + (experience || 0);
-        }, 0);
-    }
+  getTotalExperience(): number {
+    return Object.entries(this.skills).reduce((total, [, experience]) => {
+      return total + (experience || 0);
+    }, 0);
+  }
 
-    clone(): PlayerState {
-        const newState = new PlayerState;
-        newState.skills = { ...this.skills };
-        // TODO clone inventory/equipment/skills
-        return newState;
-    }
+  clone(): PlayerState {
+    const newState = new PlayerState;
+    newState.skills = { ...this.skills };
+    // TODO clone inventory/equipment/skills
+    return newState;
+  }
 }

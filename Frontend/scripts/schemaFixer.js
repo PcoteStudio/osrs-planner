@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 if(process.argv.length !== 4) {
-    throw new Error('The schema fixer should be called with the following arguments: ./path/to/source ./path/to/destination');
+  throw new Error('The schema fixer should be called with the following arguments: ./path/to/source ./path/to/destination');
 }
 
 const source = process.argv[2];

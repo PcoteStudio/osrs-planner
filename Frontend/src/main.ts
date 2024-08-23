@@ -21,11 +21,11 @@ import Ripple from 'primevue/ripple';
 library.add(fas, far, fab);
 
 const i18n = createI18n({
-    legacy: false,
-    locale: 'en',
-    messages: {
-        en: localeEn,
-    },
+  legacy: false,
+  locale: 'en',
+  messages: {
+    en: localeEn,
+  },
 });
 
 const app = createApp(App);
@@ -35,16 +35,16 @@ app.use(router);
 app.use(i18n);
 app.use(ToastService);
 app.use(PrimeVue, {
-    theme: {
-        preset: Aura,
-        options: {
-            ripple: true,
-            cssLayer: {
-                name: 'primevue',
-                order: 'tailwind-base, primevue, tailwind-utilities'
-            }
-        }
+  theme: {
+    preset: Aura,
+    options: {
+      ripple: true,
+      cssLayer: {
+        name: 'primevue',
+        order: 'tailwind-base, primevue, tailwind-utilities'
+      }
     }
+  }
 });
 
 app.directive('tooltip', Tooltip);

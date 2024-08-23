@@ -19,6 +19,7 @@ module.exports = {
   rules: {
     'class-methods-use-this': 'error',
     'comma-dangle': ['error', 'only-multiline'],
+    'indent': ['error', 2, { 'SwitchCase': 1 }],
     semi: ['error', 'always'],
     '@stylistic/js/quotes': ['error', 'single'],
     '@stylistic/js/object-curly-spacing': ['error', 'always'],

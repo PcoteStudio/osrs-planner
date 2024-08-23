@@ -30,61 +30,61 @@ export enum EquipmentSlotTypes {
 }
 
 export function toEquipmentSlot(slot: scrapedItemSlots): EquipmentSlotTypes | undefined {
-    switch (slot) {
-        case scrapedItemSlots.head:
-            return EquipmentSlotTypes.Head;
-        case scrapedItemSlots.cape:
-            return EquipmentSlotTypes.Cape;
-        case scrapedItemSlots.neck:
-            return EquipmentSlotTypes.Neck;
-        case scrapedItemSlots.ammo:
-            return EquipmentSlotTypes.Ammunition;
-        case scrapedItemSlots.weapon:
-            return EquipmentSlotTypes.Weapon;
-        case scrapedItemSlots.shield:
-            return EquipmentSlotTypes.Shield;
-        case scrapedItemSlots.two_handed:
-            return EquipmentSlotTypes.TwoHandedItems;
-        case scrapedItemSlots.body:
-            return EquipmentSlotTypes.Body;
-        case scrapedItemSlots.legs:
-            return EquipmentSlotTypes.Legs;
-        case scrapedItemSlots.hands:
-            return EquipmentSlotTypes.Hands;
-        case scrapedItemSlots.feet:
-            return EquipmentSlotTypes.Feet;
-        case scrapedItemSlots.ring:
-            return EquipmentSlotTypes.Ring;
-        default:
-            return undefined;
-    }
+  switch (slot) {
+    case scrapedItemSlots.head:
+      return EquipmentSlotTypes.Head;
+    case scrapedItemSlots.cape:
+      return EquipmentSlotTypes.Cape;
+    case scrapedItemSlots.neck:
+      return EquipmentSlotTypes.Neck;
+    case scrapedItemSlots.ammo:
+      return EquipmentSlotTypes.Ammunition;
+    case scrapedItemSlots.weapon:
+      return EquipmentSlotTypes.Weapon;
+    case scrapedItemSlots.shield:
+      return EquipmentSlotTypes.Shield;
+    case scrapedItemSlots.two_handed:
+      return EquipmentSlotTypes.TwoHandedItems;
+    case scrapedItemSlots.body:
+      return EquipmentSlotTypes.Body;
+    case scrapedItemSlots.legs:
+      return EquipmentSlotTypes.Legs;
+    case scrapedItemSlots.hands:
+      return EquipmentSlotTypes.Hands;
+    case scrapedItemSlots.feet:
+      return EquipmentSlotTypes.Feet;
+    case scrapedItemSlots.ring:
+      return EquipmentSlotTypes.Ring;
+    default:
+      return undefined;
+  }
 }
 
 export const getPlaceholderSrc = (slotType: EquipmentSlotTypes) => {
-    switch (slotType) {
-        case EquipmentSlotTypes.Head:
-            return headImg;
-        case EquipmentSlotTypes.Cape:
-            return capeImg;
-        case EquipmentSlotTypes.Neck:
-            return neckImg;
-        case EquipmentSlotTypes.Ammunition:
-            return ammunitionImg;
-        case EquipmentSlotTypes.ExtraAmmo:
-            return extraAmmoImg;
-        case EquipmentSlotTypes.Weapon:
-            return weaponImg;
-        case EquipmentSlotTypes.Shield:
-            return shieldImg;
-        case EquipmentSlotTypes.Body:
-            return bodyImg;
-        case EquipmentSlotTypes.Legs:
-            return legsImg;
-        case EquipmentSlotTypes.Hands:
-            return handsImg;
-        case EquipmentSlotTypes.Feet:
-            return feetImg;
-        case EquipmentSlotTypes.Ring:
-            return ringImg;
-    }
+  switch (slotType) {
+    case EquipmentSlotTypes.Head:
+      return headImg;
+    case EquipmentSlotTypes.Cape:
+      return capeImg;
+    case EquipmentSlotTypes.Neck:
+      return neckImg;
+    case EquipmentSlotTypes.Ammunition:
+      return ammunitionImg;
+    case EquipmentSlotTypes.ExtraAmmo:
+      return extraAmmoImg;
+    case EquipmentSlotTypes.Weapon:
+      return weaponImg;
+    case EquipmentSlotTypes.Shield:
+      return shieldImg;
+    case EquipmentSlotTypes.Body:
+      return bodyImg;
+    case EquipmentSlotTypes.Legs:
+      return legsImg;
+    case EquipmentSlotTypes.Hands:
+      return handsImg;
+    case EquipmentSlotTypes.Feet:
+      return feetImg;
+    case EquipmentSlotTypes.Ring:
+      return ringImg;
+  }
 };

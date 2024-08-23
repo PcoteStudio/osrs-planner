@@ -10,32 +10,32 @@ const toast = useToast();
 const state = useGlobalStore();
 
 watch(() => state.notifications,
-    (notifications) => {
-      for (const notification of notifications) {
-        const details = getMessageDetails(notification);
+  (notifications) => {
+    for (const notification of notifications) {
+      const details = getMessageDetails(notification);
 
-        toast.add({
-          severity: details.logLevel,
-          detail: details.message,
-          life: 5000
-        });
-      }
-      state.clearNotifications();
-    }, { deep: true }
+      toast.add({
+        severity: details.logLevel,
+        detail: details.message,
+        life: 5000
+      });
+    }
+    state.clearNotifications();
+  }, { deep: true }
 );
 
 state.$onAction(
-    ({ onError }) => {
-      onError((error) => {
-        console.error(error);
-        const details = getErrorMessageDetails(error);
+  ({ onError }) => {
+    onError((error) => {
+      console.error(error);
+      const details = getErrorMessageDetails(error);
 
-        toast.add({
-          severity: details.logLevel,
-          detail: details.message,
-        });
+      toast.add({
+        severity: details.logLevel,
+        detail: details.message,
       });
-    }
+    });
+  }
 );
 
 function getMessageDetails(notification: Notification) {

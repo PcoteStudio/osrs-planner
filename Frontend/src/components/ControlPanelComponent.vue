@@ -38,8 +38,8 @@ const buttons = computed(() => {
           label: 'Toggle effects',
           type: 'secondary',
           icon: store.getEffectState.showEffects === ShowEffectTypes.showAll ? 'pi pi-bullseye' :
-              store.getEffectState.showEffects === ShowEffectTypes.showCurrent ? 'pi pi-eye' : 'pi pi-eye-slash',
-                      action: () => store.toggleEffects()
+            store.getEffectState.showEffects === ShowEffectTypes.showCurrent ? 'pi pi-eye' : 'pi pi-eye-slash',
+          action: () => store.toggleEffects()
         },
         {
           label: 'Edit effect',
