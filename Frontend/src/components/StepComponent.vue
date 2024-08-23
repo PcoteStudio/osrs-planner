@@ -88,11 +88,13 @@ const canDragIn = computed(() => dragStore.isDragging && store.canMoveAfterNode(
 const dragOver = ref(false);
 
 const dragStart = (event: DragEvent) => {
+  event.dataTransfer?.setDragImage(content.value, 10, 10);
+
   setTimeout(() => {
     dragStore.dragFrom = step.value.id;
     dragStore.isDragging = true;
 
-    event.dataTransfer?.setDragImage(content.value, 10, 10);
+    console.log(content.value);
   }, 0);
 };
 
