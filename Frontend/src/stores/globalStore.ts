@@ -228,19 +228,30 @@ export const useGlobalStore = defineStore('globalStore', {
             const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
             this.currentRoute.removeNode(node);
         },
-        moveNode(nodeIdToMove: string, previousNodeId: string) {
-            const nodeToMove = this.currentRoute.rootNode.findRequiredNodeById(nodeIdToMove);
-            const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
-
-            this.getCurrentRoute.moveAfterNode(nodeToMove, previousNode);
-        },
-        canMoveAfterNode(nodeIdToMove?: string, previousNodeId?: string) {
-            if (!nodeIdToMove || !previousNodeId)
+        moveNode(nodeIdToMove: string, previousNodeId: string, child?: boolean) {
+            if (!nodeIdToMove || !previousNodeId || child === undefined)
                 return false;
 
             const nodeToMove = this.currentRoute.rootNode.findRequiredNodeById(nodeIdToMove);
             const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
 
+            if (child) {
+                this.getCurrentRoute.moveToSubNode(nodeToMove, previousNode);
+            }
+            else {
+                this.getCurrentRoute.moveAfterNode(nodeToMove, previousNode);
+            }
+        },
+        canMoveAfterNode(nodeIdToMove?: string, previousNodeId?: string, child?: boolean) {
+            if (!nodeIdToMove || !previousNodeId || child === undefined)
+                return false;
+
+            const nodeToMove = this.currentRoute.rootNode.findRequiredNodeById(nodeIdToMove);
+            const previousNode = this.currentRoute.rootNode.findRequiredNodeById(previousNodeId);
+
+            if (child) {
+                return Route.canMoveToSubNode(nodeToMove, previousNode);
+            }
             return Route.canMoveAfterNode(nodeToMove, previousNode);
         },
         toggleEffects() {

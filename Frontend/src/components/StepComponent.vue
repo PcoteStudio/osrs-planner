@@ -69,9 +69,6 @@ const remove = () => store.removeStep(step.value.id);
 
 const content = ref();
 
-watch(content.value, () => {
-});
-
 onMounted(() => {
   const count = (step.value.label.split('.').length - 1);
   const color = `hsl(0, 0%, ${10 - count * 3}%)`;
@@ -87,7 +84,8 @@ watch(dragStore, () => {
   }
 });
 
-const canDragIn = computed(() => dragStore.isDragging && store.canMoveAfterNode(dragStore.dragFrom, step.value.id));
+const canDragIn = computed(() => dragStore.isDragging && store.canMoveAfterNode(dragStore.dragFrom, step.value.id, dragStore.targetLocation === 'child'));
+const dragOver = ref(false);
 
 const dragStart = (event: DragEvent) => {
   setTimeout(() => {
@@ -98,29 +96,54 @@ const dragStart = (event: DragEvent) => {
   }, 0);
 };
 
-const dragend = (event: DragEvent) => {
+const dragEnd = (event: DragEvent) => {
+  const child = dragStore.targetLocation === 'child';
+
   if (dragStore.isDragging && dragStore.dragFrom && dragStore.dragTarget &&
-      store.canMoveAfterNode(dragStore.dragFrom, dragStore.dragTarget)
+      store.canMoveAfterNode(dragStore.dragFrom, dragStore.dragTarget, child)
   ) {
-    store.moveNode(dragStore.dragFrom, dragStore.dragTarget);
+    store.moveNode(dragStore.dragFrom, dragStore.dragTarget, child);
+
+    dragStore.targetLocation = undefined;
+    dragStore.dragTarget = undefined;
+    dragOver.value = false;
   }
 
   dragStore.isDragging = false;
 };
 
-const dragenter = (event: DragEvent) => {
+const count = ref(0);
+const dragEnter = (event: DragEvent, child?: boolean) => {
   if (!(event.target instanceof HTMLElement) || !canDragIn.value)
     return;
 
-  dragStore.dragTarget = step.value.id;
-  event.target.classList.add('dragover');
+  count.value++;
+
+  if (child !== undefined) {
+    dragStore.dragTarget = step.value.id;
+    if (child) {
+      dragStore.targetLocation = 'child';
+    }
+    else {
+      dragStore.targetLocation = 'after';
+    }
+  }
+  else {
+    dragOver.value = true;
+  }
 };
 
-const dragleave = (event: DragEvent) => {
+const dragLeave = (event: DragEvent, child?: boolean) => {
   if (!(event.target instanceof HTMLElement) || !canDragIn.value)
     return;
 
-  event.target.classList.remove('dragover');
+  count.value--;
+
+  if (count.value === 0){
+    dragStore.targetLocation = undefined;
+    dragStore.dragTarget = undefined;
+    dragOver.value = false;
+  }
 };
 </script>
 
@@ -137,7 +160,6 @@ const dragleave = (event: DragEvent) => {
         </a>
       </template>
     </ContextMenu>
-
     <div :id="isCurrentStep ? 'current': undefined"
          class="content"
          :class="{
@@ -146,8 +168,8 @@ const dragleave = (event: DragEvent) => {
            'current': isCurrentStep,
            'completed': isCompleted
          }"
-         @dragleave="dragleave"
-         @dragenter="dragenter"
+         @dragleave="dragLeave"
+         @dragenter="dragEnter"
          ref="content"
     >
       <div class="tag"
@@ -189,7 +211,7 @@ const dragleave = (event: DragEvent) => {
                       class="remove-button"
               />
               <Button @dragstart="dragStart"
-                      @dragend="dragend"
+                      @dragend="dragEnd"
                       draggable="true"
                       v-if="editable"
                       :severity="'secondary'"
@@ -222,12 +244,28 @@ const dragleave = (event: DragEvent) => {
             />
           </div>
         </div>
-        <div v-if="canDragIn"
-             class="dropzone"
-        ></div>
+        <div v-if="dragOver" class="dropzone">
+          <div class="zone"
+               :class="{ active: dragStore.targetLocation === 'after' }"
+               @dragover="(event) => event.preventDefault()"
+               @drop="dragEnd"
+               @dragenter="(e) => dragEnter(e, false)"
+               @dragleave="(e) => dragLeave(e, false)"
+          >
+            <span>{{ nextStepLabel }}</span>
+          </div>
+          <div class="zone"
+               :class="{ active: dragStore.targetLocation === 'child' }"
+               @dragover="(event) => event.preventDefault()"
+               @drop="dragEnd"
+               @dragenter="(e) => dragEnter(e, true)"
+               @dragleave="(e) => dragLeave(e, false)"
+          >
+            <span>{{ childStepLabel }}</span>
+          </div>
+        </div>
       </div>
     </div>
-    <hr>
     <div class="sub-step-list" v-if="hasChildren">
       <div v-if="!canDragIn" class="toggle" @click="collapseSubStepList = !collapseSubStepList">
         <span class="sub-step-count">{{ store.getChildrenCount(step.id) }} sub steps</span>
@@ -268,14 +306,23 @@ hr {
   padding: 0.5rem;
 
   .dropzone {
-    width: 90%;
-    height: 2rem;
-    border: rgba(0, 191, 255, 0.3) 3px dashed;
-  }
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 
-  &.dragover {
-    .dropzone {
-      border-color: deepskyblue;
+    .zone {
+      pointer-events: initial;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      border: rgba(0, 191, 255, 0.3) 3px dashed;
+
+      &.active {
+        border-color: deepskyblue;
+        color: white;
+        font-weight: bold;
+      }
     }
   }
 

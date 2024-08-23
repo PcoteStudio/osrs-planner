@@ -19,7 +19,7 @@ for (let i = 1; i <= 99; i++) {
   <pre>
 Dragging: {{ dragStore.isDragging }}
     Source: {{ state.getNodeById(dragStore.dragFrom)?.step.label }} ({{ dragStore.dragFrom }})
-    Target: {{ state.getNodeById(dragStore.dragTarget)?.step.label }} ({{ dragStore.dragTarget }})
+    Target: {{ state.getNodeById(dragStore.dragTarget)?.step.label }} {{ dragStore.targetLocation }} ({{ dragStore.dragTarget }})
 {{ state.currentRoute.toString(state.currentRoute.rootNode) }}
 {{ state.currentRoute.getCurrentStep() }}
 {{ state.currentRoute.getPlayerState().skills }}
