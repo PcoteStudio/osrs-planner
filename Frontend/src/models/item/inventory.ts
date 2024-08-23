@@ -1,11 +1,20 @@
 import { StateWarning } from '../stateWarning';
 import type { ContainerItem } from './containerItem';
 import { Item } from './item';
+import { ItemStore } from './itemStore';
+import randomItemsJson from'../../../tests/data/randomItems.json';
 
 export class Inventory {
     items: { [id: number]: ContainerItem } = {};
 
     constructor(public maxSlots: number = 28) { }
+
+    initializeSomeSlots(): void {
+        ItemStore.items = ItemStore.fromJSON(randomItemsJson);
+        this.moveItem(ItemStore.items[11804], 2);
+        this.moveItem(ItemStore.items[11806], 1);
+        this.moveItem(ItemStore.items[11808], 3);
+    }
 
     getSlots(): ContainerItem[] {
         const stacks : ContainerItem[] = [];
