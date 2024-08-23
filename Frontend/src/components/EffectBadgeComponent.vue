@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getSkillStyle } from '@/models/skill/skillsEnum';
-import { formatExperience, formatNumber } from '@/utils/formaters';
+import { formatShortNumbers, formatNumber } from '@/utils/formaters';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { computed, ref } from 'vue';
 import type { SkillEffect } from '@/models/skill/skillEffect';
@@ -20,7 +20,7 @@ const content = computed(() => {
       const typedEffect = props.effect as SkillEffect;
       return {
         image: getSkillStyle(typedEffect.skill).icon,
-        label: formatExperience(typedEffect.experience),
+        label: formatShortNumbers(typedEffect.experience),
         tooltip: formatNumber(typedEffect.experience),
         badgeStyle: {
           backgroundColor: getSkillStyle(typedEffect.skill).bgColor,

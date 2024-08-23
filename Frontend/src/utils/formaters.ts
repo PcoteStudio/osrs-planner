@@ -1,4 +1,4 @@
-export const formatExperience = (exp: number) : string => {
+export const formatShortNumbers = (exp: number) : string => {
     if (exp < 1000) {
         return exp.toString();
     } else if (exp < 1000000) {

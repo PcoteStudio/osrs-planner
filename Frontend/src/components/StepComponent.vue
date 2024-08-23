@@ -50,6 +50,11 @@ const isFirstChild = computed(() =>  store.currentRoute.getFirstStep() === step.
 const isLastChild = computed(() =>  store.currentRoute.getLastStep() === step.value);
 const isCompleted = computed(() => step.value.completed);
 const hasChildren = computed(() => props.node.children.length > 0);
+const childStepLabel = computed(() => `${step.value.label ?? ''}.1`);
+const nextStepLabel = computed(() => { 
+  const label = step.value.label;
+  return label ? label.substring(0, label.length - 1) + (Number(label[label.length - 1]) + 1).toString() : 'X';
+});
 
 watch(isCompleted, () => {
   if (isCompleted.value)
