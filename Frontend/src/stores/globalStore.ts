@@ -95,7 +95,10 @@ export const useGlobalStore = defineStore('globalStore', {
 
         return node.toFlatList().length;
       };
-    }
+    },
+    getInventory: (state) => {
+      return state.currentRoute.getPlayerState().inventory;
+    },
   },
   actions: {
     setCurrentNode(nodeId: string) {

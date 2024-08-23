@@ -14,7 +14,9 @@ export class Inventory {
     this.moveItem(ItemStore.items[11804], 2);
     this.moveItem(ItemStore.items[11805], 15);
     this.moveItem(ItemStore.items[11806], 1);
+    this.moveItem(ItemStore.items[11807], 10000000);
     this.moveItem(ItemStore.items[11808], 3);
+    this.moveItem(ItemStore.items[11809], 100000);
   }
 
   getSlots(): ContainerItem[] {
