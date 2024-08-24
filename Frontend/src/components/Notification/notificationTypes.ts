@@ -1,5 +1,4 @@
 import { Effect } from '@/models/effect';
-import type { Route } from '@/models/route';
 
 export type Notification =
     AddEffectNotification

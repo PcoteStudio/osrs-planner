@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
-import { ContainerItem } from '@/models/item/containerItem';
-import ContextMenu from 'primevue/contextmenu';
+import type { ContainerItem } from '@/models/item/containerItem';
 import { computed, ref } from 'vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { formatShortNumbers } from '@/utils/formaters';

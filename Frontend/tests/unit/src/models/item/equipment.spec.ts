@@ -13,11 +13,11 @@ describe('equipment', () => {
   describe('get', () => {
     it('should return the right equipment for the slot specified', () => {
       const equipment = new Equipment();
-      equipment.swapSlot(EquipmentSlotTypes.Head, helmItem);
-      equipment.swapSlot(EquipmentSlotTypes.Body, bodyItem);
+      equipment.swapSlot(EquipmentSlotTypes.Head, { item: helmItem, quantity: 1 });
+      equipment.swapSlot(EquipmentSlotTypes.Body, { item: bodyItem, quantity: 1 });
 
-      expect(equipment.get(EquipmentSlotTypes.Head)).toBe(helmItem);
-      expect(equipment.get(EquipmentSlotTypes.Body)).toBe(bodyItem);
+      expect(equipment.get(EquipmentSlotTypes.Head)).toBe({ item: helmItem, quantity: 1 });
+      expect(equipment.get(EquipmentSlotTypes.Body)).toBe({ item: bodyItem, quantity: 1 });
     });
   });
 });
