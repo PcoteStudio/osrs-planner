@@ -16,9 +16,9 @@ export class SkillEffect extends Effect {
   }
   
   public canMergeWith(effect: Effect): boolean {
-    if(effect.type != EffectTypeEnum.Skill || !(effect instanceof SkillEffect)) 
+    if(effect.type !== EffectTypeEnum.Skill || !(effect instanceof SkillEffect)) 
       return false;
-    return (effect as SkillEffect).skill == this.skill;
+    return (effect as SkillEffect).skill === this.skill;
   }
 
   public mergeWith(effect: Effect): void {

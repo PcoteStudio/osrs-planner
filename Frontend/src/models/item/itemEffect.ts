@@ -16,14 +16,14 @@ export class ItemEffect extends Effect {
       case ItemActions.Incinerate:
       case ItemActions.Withdraw:
         movedItem = playerState.bank.getItemVariation(this.item);
-        playerState.addWarning(...playerState.bank.moveItem(this.item, -this.quantity));
+        playerState.addWarnings(...playerState.bank.moveItem(this.item, -this.quantity));
         break;
       // From inventory
       case ItemActions.Drop:
       case ItemActions.Bank:
       case ItemActions.Equip:
         movedItem = playerState.inventory.getItemVariation(this.item);
-        playerState.addWarning(...playerState.inventory.moveItem(this.item, -this.quantity));
+        playerState.addWarnings(...playerState.inventory.moveItem(this.item, -this.quantity));
         break;
       case ItemActions.Note:
         if(this.item.linkedNoted)
@@ -49,20 +49,20 @@ export class ItemEffect extends Effect {
     switch (this.action) {
       // To bank
       case ItemActions.Bank:
-        playerState.addWarning(...playerState.bank.moveItem(itemToMove, quantityToMove));
+        playerState.addWarnings(...playerState.bank.moveItem(itemToMove, quantityToMove));
         break;
       // To inventory
       case ItemActions.Withdraw:
-        playerState.addWarning(...playerState.inventory.moveItem(itemToMove, quantityToMove));
+        playerState.addWarnings(...playerState.inventory.moveItem(itemToMove, quantityToMove));
         break;
       case ItemActions.Unequip:
-        playerState.addWarning(...playerState.inventory.moveItem(itemToMove, quantityToMove));
+        playerState.addWarnings(...playerState.inventory.moveItem(itemToMove, quantityToMove));
         break;
       case ItemActions.Note:
-        playerState.addWarning(...playerState.inventory.noteItems(itemToMove, quantityToMove));
+        playerState.addWarnings(...playerState.inventory.noteItems(itemToMove, quantityToMove));
         break;
       case ItemActions.Unnote:
-        playerState.addWarning(...playerState.inventory.unnoteItems(itemToMove, quantityToMove));
+        playerState.addWarnings(...playerState.inventory.unnoteItems(itemToMove, quantityToMove));
         break;
       // To equipment
       case ItemActions.Equip:
@@ -74,7 +74,7 @@ export class ItemEffect extends Effect {
   }
 
   public canMergeWith(effect: Effect): boolean {
-    if(effect.type != EffectTypeEnum.Item || !(effect instanceof ItemEffect)) 
+    if(effect.type !== EffectTypeEnum.Item || !(effect instanceof ItemEffect)) 
       return false;
     const itemEffect = (effect as ItemEffect);
     return (itemEffect.action === this.action && (itemEffect.item.id === this.item.id 

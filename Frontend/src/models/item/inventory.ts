@@ -8,6 +8,12 @@ export class Inventory {
   items: { [id: number]: ContainerItem } = {};
 
   constructor(public maxSlots: number = 28) { }
+  
+  clone(): Inventory {
+    const inventory = new Inventory(this.maxSlots);
+    inventory.items = { ...this.items };
+    return inventory;
+  }
 
   initializeSomeSlots(): void {
     ItemStore.items = ItemStore.fromJSON(randomItemsJson);
@@ -73,23 +79,24 @@ export class Inventory {
   moveItem(item: Item, quantity: number): StateWarning[] {
     const warnings: StateWarning[] = [];
     if (quantity === 0) return warnings;
-    const containerItem: ContainerItem = this.getItemVariation(item) ?? { item, quantity: 0 };
-    containerItem.quantity += quantity;
-    this.items[containerItem.item.id] = containerItem;
-    const updatedItem = Item.getItemByStackSize(item, containerItem.quantity);
-    if(updatedItem.id != containerItem.item.id) {
-      delete this.items[containerItem.item.id];
-      containerItem.item = updatedItem;
-      this.items[updatedItem.id] = containerItem;
+    let { item : cItem, quantity : cQuantity } = this.getItemVariation(item) ?? { item, quantity: 0 };
+    cQuantity += quantity;
+    this.items[cItem.id] = { item: cItem, quantity: cQuantity };
+    const updatedItem = Item.getItemByStackSize(item, cQuantity);
+    if (cQuantity === 0)
+      delete this.items[cItem.id];
+    else if(updatedItem.id !== cItem.id) {
+      delete this.items[cItem.id];
+      cItem = updatedItem;
+      if (cQuantity !== 0)
+        this.items[updatedItem.id] = { item: cItem, quantity: cQuantity };
     }
-    if (containerItem.quantity == 0)
-      delete this.items[containerItem.item.id];
-    if (containerItem.quantity < 0)
-      warnings.push(new InventoryMissingItemWarning(item, quantity, containerItem.quantity));
+    if (cQuantity < 0)
+      warnings.push(new InventoryMissingItemWarning(item, quantity, cQuantity));
     if (this.getUsedSlotsCount() > this.maxSlots)
       warnings.push(new InventoryLimitExceededWarning(item, quantity, this.maxSlots, this.getUsedSlotsCount()) );
-    if (containerItem.item.stackable && containerItem.quantity > containerItem.item.maxStack)
-      warnings.push(new InventoryMaxStackSizeExceededWarning(item, quantity, containerItem.quantity));
+    if (cItem.stackable && cQuantity > cItem.maxStack)
+      warnings.push(new InventoryMaxStackSizeExceededWarning(item, quantity, cQuantity));
     return warnings;
   }
 

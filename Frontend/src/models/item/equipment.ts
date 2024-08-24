@@ -17,9 +17,9 @@ export class Equipment {
   swapSlot(slot: EquipmentSlotTypes | undefined, containerItem: ContainerItem | undefined): ContainerItem | undefined {
     if (!slot)
       throw new Error('The destination slot is missing');
-    if (containerItem?.item != undefined && (!containerItem.item.equipable || !containerItem.item.equipmentSlot))
+    if (containerItem?.item !== undefined && (!containerItem.item.equipable || !containerItem.item.equipmentSlot))
       throw new Error('This item cannot be equiped');
-    if (containerItem?.item != undefined && containerItem.item.equipmentSlot != slot)
+    if (containerItem?.item !== undefined && containerItem.item.equipmentSlot !== slot)
       throw new Error('This item cannot be in this slot');
     const previousItem = this.slots[slot];
     this.slots[slot] = containerItem;

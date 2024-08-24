@@ -18,7 +18,7 @@ export class PlayerState {
     this.skills[SkillsEnum.Hitpoints] = 1154;
   }
 
-  addWarning(...warnings: StateWarning[]) {
+  addWarnings(...warnings: StateWarning[]) {
     if (!warnings || !warnings.length) return;
     this.warnings.push(...warnings);
   }
@@ -43,7 +43,8 @@ export class PlayerState {
   clone(): PlayerState {
     const newState = new PlayerState;
     newState.skills = { ...this.skills };
-    // TODO clone inventory/equipment/skills
+    newState.inventory = this.inventory.clone();
+    // TODO clone equipment/bank
     return newState;
   }
 }

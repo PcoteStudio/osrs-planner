@@ -30,19 +30,20 @@ export class Bank {
   moveItem(item: Item, quantity: number): StateWarning[] {
     const warnings: StateWarning[] = [];
     if (quantity === 0) return warnings;
-    const containerItem: ContainerItem =  this.getItemVariation(item) ?? { item, quantity: 0 };
-    containerItem.quantity += quantity;
-    this.items[containerItem.item.id] = containerItem;
-    const updatedItem = Item.getItemByStackSize(item, containerItem.quantity);
-    if(updatedItem.id != containerItem.item.id) {
-      delete this.items[containerItem.item.id];
-      containerItem.item = updatedItem;
-      this.items[updatedItem.id] = containerItem;
+    let { item : cItem, quantity : cQuantity } = this.getItemVariation(item) ?? { item, quantity: 0 };
+    cQuantity += quantity;
+    this.items[cItem.id] = { item: cItem, quantity: cQuantity };
+    const updatedItem = Item.getItemByStackSize(item, cQuantity);
+    if (cQuantity === 0)
+      delete this.items[cItem.id];
+    else if(updatedItem.id !== cItem.id) {
+      delete this.items[cItem.id];
+      cItem = updatedItem;
+      if (quantity !== 0)
+        this.items[updatedItem.id] = { item: cItem, quantity: cQuantity };
     }
-    if (containerItem.quantity == 0)
-      delete this.items[containerItem.item.id];
-    else if (containerItem.quantity < 0)
-      warnings.push(new BankMissingItemWarning(containerItem.item, quantity, containerItem.quantity)) ;
+    else if (cQuantity < 0)
+      warnings.push(new BankMissingItemWarning(cItem, quantity, cQuantity)) ;
     return warnings;
   }
 
@@ -58,7 +59,7 @@ export class Bank {
    * Calculates the number of slots used by the items in the bank.
    * @returns The number of used slots.
    */
-  usedSlots(): number {
+  getUsedSlotsCount(): number {
     let usedSlot = 0;
     for (const [, containerItem] of Object.entries(this.items)) {
       if (containerItem.quantity <= 0) continue;

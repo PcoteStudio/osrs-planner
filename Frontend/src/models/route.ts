@@ -81,7 +81,7 @@ export class Route {
       throw new InvalidNodeMoveAfter(nodeToMove, previousNode);
     this.invalidateNextNodes(nodeToMove);
     const previousParent = nodeToMove.parent;
-    nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id != nodeToMove.step?.id);
+    nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id !== nodeToMove.step?.id);
     nodeToMove.parent = previousNode?.parent;
     nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
     this.updateChildrenDepth(nodeToMove);
@@ -101,7 +101,7 @@ export class Route {
   moveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): StepTreeNode {
     if (!Route.canMoveToSubNode(nodeToMove, parentNode))
       throw new Error('These nodes cannot be moved after one another');
-    nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step.id != nodeToMove.step.id);
+    nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step.id !== nodeToMove.step.id);
     nodeToMove.parent = parentNode;
     parentNode.children.splice(0, 0, nodeToMove);
     this.updateChildrenDepth(nodeToMove);
