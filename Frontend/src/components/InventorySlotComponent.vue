@@ -16,25 +16,10 @@ const props = withDefaults(defineProps<{
 });
 
 const menu = ref();
-const items = computed(() => [
-  {
-    label: 'Bank',
-    icon: 'pi pi-building-columns',
-    command: () => store.openEffectModal(undefined, selectedSkill.value),
-  },
-  {
-    label: 'Set quantity',
-    icon: 'pi pi-pen-to-square',
-    command: () => store.openEffectModal(undefined, selectedSkill.value),
-  },
-  {
-    label: props.item?.item.noted ? 'Un-note' : 'Note',
-    icon: 'pi pi-file',
-    command: () => store.openEffectModal(undefined, selectedSkill.value),
-  }
-]);
 
-const selectedSkill = ref();
+const item = computed(() => props.item?.item);
+const quantity = computed(() => props.item?.quantity || 0);
+
 const openContextMenu = (event : MouseEvent) => {
   menu.value.show(event);
 };
@@ -42,28 +27,22 @@ const openContextMenu = (event : MouseEvent) => {
 
 <template>
   <div class="slot"
-       :class="{ error: error }"
-       @contextmenu="openContextMenu"
-       @click="openContextMenu"
+       :class="{ error: error, 'outline-red': quantity < 0 }"
   >
-    <img :src="item?.item.imageUrl" />
-    <span v-if="item?.quantity !== 1"
-          class="quantity-overlay"
-          :class="{ white: item?.quantity >= 100000, green: item?.quantity >= 10000000 }"
-    >
-      {{ formatShortNumbers(item?.quantity) }}
-    </span>
+    <div v-if="quantity !== 0">
+      <img :src="item?.imageUrl"  :alt="item?.name" />
+      <span v-if="quantity !== 1"
+            class="quantity-overlay"
+            :class="{
+        white: quantity >= 100000,
+        green: quantity >= 10000000,
+        red: quantity < 0
+      }"
+      >
+        {{ formatShortNumbers(quantity) }}
+      </span>
+    </div>
   </div>
-
-  <ContextMenu ref="menu" :model="items" @hide="selectedSkill = null">
-    <template #item="{ item, props }">
-      <a v-ripple class="flex items-center" v-bind="props.action">
-        <span :class="item.icon" />
-        <img v-if="selectedSkill?.icon" :src="selectedSkill?.icon" :alt="selectedSkill?.type">
-        <span class="ml-2">{{ item.label }}</span>
-      </a>
-    </template>
-  </ContextMenu>
 </template>
 
 <style scoped>
@@ -89,12 +68,20 @@ const openContextMenu = (event : MouseEvent) => {
     left: 0;
     top: 0;
     padding-left: 0.2em;
+
     &.white {
       color: white;
     }
     &.green {
       color: #00ff80;
     }
+    &.red {
+      color: red;
+    }
+  }
+
+  &.outline-red {
+    outline: red 1px solid;
   }
 
   &.error {

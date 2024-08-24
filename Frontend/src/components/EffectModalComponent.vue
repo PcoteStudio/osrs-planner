@@ -18,6 +18,7 @@ const selectedNode = ref();
 const effectTypes = computed(() => getEffectTypes());
 const nodes = ref(store.getNodeList);
 const effectList = computed(() => nodes.value.find(n => n.step.id === selectedNode.value.step.id)?.step.effects);
+const filteredEffectList = computed(() => effectList.value?.filter(e => e.type === selectedEffectType.value.type));
 
 const showModal = computed(() => store.getEffectState.showModal);
 watch(showModal, () => {
@@ -38,7 +39,7 @@ watch(showModal, () => {
   >
     <div class="content">
       <div class="effect-list">
-        <EffectBadgeComponent v-for="effect in effectList" :key="effect"
+        <EffectBadgeComponent v-for="effect in filteredEffectList" :key="effect"
                               :effect="effect"
                               :removable="true"
         />
