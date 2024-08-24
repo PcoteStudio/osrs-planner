@@ -10,6 +10,7 @@ import { Step } from '@/models/step';
 import { loremIpsum } from 'lorem-ipsum';
 import { Skill } from '@/models/skill/skill';
 import { ShowEffectTypes } from '@/types/showEffectTypes';
+import { Item } from '@/models/item/item';
 
 export const useGlobalStore = defineStore('globalStore', {
   state: () => {
@@ -176,7 +177,7 @@ export const useGlobalStore = defineStore('globalStore', {
         }
       });
     },
-    openEffectModal(nodeId?: string, arg?: Effect | Skill) {
+    openEffectModal(nodeId?: string, arg?: Effect | Skill | Item) {
       if (nodeId)
         this.effectState.node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
       else
@@ -196,6 +197,10 @@ export const useGlobalStore = defineStore('globalStore', {
       if (arg instanceof Skill) {
         this.effectState.type = EffectTypeEnum.Skill;
         this.effectState.skill = arg.type;
+      }
+
+      if (arg instanceof Item) {
+        this.effectState.type = EffectTypeEnum.Item;
       }
 
       this.effectState.showModal = true;
@@ -264,6 +269,12 @@ export const useGlobalStore = defineStore('globalStore', {
         this.effectState.showEffects = ShowEffectTypes.showNone;
       else if (this.effectState.showEffects === ShowEffectTypes.showNone)
         this.effectState.showEffects = ShowEffectTypes.showCurrent;
-    }
+    },
+    noteItem(item: Item, quantity: number) {
+      if (item.noted)
+        this.getCurrentRoute.getPlayerState().inventory.unnoteItems(item, quantity);
+      else
+        this.getCurrentRoute.getPlayerState().inventory.noteItems(item, quantity);
+    },
   },
 });
