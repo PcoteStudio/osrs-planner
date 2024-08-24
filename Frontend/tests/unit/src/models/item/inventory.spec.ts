@@ -180,14 +180,14 @@ describe('Inventory', () => {
   });
 
   describe('moveItem', () => {
-    it('should be able to fill the inventory in a single move', () => {
+    it('should fill the inventory in a single move', () => {
       const warnings = inventory.moveItem(unstackableItem, inventory.maxSlots);
             
       expect(warnings).toStrictEqual([]);
       expect(inventory.getUsedSlotsCount()).toStrictEqual(inventory.maxSlots);
     });
 
-    it('should be able to fill the inventory in multiple moves', () => {
+    it('should fill the inventory in multiple moves', () => {
       for (let i = 0; i < inventory.maxSlots; i++) {
         const warnings = inventory.moveItem(unstackableItem, 1);
         expect(warnings).toStrictEqual([]);
@@ -195,7 +195,7 @@ describe('Inventory', () => {
       expect(inventory.getUsedSlotsCount()).toStrictEqual(inventory.maxSlots);
     });
 
-    it('should be able to empty the inventory in a single move', () => {
+    it('should empty the inventory in a single move', () => {
       inventory.moveItem(unstackableItem, inventory.maxSlots);
       const warnings = inventory.moveItem(unstackableItem, -inventory.maxSlots);
             
@@ -203,7 +203,7 @@ describe('Inventory', () => {
       expect(inventory.getUsedSlotsCount()).toStrictEqual(0);
     });
 
-    it('should be able to empty the inventory in multiple moves', () => {
+    it('should empty the inventory in multiple moves', () => {
       inventory.moveItem(unstackableItem, inventory.maxSlots);
       for (let i = 0; i < inventory.maxSlots; i++) {
         const warnings = inventory.moveItem(unstackableItem, -1);
