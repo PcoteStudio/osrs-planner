@@ -30,6 +30,10 @@ export class Inventory {
     return stacks;
   }
 
+  getItem(item: Item): ContainerItem | undefined {
+    return this.items[item.id];
+  }
+
   getItemVariation(item: Item): ContainerItem | undefined {
     if(item.noted || item.isPlaceholder) return this.items[item.id];
     const baseItem = item.linkedItem ?? item;

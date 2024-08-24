@@ -1,38 +1,72 @@
 import { Effect, EffectTypeEnum } from '../effect';
 import { PlayerState } from '../playerState';
+import type { ContainerItem } from './containerItem';
 import { Item } from './item';
-import { ItemContainers } from './itemContainers';
+import { ItemActions } from './itemActions';
 
 export class ItemEffect extends Effect {
-  constructor(public source: ItemContainers, public destination: ItemContainers, public item: Item, public quantity: number) {
+  constructor(public action: ItemActions, public item: Item, public quantity: number) {
     super(EffectTypeEnum.Item);
   }
 
   public apply(playerState: PlayerState) {
-    switch (this.source) {
-      case ItemContainers.Bank:
+    let movedItem: ContainerItem | undefined = undefined;
+    switch (this.action) {
+      // From bank
+      case ItemActions.Incinerate:
+      case ItemActions.Withdraw:
+        movedItem = playerState.bank.getItemVariation(this.item);
         playerState.addWarning(...playerState.bank.moveItem(this.item, -this.quantity));
         break;
-      case ItemContainers.Inventory:
+      // From inventory
+      case ItemActions.Drop:
+      case ItemActions.Bank:
+      case ItemActions.Equip:
+        movedItem = playerState.inventory.getItemVariation(this.item);
         playerState.addWarning(...playerState.inventory.moveItem(this.item, -this.quantity));
         break;
-      case ItemContainers.Equipment:
-        if (this.item.equipmentSlot)
-          playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
+      case ItemActions.Note:
+        if(this.item.linkedNoted)
+          movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item.linkedNoted, quantity: this.quantity };
+        break;
+      case ItemActions.Unnote:
+        if(this.item.linkedItem)
+          movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item.linkedItem, quantity: this.quantity };
+        break;
+      // From equipment
+      case ItemActions.Unequip:
+        movedItem = playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
         break;
       default:
         break;
     }
-    switch (this.destination) {
-      case ItemContainers.Bank:
-        playerState.addWarning(...playerState.bank.moveItem(this.item, this.quantity));
+    
+    const itemToMove = movedItem?.item ?? this.item;
+    let quantityToMove = movedItem?.quantity ?? 0;
+    if (this.quantity !== Number.POSITIVE_INFINITY && this.quantity !== Number.NEGATIVE_INFINITY)
+      quantityToMove = this.quantity;
+
+    switch (this.action) {
+      // To bank
+      case ItemActions.Bank:
+        playerState.addWarning(...playerState.bank.moveItem(itemToMove, quantityToMove));
         break;
-      case ItemContainers.Inventory:
-        playerState.addWarning(...playerState.inventory.moveItem(this.item, this.quantity));
+      // To inventory
+      case ItemActions.Withdraw:
+        playerState.addWarning(...playerState.inventory.moveItem(itemToMove, quantityToMove));
         break;
-      case ItemContainers.Equipment:
-        if (this.item.equipmentSlot)
-          playerState.equipment.swapSlot(this.item.equipmentSlot, this.item);
+      case ItemActions.Unequip:
+        playerState.addWarning(...playerState.inventory.moveItem(itemToMove, quantityToMove));
+        break;
+      case ItemActions.Note:
+        playerState.addWarning(...playerState.inventory.noteItems(itemToMove, quantityToMove));
+        break;
+      case ItemActions.Unnote:
+        playerState.addWarning(...playerState.inventory.unnoteItems(itemToMove, quantityToMove));
+        break;
+      // To equipment
+      case ItemActions.Equip:
+        playerState.equipment.swapSlot(itemToMove.equipmentSlot, movedItem);
         break;
       default:
         break;
@@ -43,7 +77,7 @@ export class ItemEffect extends Effect {
     if(effect.type != EffectTypeEnum.Item || !(effect instanceof ItemEffect)) 
       return false;
     const itemEffect = (effect as ItemEffect);
-    return (itemEffect.source === this.source && itemEffect.destination === this.destination && (itemEffect.item.id === this.item.id 
+    return (itemEffect.action === this.action && (itemEffect.item.id === this.item.id 
         || (!this.item.isPlaceholder && !itemEffect.item.isPlaceholder && !this.item.noted && !itemEffect.item.noted
             && (this.item.linkedItemId ?? this.item.id) === (itemEffect.item.linkedItemId ?? itemEffect.item.id))));
   }
@@ -56,15 +90,12 @@ export class ItemEffect extends Effect {
   }
 
   public toJSON(): object {
-    return { ...super.toJSON(), source: this.source, item: this.item, quantity: this.quantity };
+    return { ...super.toJSON(), action: this.action, item: this.item, quantity: this.quantity };
   }
 
   public toString(): string[] {
     const effects: string[] = [];
-    if (this.source !== ItemContainers.World)
-      effects.push(`${ItemContainers[this.source]}: -${this.quantity} ${this.item}`);
-    if (this.source !== ItemContainers.World)
-      effects.push(`${ItemContainers[this.destination]}: +${this.quantity} ${this.item}`);
+    effects.push(`${this.action} ${[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].includes(this.quantity) ? 'all' : this.quantity} ${this.item}`);
     return effects;
   }
 }

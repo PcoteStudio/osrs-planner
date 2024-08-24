@@ -3,7 +3,6 @@ import { PlayerState } from './playerState';
 import { Effect } from '@/models/effect';
 import { JsonHelper } from '@/utils/jsonHelper';
 import { EffectFactory } from './effectFactory';
-import { SkillEffect } from './skill/skillEffect';
 
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
 
@@ -19,8 +18,7 @@ export class Step {
     this.description = description;
   }
 
-  addEffect(effect: Effect | undefined) {
-    if(!effect) return;
+  addEffect(effect: Effect) {
     // Merge similar effects together
     for (const existingEffect of this.effects) {
       if(existingEffect.canMergeWith(effect)) {

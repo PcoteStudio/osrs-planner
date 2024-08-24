@@ -22,11 +22,11 @@ export class Bank {
   }
 
   /**
-     * Move items into or out of the bank.
-     * @param itemId ID of the item moved.
-     * @param quantity Number of item inserted if positive or removed if negative.
-     * @returns Detailed warning or `undefined` if the move is valid.
-     */
+   * Move items into or out of the bank.
+   * @param itemId ID of the item moved.
+   * @param quantity Number of item inserted if positive or removed if negative.
+   * @returns Detailed warning or `undefined` if the move is valid.
+   */
   moveItem(item: Item, quantity: number): StateWarning[] {
     const warnings: StateWarning[] = [];
     if (quantity === 0) return warnings;
@@ -47,17 +47,17 @@ export class Bank {
   }
 
   /**
-     * Remove all items from the bank.
-     */
+   * Remove all items from the bank.
+   */
   clear(): void {
     for (const itemId in this.items)
       delete this.items[itemId];
   }
 
   /**
-     * Calculates the number of slots used by the items in the bank.
-     * @returns The number of used slots.
-     */
+   * Calculates the number of slots used by the items in the bank.
+   * @returns The number of used slots.
+   */
   usedSlots(): number {
     let usedSlot = 0;
     for (const [, containerItem] of Object.entries(this.items)) {

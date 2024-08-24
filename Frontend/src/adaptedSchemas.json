@@ -37,7 +37,15 @@
                     "additionalProperties": false,
                     "patternProperties": {
                         "^[0-9]+$": {
-                            "$ref": "ContainerItem"
+                            "properties": {
+                                "item": {
+                                    "$ref": "Item"
+                                },
+                                "quantity": {
+                                    "type": "number"
+                                }
+                            },
+                            "type": "object"
                         }
                     },
                     "type": "object"
@@ -85,10 +93,6 @@
                 "item": {
                     "$ref": "Item"
                 },
-                "noted": {
-                    "default": false,
-                    "type": "boolean"
-                },
                 "quantity": {
                     "type": "number"
                 }
@@ -122,7 +126,7 @@
         "Equipment": {
             "properties": {
                 "slots": {
-                    "$ref": "{[x:string]:Item|undefined;}"
+                    "$ref": "{[x:string]:ContainerItem|undefined;}"
                 }
             },
             "type": "object"
@@ -216,23 +220,42 @@
         },
         "Inventory": {
             "properties": {
-                "availableSlots": {
-                    "default": 28,
-                    "type": "number"
-                },
                 "items": {
                     "additionalProperties": false,
                     "patternProperties": {
                         "^[0-9]+$": {
-                            "$ref": "ContainerItem"
+                            "properties": {
+                                "item": {
+                                    "$ref": "Item"
+                                },
+                                "quantity": {
+                                    "type": "number"
+                                }
+                            },
+                            "type": "object"
                         }
                     },
                     "type": "object"
+                },
+                "maxSlots": {
+                    "default": 28,
+                    "type": "number"
                 }
             },
             "type": "object"
         },
         "InventoryLimitExceededWarning": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "InventoryMaxStackSizeExceededWarning": {
             "properties": {
                 "description": {
                     "type": "string"
@@ -333,7 +356,18 @@
                 "linkedPlaceholderId": {
                     "type": "number"
                 },
+                "linkedStackedItems": {
+                    "default": [],
+                    "items": {
+                        "$ref": "Item"
+                    },
+                    "type": "array"
+                },
                 "lowAlch": {
+                    "type": "number"
+                },
+                "maxStack": {
+                    "default": 2147483647,
                     "type": "number"
                 },
                 "members": {
@@ -343,7 +377,7 @@
                 "name": {
                     "type": "string"
                 },
-                "noteable": {
+                "notable": {
                     "default": false,
                     "type": "boolean"
                 },
@@ -352,6 +386,7 @@
                     "type": "boolean"
                 },
                 "stackSize": {
+                    "default": 1,
                     "type": "number"
                 },
                 "stackable": {
@@ -368,28 +403,30 @@
             },
             "type": "object"
         },
-        "ItemContainers": {
+        "ItemActions": {
             "enum": [
-                0,
-                1,
-                2,
-                3
+                "Bank",
+                "Incinerate",
+                "Withdraw",
+                "Equip",
+                "Unequip",
+                "Pickup",
+                "Drop",
+                "Note",
+                "Unnote"
             ],
-            "type": "number"
+            "type": "string"
         },
         "ItemEffect": {
             "properties": {
-                "destination": {
-                    "$ref": "ItemContainers"
+                "action": {
+                    "$ref": "ItemActions"
                 },
                 "item": {
                     "$ref": "Item"
                 },
                 "quantity": {
                     "type": "number"
-                },
-                "source": {
-                    "$ref": "ItemContainers"
                 },
                 "type": {
                     "$ref": "EffectTypeEnum"
@@ -398,6 +435,14 @@
             "type": "object"
         },
         "ItemRequirement": {
+            "properties": {
+                "item": {
+                    "$ref": "Item"
+                },
+                "quantity": {
+                    "type": "number"
+                }
+            },
             "type": "object"
         },
         "ItemStore": {
@@ -659,6 +704,14 @@
             },
             "type": "object"
         },
+        "ShowEffectTypes": {
+            "enum": [
+                "showCurrent",
+                "showAll",
+                "showNone"
+            ],
+            "type": "string"
+        },
         "Skill": {
             "properties": {
                 "bgColor": {
@@ -745,6 +798,9 @@
                 },
                 {
                     "$ref": "InventoryMissingItemWarning"
+                },
+                {
+                    "$ref": "InventoryMaxStackSizeExceededWarning"
                 }
             ]
         },
@@ -901,7 +957,7 @@
             ],
             "type": "string"
         },
-        "{[x:string]:Item|undefined;}": {
+        "{[x:string]:ContainerItem|undefined;}": {
             "type": "object"
         },
         "{[x:string]:number|undefined;}": {

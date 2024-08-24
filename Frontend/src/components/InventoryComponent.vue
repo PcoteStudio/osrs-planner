@@ -8,9 +8,9 @@ const store = useGlobalStore();
 
 const inventorySlots = computed(() => {
   let slots = store.getInventory.getSlots()
-      .concat(new Array(
-          28 - store.getInventory.getSlots().length + 2
-      ));
+    .concat(new Array(
+      28 - store.getInventory.getSlots().length + 2
+    ));
 
   return slots;
 });

@@ -8,7 +8,7 @@ const store = useGlobalStore();
 
 const torvaHelm = new Item(26382, 'Torva full helm');
 torvaHelm.imageUrl = 'https://oldschool.runescape.wiki/images/Torva_full_helm.png?96920';
-store.getCurrentRoute.getPlayerState().equipment.swapSlot(EquipmentSlotTypes.Head, torvaHelm);
+store.getCurrentRoute.getPlayerState().equipment.swapSlot(EquipmentSlotTypes.Head, { item: torvaHelm, quantity: 1 });
 
 </script>
 
