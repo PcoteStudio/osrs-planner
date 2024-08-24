@@ -7,6 +7,12 @@ export class Bank {
 
   constructor() { }
 
+  clone(): Bank {
+    const bank = new Bank();
+    bank.items = { ...this.items };
+    return bank;
+  }
+
   getSlots(): ContainerItem[] {
     return Object.values(this.items);
   }

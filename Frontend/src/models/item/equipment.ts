@@ -10,6 +10,12 @@ export class Equipment {
     }
   }
 
+  clone(): Equipment {
+    const equipment = new Equipment();
+    equipment.slots = { ...this.slots };
+    return equipment;
+  }
+
   get(slot: EquipmentSlotTypes): ContainerItem | undefined {
     return this.slots[slot];
   }

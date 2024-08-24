@@ -44,7 +44,8 @@ export class PlayerState {
     const newState = new PlayerState;
     newState.skills = { ...this.skills };
     newState.inventory = this.inventory.clone();
-    // TODO clone equipment/bank
+    newState.equipment = this.equipment.clone();
+    newState.bank = this.bank.clone();
     return newState;
   }
 }
