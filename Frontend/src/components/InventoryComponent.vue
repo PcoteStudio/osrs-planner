@@ -26,7 +26,7 @@ const items = ref();
 
 const selectedSkill = ref();
 const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
-  let menuItems = [
+  let menuItems : ({ label: string, icon: string, command: () => void } | { separator: true })[] = [
     {
       label: 'Add',
       icon: 'pi pi-plus',

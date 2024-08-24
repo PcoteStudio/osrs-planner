@@ -1,5 +1,7 @@
+import type { NightwatchAPI } from 'nightwatch';
+
 describe('My First Test', function () {
-  before((browser) => {
+  before((browser: NightwatchAPI) => {
     browser.init();
   });
 
@@ -7,5 +9,5 @@ describe('My First Test', function () {
     browser.assert.textContains('.green', 'You did it!');
   });
 
-  after((browser) => browser.end());
+  after((browser: NightwatchAPI) => browser.end());
 });

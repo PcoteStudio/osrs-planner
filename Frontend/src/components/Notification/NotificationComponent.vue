@@ -64,19 +64,15 @@ function getMessageDetails(notification: Notification) {
 function getErrorMessageDetails(error: Error) {
   let details = { message: '', logLevel: 'error' };
 
-  switch (typeof error) {
-    case InvalidRouteJsonError:
-      details.message = `The json of the route is invalid: ${error.innerError.message}`;
-      details.logLevel = 'warn';
-      break;
-    case InvalidNodeMoveAfter:
-      details.message = `The step ${error.nodeToMove.step.label} cannot be moved after ${error.previousNode.step.label}`;
-      details.logLevel = 'warn';
-      break;
-    default:
-      details.message = 'An error occured';
+  if (error instanceof InvalidRouteJsonError) {
+    details.message = `The json of the route is invalid: ${error.innerError.message}`;
+    details.logLevel = 'warn';
+  } else if (error instanceof InvalidNodeMoveAfter) {
+    details.message = `The step ${error.nodeToMove.step.label} cannot be moved after ${error.previousNode.step.label}`;
+    details.logLevel = 'warn';
+  } else {
+    details.message = 'An error occured';
   }
-
   return details;
 }
 

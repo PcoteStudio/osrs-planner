@@ -31,7 +31,4 @@
   "ts-node": {
     "transpileOnly": true
   },
-  "files": [
-    "nightwatch.d.ts"
-  ]
 }
