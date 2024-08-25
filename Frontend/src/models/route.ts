@@ -10,7 +10,12 @@ import { InvalidNodeMoveAfter } from '@/errors/invalidNodeMoveAfter';
 export class Route {
   playerState: PlayerState = new PlayerState();
   rootNode: RootStepTreeNode = new RootStepTreeNode(-1);
-  currentNode: StepTreeNode | undefined; // Current step is considered already executed
+  currentNode: StepTreeNode; // Current step is considered already executed
+
+  constructor() {
+    this.addStep(new Step('Initial step'));
+    this.currentNode = this.getFirstNode();
+  }
 
   addEffect(node: StepTreeNode, effect: Effect) {
     if (!node?.step) throw new Error('Cannot assign effect to undefined step');
@@ -36,7 +41,7 @@ export class Route {
       newNode.parent = previousNode.parent;
     } else {
       newNode = new StepTreeNode(0, newStep, this.rootNode);
-      this.rootNode.children.push(newNode);
+      this.rootNode.children = [newNode, ...this.rootNode.children];
     }
     newNode.depth = newNode.parent.depth + 1;
     this.updateChildrenLabel(newNode.parent);
@@ -242,7 +247,7 @@ export class Route {
      * Applies the next steps until the specified step is applied or until the last step.
      * @param step Once this step is executed, will return.
      */
-  setCurrentNode(node: StepTreeNode | undefined) {
+  setCurrentNode(node: StepTreeNode) {
     if (node?.step.resultingState) { // Load pre-processed step
       if (this.currentNode?.step)
         this.currentNode.step.resultingState = this.playerState.clone();
@@ -253,7 +258,8 @@ export class Route {
 
     if (!this.getCurrentStep()?.resultingState) { // Re-process all steps
       this.playerState = new PlayerState();
-      this.currentNode = undefined;
+      this.currentNode = this.getFirstNode();
+      this.currentNode.step.applyEffects(this.playerState);
     }
 
     let wasStepExecuted = true;
@@ -270,31 +276,24 @@ export class Route {
     return total;
   }
 
-  getFirstNode(): StepTreeNode | undefined {
-    if (!this.rootNode.children.length)
-      return undefined;
-    return Route.getNextNode(this.rootNode);
+  getFirstNode(): StepTreeNode {
+    return Route.getNextNode(this.rootNode) as StepTreeNode;
   }
 
-  getLastNode(): StepTreeNode | undefined {
-    if (!this.rootNode.children.length)
-      return undefined;
-    let node = this.rootNode.children[this.rootNode.children.length - 1];
-    while (node.children.length)
-      node = node.children[node.children.length - 1];
-    return node;
+  getLastNode(): StepTreeNode {
+    return this.rootNode.children[this.rootNode.children.length - 1];
   }
 
-  getFirstStep(): Step | undefined {
-    return this.getFirstNode()?.step;
+  getFirstStep(): Step {
+    return this.getFirstNode().step;
   }
 
-  getCurrentStep(): Step | undefined {
-    return this.currentNode?.step;
+  getCurrentStep(): Step {
+    return this.currentNode.step;
   }
 
-  getLastStep(): Step | undefined {
-    return this.getLastNode()?.step;
+  getLastStep(): Step {
+    return this.getLastNode().step;
   }
 
   getPlayerState(): PlayerState {
@@ -335,8 +334,19 @@ export class Route {
     const route: Route = new Route();
     route.rootNode = RootStepTreeNode.fromJSON(jsonObject.rootNode);
     route.updateChildrenLabel(route.rootNode);
+    route.setCurrentNode(route.getFirstNode());
     return route;
   }
+
+  static findNodeById(node: BaseStepTreeNode, id: string): StepTreeNode | undefined {
+    if (node instanceof StepTreeNode && node.step?.id === id )
+      return node;
+    for (const childNode of node.children) {
+      const foundNode = Route.findNodeById(childNode, id);
+      if(foundNode) return foundNode;
+    }
+    return undefined;
+  };
 
   initializeSomeSteps() {
     let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide. Si vous voulez mon avis concernant cette rigueur contextuelle, nous sommes contraints de prendre en considération la plus grande partie des synergies déclinables, pour longtemps.');

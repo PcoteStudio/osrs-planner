@@ -25,7 +25,7 @@ export class SkillEffect extends Effect {
   }
 
   public toString(): string[] {
-    return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : '-'}${this.experience} XP`];
+    return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : ''}${this.experience} XP`];
   }
 
   public toJSON(): object {

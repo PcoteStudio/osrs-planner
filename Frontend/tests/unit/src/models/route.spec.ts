@@ -12,7 +12,8 @@ describe('Route', () => {
   });
 
   function createComplexRoute() {
-    const node1 = route.addStep(new Step('1'));
+    const node1 = route.getFirstNode();
+    node1.step.description = '1';
     const node11 = route.addSubStep(new Step('1.1'), node1);
     const node12 = route.addStep(new Step('1.2'), node11);
     const node121 = route.addSubStep(new Step('1.2.1'), node12);
@@ -26,73 +27,62 @@ describe('Route', () => {
   }
 
   describe('addStep', () => {
-    it('should correctly add a step in an empty route', () => {
-      route.addStep(new Step('1'));
+    it('should correctly add a step in a route', () => {
+      route.addStep(new Step('A'));
 
-      expect(route.getStepCount(route.rootNode)).toStrictEqual(1);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
+      expect(route.getStepCount(route.rootNode)).toStrictEqual(2);
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(route.getLastNode());
     });
 
     it('should correctly add a step after the only other step of a route', () => {
-      const firstNode = route.addStep(new Step('1'));
-      route.addStep(new Step('2'), firstNode);
+      route.addStep(new Step('B'), route.getFirstNode());
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(2);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
-      expect(route.rootNode.children[1].step.description).toStrictEqual('2');
-      expect(route.rootNode.children[0].depth).toStrictEqual(0);
+      expect(route.rootNode.children[1].step.description).toStrictEqual('B');
       expect(route.rootNode.children[1].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(route.getFirstNode());
     });
 
     it('should correctly add a step in between the only 2 other steps of a route', () => {
-      const firstNode = route.addStep(new Step('1'));
-      route.addStep(new Step('3'), firstNode);
-      route.addStep(new Step('2'), firstNode);
+      const firstNode = route.addStep(new Step('A'));
+      route.addStep(new Step('B'), firstNode);
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(3);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
-      expect(route.rootNode.children[1].step.description).toStrictEqual('2');
-      expect(route.rootNode.children[2].step.description).toStrictEqual('3');
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
+      expect(route.rootNode.children[1].step.description).toStrictEqual('B');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
       expect(route.rootNode.children[1].depth).toStrictEqual(0);
-      expect(route.rootNode.children[2].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(route.getLastNode());
     });
   });
 
   describe('moveAfterNode', () => {
     it('should correctly move a step after the only other step of a route', () => {
-      const secondNode = route.addStep(new Step('2'));
-      const firstNode = route.addStep(new Step('1'), secondNode);
+      const initialNode = route.getFirstNode();
+      const firstNode = route.addStep(new Step('A'), initialNode);
 
-      route.moveAfterNode(secondNode, firstNode);
+      route.moveAfterNode(initialNode, firstNode);
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(2);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
-      expect(route.rootNode.children[1].step.description).toStrictEqual('2');
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
-      expect(route.rootNode.children[1].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(initialNode);
     });
 
     it('should correctly move a step in between the only 2 other steps of a route', () => {
-      const secondNode = route.addStep(new Step('2'));
-      route.addStep(new Step('3'), secondNode);
-      const firstNode = route.addStep(new Step('1'), secondNode);
+      const nodeA = route.addStep(new Step('A'));
+      const nodeB = route.addStep(new Step('B'));
 
-      route.moveAfterNode(secondNode, firstNode);
+      route.moveAfterNode(nodeB, nodeA);
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(3);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
-      expect(route.rootNode.children[1].step.description).toStrictEqual('2');
-      expect(route.rootNode.children[2].step.description).toStrictEqual('3');
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
+      expect(route.rootNode.children[1].step.description).toStrictEqual('B');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
       expect(route.rootNode.children[1].depth).toStrictEqual(0);
-      expect(route.rootNode.children[2].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(route.getLastNode());
     });
         
     it('should throw when trying to move a step after itself', () => {
@@ -119,18 +109,16 @@ describe('Route', () => {
 
   describe('addSubStep', () => {
     it('should correctly add a step before the only other step of a route', () => {
-      route.addStep(new Step('2'));
-      route.addSubStep(new Step('1'), route.rootNode);
+      route.addSubStep(new Step('A'), route.rootNode);
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(2);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
-      expect(route.rootNode.children[1].step.description).toStrictEqual('2');
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
-      expect(route.rootNode.children[1].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(route.getLastNode());
     });
 
     it('should correctly create a complex route', () => {
+      const initialNode = route.getFirstNode();
       createComplexRoute();
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(11);
@@ -156,22 +144,20 @@ describe('Route', () => {
       expect(route.rootNode.children[1]?.children[0]?.children[0].depth).toStrictEqual(2);
       expect(route.rootNode.children[2]?.step.description).toStrictEqual('3');
       expect(route.rootNode.children[2]?.depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(initialNode);
     });
   });
 
   describe('moveToSubNode', () => {
     it('should correctly move a step before the only other step of a route', () => {
-      route.addStep(new Step('2'));
-      const node1 = route.addStep(new Step('1'));
-      route.moveToSubNode(node1, route.rootNode);
+      const initialNode = route.getFirstNode();
+      const nodeA = route.addStep(new Step('A'));
+      route.moveToSubNode(nodeA, route.rootNode);
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(2);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('1');
-      expect(route.rootNode.children[1].step.description).toStrictEqual('2');
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
-      expect(route.rootNode.children[1].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(initialNode);
     });
 
     it('should correctly move a tree of steps in a complex route', () => {
@@ -205,7 +191,7 @@ describe('Route', () => {
       expect(route.rootNode.children[1]?.children[1]?.children[0].depth).toStrictEqual(2);
       expect(route.rootNode.children[2]?.step.description).toStrictEqual('3');
       expect(route.rootNode.children[2]?.depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(route.rootNode.children[0]);
     });
 
     it('should throw when trying to move a step under itself', () => {
@@ -232,18 +218,19 @@ describe('Route', () => {
 
   describe('removeNode', () => {
     it('should correctly remove the first step of a route', () => {
-      route.addStep(new Step('2'));
-      const node1 = route.addStep(new Step('1'));
+      const initialNode = route.getFirstNode();
+      const nodeA = route.addStep(new Step('A'), route.getFirstNode());
 
-      route.removeNode(node1);
+      route.removeNode(initialNode);
 
       expect(route.getStepCount(route.rootNode)).toStrictEqual(1);
-      expect(route.rootNode.children[0].step.description).toStrictEqual('2');
+      expect(route.rootNode.children[0].step.description).toStrictEqual('A');
       expect(route.rootNode.children[0].depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(nodeA);
     });
 
     it('should correctly remove a step and its children in a complex route', () => {
+      const initialNode = route.getFirstNode();
       createComplexRoute();
 
       route.removeNode(route.rootNode.children[1]); // Node 2
@@ -265,7 +252,7 @@ describe('Route', () => {
       expect(route.rootNode.children[0]?.children[2]?.depth).toStrictEqual(1);
       expect(route.rootNode.children[1]?.step.description).toStrictEqual('3');
       expect(route.rootNode.children[1]?.depth).toStrictEqual(0);
-      expect(route.currentNode).toBe(undefined);
+      expect(route.currentNode).toBe(initialNode);
     });
   });
 
@@ -345,8 +332,8 @@ describe('Route', () => {
   describe('stepOnce', () => {
     it('should correctly navigate through a complex route', () => {
       createComplexRoute();
+      route.setCurrentNode(route.getFirstNode());
 
-      expect(route.stepOnce()).toStrictEqual(true);
       expect(route.getCurrentStep()?.description).toStrictEqual('1.1');
       expect(route.stepOnce()).toStrictEqual(true);
       expect(route.getCurrentStep()?.description).toStrictEqual('1.2.1');
@@ -453,31 +440,32 @@ describe('Route', () => {
     it('should rebuild the original object', () => {
       createComplexRoute();
       const firstNode = route.getFirstNode();
-            firstNode!.step.addEffect(new SkillEffect(SkillsEnum.Crafting, 300));
-            const lastNode = route.getLastNode();
-            lastNode!.step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
-            
-            const routeJsonObject = route.toJSON();
-            const json = JSON.stringify(routeJsonObject);
-            const parsedRoute = Route.fromJSON(JSON.parse(json));
+      firstNode.step.addEffect(new SkillEffect(SkillsEnum.Crafting, 300));
+      const lastNode = route.getLastNode();
+      lastNode.step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
+      
+      const routeJsonObject = route.toJSON();
+      const json = JSON.stringify(routeJsonObject);
+      const parsedRoute = Route.fromJSON(JSON.parse(json));
 
-            let i = 1;
-            let node = route.getFirstNode();
-            let parsedNode = parsedRoute.getFirstNode();
-            while(node && parsedNode) {
-              parsedNode.step.id = node.step.id;
-              node.step.description = i.toString();
-              parsedNode.step.description = i.toString();
-              node = Route.getNextNode(node);
-              parsedNode = Route.getNextNode(parsedNode);
-              i++;
-            }
-            console.log(route.toString());
-            console.log(parsedRoute.toString());
-            assert.deepStrictEqual(route, parsedRoute);
+      let i = 1;
+      let node: StepTreeNode | undefined = route.getFirstNode();
+      let parsedNode: StepTreeNode | undefined = parsedRoute.getFirstNode();
+      while(node && parsedNode) {
+        parsedNode.step.id = node.step.id;
+        node.step.description = i.toString();
+        parsedNode.step.description = i.toString();
+        node = Route.getNextNode(node);
+        parsedNode = Route.getNextNode(parsedNode);
+        i++;
+      }
+      console.log(route.toString());
+      console.log(parsedRoute.toString());
+      expect(parsedRoute.rootNode).toStrictEqual(route.rootNode);
+      expect(parsedRoute.currentNode).toStrictEqual(parsedRoute.getFirstNode());
 
-            parsedRoute.setCurrentNode(parsedRoute.getLastNode());
-            expect(parsedRoute.playerState.skills.getTotalExperience()).toStrictEqual(1554);
+      parsedRoute.setCurrentNode(parsedRoute.getLastNode());
+      expect(parsedRoute.playerState.skills.getTotalExperience()).toStrictEqual(1554);
     });
   });
 });
