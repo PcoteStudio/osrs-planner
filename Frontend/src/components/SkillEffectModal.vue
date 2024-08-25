@@ -68,9 +68,22 @@ const addExperience = (exp: number) => {
 const addEffect = () => {
   if (!selectedSkill.value && !experience.value)
     throw new Error(`selectedSkill: ${selectedSkill.value} and experience ${experience.value} need to be defined`);
+  let exp;
+  if (currentAppliedEffect.value instanceof SkillEffect) {
+    exp = Number(experience.value) - Number(currentAppliedEffect.value.experience);
+  }
+  else {
+    exp = Number(experience.value);
+  }
+  const newEffect = new SkillEffect(selectedSkill.value.type, exp);
+  store.addEffect({
+    category: EffectTypeEnum.Skill,
+    data: {
+      stepId: props.node.step.id,
+    }
+  }, newEffect);
 
-  const newEffect = new SkillEffect(selectedSkill.value.type, Number(experience.value));
-  store.addEffect(props.node.step.id, newEffect);
+  store.closeEffectModal();
 };
 
 const currentAppliedEffect = computed(() => store.findEffect(props.node.step.id, EffectTypeEnum.Skill, selectedSkill.value?.name));
@@ -102,7 +115,9 @@ watch(selectedSkill, () => {
 
 const invalidForm = computed(() => {
   // 0 < Experience <= 200m && selectedSkill
-  return !(experience.value > 0 && experience.value <= 200000000 && selectedSkill);
+  if (experience.value && selectedSkill.value)
+    return !(experience.value > 0 && experience.value <= 200000000);
+  return true;
 });
 </script>
 
@@ -165,7 +180,7 @@ const invalidForm = computed(() => {
     </span>
     <div class="flex justify-end gap-2">
       <Button type="button" label="Cancel" severity="secondary" @click="store.closeEffectModal" size="small" />
-      <Button type="button" label="Add effect" @click="addEffect()" :disabled="invalidForm" size="small" />
+      <Button type="button" :label="currentAppliedEffect ? 'Edit effect' : 'Add effect'" @click="addEffect()" :disabled="invalidForm" size="small" />
     </div>
   </div>
 </template>

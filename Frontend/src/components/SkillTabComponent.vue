@@ -11,7 +11,7 @@ const store = useGlobalStore();
 
 const skills = computed(() => {
   const skillList : Skill[] = [];
-  for (const [key, value] of Object.entries(store.getCurrentSkills)) {
+  for (const [key, value] of Object.entries(store.getCurrentSkills.skills)) {
     skillList.push(new Skill(key as SkillsEnum, value || 0));
   }
   return skillList.sort((a, b) => a.order - b.order);
@@ -25,7 +25,7 @@ const items = ref([
     command: () => store.openEffectModal({
       category: EffectTypeEnum.Skill,
       data: {
-        stepId: store.getCurrentRoute.getCurrentStep()
+        stepId: store.getCurrentRoute.getCurrentStep().id,
         skill: selectedSkill.value,
       }
     }),
