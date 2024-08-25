@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { PlayerState } from '@/models/playerState';
-import { SkillsEnum } from '@/models/skill/skillsEnum';
-import { InventoryMissingItemWarning } from '@/models/item/inventory';
+import { Inventory, InventoryMissingItemWarning } from '@/models/item/inventory';
 import { Item } from '@/models/item/item';
+import { Bank } from '@/models/item/bank';
+import { Equipment } from '@/models/item/equipment';
+import { Skills } from '@/models/skill/skills';
 
 describe('PlayerState', () => {
   let playerState: PlayerState;
@@ -12,15 +14,24 @@ describe('PlayerState', () => {
   });
 
   describe('constructor', () => {
-    it('should instanciate every skill at their base value', () => {
-      expect(Object.keys(playerState.skills).length).toStrictEqual(23);
-      expect(playerState.skills[SkillsEnum.Hitpoints]).toStrictEqual(1154);
-      expect(playerState.getTotalExperience()).toStrictEqual(1154);
-      expect(playerState.getTotalLevel()).toStrictEqual(32);
+    it('should instanciate the bank', () => {
+      expect(playerState.bank).toBeInstanceOf(Bank);
     });
 
-    it('should instanciate with 0 warning', () => {
-      expect(playerState.warnings.length).toStrictEqual(0);
+    it('should instanciate the inventory', () => {
+      expect(playerState.inventory).toBeInstanceOf(Inventory);
+    });
+
+    it('should instanciate the equipment', () => {
+      expect(playerState.equipment).toBeInstanceOf(Equipment);
+    });
+
+    it('should instanciate the skills', () => {
+      expect(playerState.skills).toBeInstanceOf(Skills);
+    });
+
+    it('should instanciate an empty warning list', () => {
+      expect(playerState.warnings).toStrictEqual([]);
     });
   });
 

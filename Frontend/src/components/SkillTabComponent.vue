@@ -42,8 +42,8 @@ const openContextMenu = (event : MouseEvent, skill: Skill) => {
         @click="openContextMenu($event, skill)"
     />
     <SkillComponent
-        :level="store.getCurrentRoute.getPlayerState().getTotalLevel()"
-        :experience="store.getCurrentRoute.getPlayerState().getTotalExperience()"
+        :level="store.getCurrentRoute.getPlayerState().skills.getTotalLevel()"
+        :experience="store.getCurrentRoute.getPlayerState().skills.getTotalExperience()"
     />
 
     <ContextMenu ref="menu" :model="items" @hide="selectedSkill = null">

@@ -1,7 +1,6 @@
 import { JsonHelper } from '@/utils/jsonHelper';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { PlayerState } from '@/models/playerState';
-import { StateWarning } from '@/models/stateWarning';
 import { SkillsEnum } from './skillsEnum';
 
 export class SkillEffect extends Effect {
@@ -9,10 +8,8 @@ export class SkillEffect extends Effect {
     super(EffectTypeEnum.Skill);
   }
 
-  public apply(playerState: PlayerState): StateWarning | undefined {
-    const currentXp = playerState.skills[this.skill] ?? 0;
-    playerState.skills[this.skill] = currentXp + this.experience;
-    return undefined;
+  public apply(playerState: PlayerState): void {
+    playerState.skills.addSkillExperience(this.skill, this.experience);
   }
   
   public canMergeWith(effect: Effect): boolean {

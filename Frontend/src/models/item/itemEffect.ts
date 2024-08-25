@@ -9,7 +9,7 @@ export class ItemEffect extends Effect {
     super(EffectTypeEnum.Item);
   }
 
-  public apply(playerState: PlayerState) {
+  public apply(playerState: PlayerState): void {
     let movedItem: ContainerItem | undefined = undefined;
     switch (this.action) {
       // From bank

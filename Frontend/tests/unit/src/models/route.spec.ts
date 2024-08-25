@@ -477,7 +477,7 @@ describe('Route', () => {
             assert.deepStrictEqual(route, parsedRoute);
 
             parsedRoute.setCurrentNode(parsedRoute.getLastNode());
-            expect(parsedRoute.playerState.getTotalExperience()).toStrictEqual(1554);
+            expect(parsedRoute.playerState.skills.getTotalExperience()).toStrictEqual(1554);
     });
   });
 });

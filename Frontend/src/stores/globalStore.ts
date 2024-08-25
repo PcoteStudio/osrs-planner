@@ -69,7 +69,7 @@ export const useGlobalStore = defineStore('globalStore', {
       };
     },
     getCurrentSkillExp: (state) => {
-      return (skill: SkillsEnum): number => state.currentRoute.getPlayerState().getSkillExperience(skill);
+      return (skill: SkillsEnum): number => state.currentRoute.getPlayerState().skills.getSkillExperience(skill);
     },
     findEffect: (state) => {
       return (nodeId: string, effectType: EffectTypeEnum, skillType?: SkillsEnum): Effect | undefined => {
