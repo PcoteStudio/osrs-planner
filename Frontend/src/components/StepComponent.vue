@@ -73,7 +73,14 @@ const editEffect = (stepId: string, effect: Effect) => {
     }
   });
 };
-const removeEffect = (effect: Effect) => store.removeEffect(step.value.id, effect);
+const removeEffect = (effect: Effect) => {
+  store.removeEffect({
+    category: effect.type,
+    data: {
+      stepId: step.value.id
+    }
+  }, effect);
+};
 const openContextMenu = (event : MouseEvent) => menu.value.show(event);
 const remove = () => store.removeStep(step.value.id);
 

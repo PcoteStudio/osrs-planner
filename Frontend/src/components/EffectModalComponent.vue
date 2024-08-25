@@ -10,6 +10,7 @@ import CompletionEffectModal from '@/components/CompletionEffectModal.vue';
 import ItemEffectModal from '@/components/ItemEffectModal.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import { type EffectCategory, getEffectCategories } from '@/types/EffectCategory';
+import { SkillEffect } from '@/models/skill/skillEffect';
 
 const store = useGlobalStore();
 
@@ -19,8 +20,8 @@ const selectedNode = ref();
 const effectCategories : EffectCategory[] = getEffectCategories();
 
 const nodes = ref(store.getNodeList);
-const effectList = computed(() => selectedNode.value.effects);
-const filteredEffectList = computed(() => effectList.value?.filter((e: Effect) => e.type === selectedEffectType.value.type));
+const effectList = computed(() => selectedNode.value.step.effects);
+const filteredEffectList = computed(() => effectList.value?.filter((e: Effect) => e.type === selectedEffectType.value?.type));
 
 const showModal = computed(() => store.getEffectState.showModal);
 watch(showModal, () => {
@@ -36,6 +37,15 @@ watch(showModal, () => {
 
 }, { immediate: true });
 
+const removeEffect = (effect: Effect) => {
+  store.removeEffect({
+    category: effect.type,
+    data: {
+      stepId: selectedNode.value.step.id
+    }
+  }, effect);
+};
+
 </script>
 
 <template>
@@ -49,6 +59,7 @@ watch(showModal, () => {
         <EffectBadgeComponent v-for="effect in filteredEffectList" :key="effect"
                               :effect="effect"
                               :removable="true"
+                              :remove="() => removeEffect(effect)"
         />
       </div>
       <FloatLabel>

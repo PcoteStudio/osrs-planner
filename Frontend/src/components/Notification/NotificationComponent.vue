@@ -17,7 +17,7 @@ watch(() => state.notifications,
       toast.add({
         severity: details.logLevel,
         detail: details.message,
-        life: 5000
+        life: 1500
       });
     }
     state.clearNotifications();
