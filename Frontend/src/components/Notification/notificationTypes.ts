@@ -1,38 +1,38 @@
 import { Effect } from '@/models/effect';
 
 export type Notification =
-    AddEffectNotification
-    | RemoveEffectNotification
-    | toggleCompleted
-    | setCurrentRoute
-    ;
+  AddEffectNotification
+  | RemoveEffectNotification
+  | toggleCompleted
+  | setCurrentRoute
+  ;
 type AddEffectNotification = {
-    action: 'addEffect';
-    data: {
-        effect: Effect;
-        stepLabel: string;
-    }
+  action: 'addEffect';
+  data: {
+    effect: Effect;
+    stepLabel: string;
+  }
 }
 
 type RemoveEffectNotification = {
-    action: 'removeEffect';
-    data: {
-        effect: Effect;
-        stepLabel: string;
-    }
+  action: 'removeEffect';
+  data: {
+    effect: Effect;
+    stepLabel: string;
+  }
 }
 
 type toggleCompleted = {
-    action: 'toggleCompleted';
-    data: {
-        stepLabel: string;
-        completed: boolean;
-    }
+  action: 'toggleCompleted';
+  data: {
+    stepLabel: string;
+    completed: boolean;
+  }
 }
 
 type setCurrentRoute = {
-    action: 'setCurrentRoute';
-    data: {
-        nbSteps: number;
-    }
+  action: 'setCurrentRoute';
+  data: {
+    nbSteps: number;
+  }
 }

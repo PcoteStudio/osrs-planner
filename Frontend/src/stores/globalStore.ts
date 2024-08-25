@@ -8,9 +8,9 @@ import { type Notification } from '@/components/Notification/notificationTypes';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { Step } from '@/models/step';
 import { loremIpsum } from 'lorem-ipsum';
-import { Skill } from '@/models/skill/skill';
 import { ShowEffectTypes } from '@/types/showEffectTypes';
 import { Item } from '@/models/item/item';
+import { type EffectType } from '@/types/itemEffectTypes';
 
 export const useGlobalStore = defineStore('globalStore', {
   state: () => {
@@ -21,9 +21,7 @@ export const useGlobalStore = defineStore('globalStore', {
     const effectState = {
       showEffects: ShowEffectTypes.showCurrent,
       showModal: false,
-      node: undefined as StepTreeNode | undefined,
-      type: undefined as EffectTypeEnum | undefined,
-      skill: undefined as SkillsEnum | undefined,
+      effect: undefined as EffectType | undefined,
     };
 
     const importExportState = {
@@ -150,9 +148,12 @@ export const useGlobalStore = defineStore('globalStore', {
       if (this.notifications.length > 0)
         this.notifications = [];
     },
-    addEffect(nodeId: string, newEffect: Effect) {
-      const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
-      this.getEffectState.skill = undefined;
+    addEffect(effectType: EffectType, newEffect: Effect) {
+      const node = this.currentRoute.rootNode.findRequiredNodeById(effectType.data.stepId);
+
+      const effect = this.getEffectState.effect;
+      if (effect?.category === EffectTypeEnum.Skill)
+        effect.data.skill = undefined;
 
       this.currentRoute.addEffect(node, newEffect);
 
@@ -164,8 +165,8 @@ export const useGlobalStore = defineStore('globalStore', {
         }
       });
     },
-    removeEffect(nodeId: string, effect: Effect) {
-      const node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
+    removeEffect(effectType: EffectType, effect: Effect) {
+      const node = this.currentRoute.rootNode.findRequiredNodeById(effectType.data.stepId);
 
       this.currentRoute.removeEffect(node, effect);
 
@@ -177,30 +178,13 @@ export const useGlobalStore = defineStore('globalStore', {
         }
       });
     },
-    openEffectModal(nodeId?: string, arg?: Effect | Skill | Item) {
-      if (nodeId)
-        this.effectState.node = this.currentRoute.rootNode.findRequiredNodeById(nodeId);
-      else
-        this.effectState.node = this.currentRoute.currentNode;
-
-      this.effectState.type = undefined;
-      this.effectState.skill = undefined;
-
-      if (arg instanceof Effect) {
-        this.effectState.type = arg.type;
+    //openEffectModal(nodeId?: string, arg?: Effect | Skill | Item) {
+    openEffectModal(effectType?: EffectType) {
+      if (effectType) {
+        this.effectState.effect = effectType;
       }
-            
-      if (arg instanceof SkillEffect) {
-        this.effectState.skill = arg.skill;
-      }
-
-      if (arg instanceof Skill) {
-        this.effectState.type = EffectTypeEnum.Skill;
-        this.effectState.skill = arg.type;
-      }
-
-      if (arg instanceof Item) {
-        this.effectState.type = EffectTypeEnum.Item;
+      else {
+        this.effectState.effect = undefined;
       }
 
       this.effectState.showModal = true;

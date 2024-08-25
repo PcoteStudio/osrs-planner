@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import type { ContainerItem } from '@/models/item/containerItem';
 import InventorySlotComponent from '@/components/InventorySlotComponent.vue';
+import type { EffectType } from '@/types/itemEffectTypes';
 
 const store = useGlobalStore();
 
@@ -26,10 +27,14 @@ const items = ref();
 
 const selectedSkill = ref();
 const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
-  let menuItems : ({ label: string, icon: string, command: () => void } | { separator: true })[] = [
+  let test : EffectType = {
+    action: 'AddItem'
+  };
+
+  test.params
+  let menuItems = [
     {
-      label: 'Add',
-      icon: 'pi pi-plus',
+      ...test.params,
       command: () => store.openEffectModal(currentStep.value?.id),
     }
   ];
@@ -42,8 +47,18 @@ const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
         command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
       },
       {
-        label: 'Set quantity',
+        label: 'Equip',
+        icon: 'pi pi-sign-in',
+        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
+      },
+      {
+        label: 'Quantity',
         icon: 'pi pi-pen-to-square',
+        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
+      },
+      {
+        label: 'Remove',
+        icon: 'pi pi-trash',
         command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
       },
       {

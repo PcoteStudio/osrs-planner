@@ -4,30 +4,47 @@ import Select from 'primevue/select';
 
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, ref, watch } from 'vue';
-import { EffectTypeEnum, getEffectTypes } from '@/models/effect';
+import { Effect, EffectTypeEnum } from '@/models/effect';
 import SkillEffectModal from '@/components/SkillEffectModal.vue';
 import CompletionEffectModal from '@/components/CompletionEffectModal.vue';
 import ItemEffectModal from '@/components/ItemEffectModal.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
+import { type EffectCategory, getEffectCategories } from '@/types/EffectCategory';
+import { SkillEffect } from '@/models/skill/skillEffect';
 
 const store = useGlobalStore();
 
 const selectedEffectType = ref();
 const selectedNode = ref();
 
-const effectTypes = computed(() => getEffectTypes());
+const effectCategories : EffectCategory[] = getEffectCategories();
+
 const nodes = ref(store.getNodeList);
-const effectList = computed(() => nodes.value.find(n => n.step.id === selectedNode.value.step.id)?.step.effects);
-const filteredEffectList = computed(() => effectList.value?.filter(e => e.type === selectedEffectType.value.type));
+const effectList = computed(() => selectedNode.value.step.effects);
+const filteredEffectList = computed(() => effectList.value?.filter((e: Effect) => e.type === selectedEffectType.value?.type));
 
 const showModal = computed(() => store.getEffectState.showModal);
 watch(showModal, () => {
   if (!showModal.value)
     return;
 
-  selectedEffectType.value = effectTypes.value.find(e => e.type === store.getEffectState.type);
-  selectedNode.value = store.getEffectState.node || store.getCurrentRoute.currentNode;
+  selectedNode.value = store.getNodeById(store.getEffectState.effect?.data.stepId)
+      || store.getCurrentRoute.currentNode;
+
+  selectedEffectType.value = effectCategories.find(
+    (e: EffectCategory) => e.type === store.getEffectState.effect?.category);
+
+
 }, { immediate: true });
+
+const removeEffect = (effect: Effect) => {
+  store.removeEffect({
+    category: effect.type,
+    data: {
+      stepId: selectedNode.value.step.id
+    }
+  }, effect);
+};
 
 </script>
 
@@ -42,6 +59,7 @@ watch(showModal, () => {
         <EffectBadgeComponent v-for="effect in filteredEffectList" :key="effect"
                               :effect="effect"
                               :removable="true"
+                              :remove="() => removeEffect(effect)"
         />
       </div>
       <FloatLabel>
@@ -68,7 +86,7 @@ watch(showModal, () => {
       <FloatLabel>
         <Select v-model="selectedEffectType"
                 id="effectTypes"
-                :options="effectTypes"
+                :options="effectCategories"
                 optionLabel="name"
                 placeholder="Select an effect type"
                 class="w-full"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import type { ContainerItem } from '@/models/item/containerItem';
+import { ContainerItem } from '@/models/item/containerItem';
 import { computed, ref } from 'vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { formatShortNumbers } from '@/utils/formaters';

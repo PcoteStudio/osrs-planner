@@ -43,7 +43,7 @@ const items = computed(() => {
     });
   }
 
-  if (props.remove) {
+  if (props.remove && !props.removable) {
     actions.push({
       label: 'Remove',
       icon: 'pi pi-times',
@@ -68,6 +68,7 @@ const openContextMenu = (event : MouseEvent) => items.value.length > 0 && menu.v
     :class="{editable: items.length > 0}"
     @contextmenu="openContextMenu($event)"
     @click="openContextMenu($event)"
+    @remove="remove"
   />
   <ContextMenu ref="menu" :model="items">
     <template #item="{ item, props }">
