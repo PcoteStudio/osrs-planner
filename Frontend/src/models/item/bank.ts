@@ -17,6 +17,10 @@ export class Bank {
     return Object.values(this.items);
   }
 
+  getItem(item: Item): ContainerItem | undefined {
+    return this.items[item.id];
+  }
+  
   getItemVariation(item: Item): ContainerItem | undefined {
     const baseItem = item.linkedItem ?? item;
     const variations = baseItem.linkedStackedItems;

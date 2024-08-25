@@ -389,4 +389,24 @@ describe('Inventory', () => {
       expect(inventory.getItemVariation(stackableItemVariant)).toStrictEqual(undefined);
     });
   });
+
+  describe('clone', () => {
+    it('should return an identical copy', () => {
+      inventory.moveItem(stackableItem, 3);
+      inventory.moveItem(unstackableItem, 8);
+      inventory.moveItem(notedItem, 8);
+      const inventoryClone = inventory.clone();
+
+      expect(inventoryClone.getSlots()).toStrictEqual(inventory.getSlots());
+    });
+
+    it('should return a copy that does not mutate the original', () => {
+      inventory.moveItem(stackableItem, 3);
+      const inventoryClone = inventory.clone();
+      inventory.moveItem(stackableItem, -1);
+
+      expect(inventoryClone.getItem(stackableItem)).toStrictEqual({ item: stackableItem, quantity: 3 });
+      expect(inventory.getItem(stackableItem)).toStrictEqual({ item: stackableItem, quantity: 2 });
+    });
+  });
 });
