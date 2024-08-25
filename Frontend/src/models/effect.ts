@@ -18,23 +18,3 @@ export enum EffectTypeEnum {
     Item = 'Item',
     Skill = 'Skill',
 }
-
-export const getEffectTypes = () => {
-  return [
-    {
-      name: 'Completion',
-      type: EffectTypeEnum.Completion,
-      icon: 'https://oldschool.runescape.wiki/images/Quest_point_icon.png?dc356',
-    },
-    {
-      name: 'Item',
-      type: EffectTypeEnum.Item,
-      icon: 'https://oldschool.runescape.wiki/images/Potato_with_cheese.png?64f1b',
-    },
-    {
-      name: 'Skill',
-      type: EffectTypeEnum.Skill,
-      icon: 'https://oldschool.runescape.wiki/images/Stats_icon.png?1b467'
-    },
-  ];
-};

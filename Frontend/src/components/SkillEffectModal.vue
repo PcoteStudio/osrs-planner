@@ -51,7 +51,14 @@ const skillTypes = computed(() => {
 });
 
 watch(store.getEffectState, (state) => {
-  selectedSkill.value = skillTypes.value.find(s => s.type === state.skill);
+  if (state.effect?.category === EffectTypeEnum.Skill) {
+    const skillEffect = state.effect.data.effect as SkillEffect;
+    const skill = state.effect.data.skill;
+    if (skillEffect)
+      selectedSkill.value = skillTypes.value.find(s => s.type === skillEffect.skill);
+    else if (skill)
+      selectedSkill.value = skillTypes.value.find(s => s.type === skill.type);
+  }
 }, { immediate: true });
 
 const addExperience = (exp: number) => {

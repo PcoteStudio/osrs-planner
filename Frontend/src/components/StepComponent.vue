@@ -4,11 +4,12 @@ import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
 import type { StepTreeNode } from '@/models/stepTreeNode';
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, onMounted, ref, watch } from 'vue';
-import type { Effect } from '@/models/effect';
+import { type Effect, EffectTypeEnum } from '@/models/effect';
 import ContextMenu from 'primevue/contextmenu';
 import { useDragStore } from '@/stores/dragStore';
 import EditTextarea from '@/components/EditTextarea.vue';
 import { ShowEffectTypes } from '@/types/showEffectTypes';
+import type { EffectType } from '@/types/itemEffectTypes';
 
 const props = withDefaults(defineProps<{
   node: StepTreeNode;
@@ -62,7 +63,16 @@ watch(isCompleted, () => {
 });
 
 const setCurrentNode = () => store.setCurrentNode(step.value.id);
-const addEffect = () => store.openEffectModal(step.value.id);
+const addEffect = () => store.openEffectModal();
+const editEffect = (stepId: string, effect: Effect) => {
+  store.openEffectModal({
+    category: effect.type,
+    data: {
+      stepId: stepId,
+      effect: effect
+    }
+  });
+};
 const removeEffect = (effect: Effect) => store.removeEffect(step.value.id, effect);
 const openContextMenu = (event : MouseEvent) => menu.value.show(event);
 const remove = () => store.removeStep(step.value.id);
@@ -238,7 +248,7 @@ const dragLeave = (event: DragEvent, child?: boolean) => {
               :key="effect"
               :effect="effect"
               :remove="() => removeEffect(effect)"
-              :edit="() => store.openEffectModal(step.id, effect)"
+              :edit="() => editEffect(step.id, effect)"
             />
             <Button v-if="editable" type="button" icon="pi pi-plus" rounded severity="primary" outlined
                     :style="{ height: '2em', width: '2em', fontSize: '0.9em' }" size="small"

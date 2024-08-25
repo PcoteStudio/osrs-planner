@@ -5,6 +5,7 @@ import SkillComponent from '@/components/SkillComponent.vue';
 import { Skill } from '@/models/skill/skill';
 import ContextMenu from 'primevue/contextmenu';
 import type { SkillsEnum } from '@/models/skill/skillsEnum';
+import { EffectTypeEnum } from '@/models/effect';
 
 const store = useGlobalStore();
 
@@ -21,7 +22,13 @@ const items = ref([
   {
     label: 'effect',
     icon: 'pi pi-plus',
-    command: () => store.openEffectModal(undefined, selectedSkill.value),
+    command: () => store.openEffectModal({
+      category: EffectTypeEnum.Skill,
+      data: {
+        stepId: store.getCurrentRoute.getCurrentStep()
+        skill: selectedSkill.value,
+      }
+    }),
   }
 ]);
 
