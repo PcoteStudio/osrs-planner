@@ -1,11 +1,12 @@
+import type { EffectEntity } from '@/entities/effectEntity';
 import { PlayerState } from './playerState';
 
 export abstract class Effect {
     public abstract apply(playerState: PlayerState): void;
     public abstract canMergeWith(effect: Effect): boolean;
     public abstract mergeWith(effect: Effect): void;
-    public abstract toString(): string[];
-    public toJSON(): object {
+    public abstract toString(): string;
+    public toJSON(): EffectEntity {
       return { type: this.type };
     }
 

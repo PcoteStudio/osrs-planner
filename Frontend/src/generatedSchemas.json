@@ -174,6 +174,14 @@
             },
             "type": "object"
         },
+        "EffectEntity": {
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/EffectTypeEnum"
+                }
+            },
+            "type": "object"
+        },
         "EffectFactory": {
             "type": "object"
         },
@@ -691,12 +699,14 @@
         "ItemActions": {
             "enum": [
                 "Bank",
+                "BankAll",
                 "Incinerate",
                 "Withdraw",
                 "Equip",
                 "Unequip",
                 "Pickup",
                 "Drop",
+                "DropAll",
                 "Note",
                 "Unnote"
             ],
@@ -718,6 +728,32 @@
                 }
             },
             "type": "object"
+        },
+        "ItemEffectEntity": {
+            "allOf": [
+                {
+                    "properties": {
+                        "type": {
+                            "$ref": "#/definitions/EffectTypeEnum"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "$ref": "#/definitions/ItemActions"
+                        },
+                        "itemId": {
+                            "type": "number"
+                        },
+                        "quantity": {
+                            "type": "number"
+                        }
+                    },
+                    "type": "object"
+                }
+            ]
         },
         "ItemRequirement": {
             "properties": {
@@ -1132,6 +1168,29 @@
                 }
             },
             "type": "object"
+        },
+        "SkillEffectEntity": {
+            "allOf": [
+                {
+                    "properties": {
+                        "type": {
+                            "$ref": "#/definitions/EffectTypeEnum"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "experience": {
+                            "type": "number"
+                        },
+                        "skill": {
+                            "$ref": "#/definitions/SkillsEnum"
+                        }
+                    },
+                    "type": "object"
+                }
+            ]
         },
         "SkillEffectType": {
             "properties": {

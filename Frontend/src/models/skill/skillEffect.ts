@@ -2,6 +2,7 @@ import { JsonHelper } from '@/utils/jsonHelper';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { PlayerState } from '@/models/playerState';
 import { SkillsEnum } from './skillsEnum';
+import type { SkillEffectEntity } from '@/entities/skillEffectEntity';
 
 export class SkillEffect extends Effect {
   constructor(public skill: SkillsEnum, public experience: number) {
@@ -12,24 +13,24 @@ export class SkillEffect extends Effect {
     playerState.skills.addSkillExperience(this.skill, this.experience);
   }
   
-  public canMergeWith(effect: Effect): boolean {
+  public canMergeWith(effect: Effect): effect is SkillEffect {
     if(effect.type !== EffectTypeEnum.Skill || !(effect instanceof SkillEffect)) 
       return false;
-    return (effect as SkillEffect).skill === this.skill;
+    return effect.skill === this.skill;
   }
 
-  public mergeWith(effect: Effect): void {
+  public mergeWith(effect: Effect): asserts effect is SkillEffect {
     if(!this.canMergeWith(effect))
       throw new Error('Incompatible effects cannot be merged together');
-    this.experience += (effect as SkillEffect).experience;
+    this.experience += effect.experience;
   }
 
-  public toString(): string[] {
-    return [`${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : ''}${this.experience} XP`];
+  public toString(): string {
+    return `${SkillsEnum[this.skill]}: ${this.experience >= 0 ? '+' : ''}${this.experience} XP`;
   }
 
-  public toJSON(): object {
-    return { ...super.toJSON(), skill: this.skill.toString(), experience: this.experience };
+  public toJSON(): SkillEffectEntity {
+    return { ...super.toJSON(), skill: this.skill, experience: this.experience };
   }
 
   public static fromJSON(jsonObject: { [key: string]: any }): SkillEffect {

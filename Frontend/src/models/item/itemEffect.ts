@@ -1,8 +1,11 @@
+import { JsonHelper } from '@/utils/jsonHelper';
 import { Effect, EffectTypeEnum } from '../effect';
 import { PlayerState } from '../playerState';
 import type { ContainerItem } from './containerItem';
 import { Item } from './item';
 import { ItemActions } from './itemActions';
+import { ItemStore } from './itemStore';
+import type { ItemEffectEntity } from '@/entities/itemEffectEntity';
 
 export class ItemEffect extends Effect {
   constructor(public action: ItemActions, public item: Item, public quantity: number) {
@@ -85,7 +88,7 @@ export class ItemEffect extends Effect {
     }
   }
 
-  public canMergeWith(effect: Effect): boolean {
+  public canMergeWith(effect: Effect): effect is ItemEffect {
     if(effect.type !== EffectTypeEnum.Item || !(effect instanceof ItemEffect)) 
       return false;
     const itemEffect = (effect as ItemEffect);
@@ -94,20 +97,34 @@ export class ItemEffect extends Effect {
             && (this.item.linkedItemId ?? this.item.id) === (itemEffect.item.linkedItemId ?? itemEffect.item.id))));
   }
 
-  public mergeWith(effect: Effect): void {
+  public mergeWith(effect: Effect): asserts effect is ItemEffect {
     if(!this.canMergeWith(effect))
       throw new Error('Incompatible effects cannot be merged together');
-    this.quantity += (effect as ItemEffect).quantity;
+    this.quantity += effect.quantity;
     this.item = Item.getItemByStackSize(this.item, this.quantity);
   }
 
-  public toJSON(): object {
-    return { ...super.toJSON(), action: this.action, item: this.item, quantity: this.quantity };
+  public toJSON(): ItemEffectEntity {
+    return { ...super.toJSON(), action: this.action, itemId: this.item.id, quantity: this.quantity };
   }
 
-  public toString(): string[] {
-    const effects: string[] = [];
-    effects.push(`${this.action} ${[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].includes(this.quantity) ? 'all' : this.quantity} ${this.item}`);
-    return effects;
+  public static fromJSON(jsonObject: { [key: string]: any }): ItemEffect {
+    const parsedItemEffect = JsonHelper.parseWithSchema<ItemEffectEntity>('ItemEffectEntity', jsonObject);
+    const existingItem = ItemStore.getItem(parsedItemEffect.itemId);
+    if(!existingItem)
+      throw new Error(`The ItemEffect item could not be found in the store ${JSON.stringify(jsonObject)}`);
+    return new ItemEffect(parsedItemEffect.action, existingItem, parsedItemEffect.quantity);
+  }
+
+  public toString(): string {
+    switch (this.action) {
+      case ItemActions.BankAll:
+        return 'Bank all items';
+      case ItemActions.DropAll:
+        return 'Drop all items';
+      default:
+        return `${this.action} ${[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].includes(this.quantity) ? 'all' : this.quantity} ${this.item}`;
+    }
+    
   }
 }

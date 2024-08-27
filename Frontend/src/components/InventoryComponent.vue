@@ -31,7 +31,7 @@ const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
     action: 'AddItem'
   };
 
-  test.params
+  test.params;
   let menuItems = [
     {
       ...test.params,

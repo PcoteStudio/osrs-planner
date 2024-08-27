@@ -1,4 +1,4 @@
-import { assert, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { Route } from '@/models/route';
 import { Step } from '@/models/step';
 import { StepTreeNode } from '@/models/stepTreeNode';
