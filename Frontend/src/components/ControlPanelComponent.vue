@@ -15,7 +15,7 @@ const buttons = computed(() => {
       options: [
         {
           label: 'Complete step',
-          type: store.getCurrentRoute.getCurrentStep()?.completed ? 'primary' : 'secondary',
+          type: store.getCurrentRoute.getCurrentStep().completed ? 'primary' : 'secondary',
           icon: 'pi pi-check',
           disabled: !currentStep.value,
           action: () => {

@@ -1,20 +1,15 @@
 import type { Skill } from '@/models/skill/skill';
 import type { EffectTypeEnum } from '@/models/effect';
 import { Effect } from '@/models/effect';
+import type { ItemEffectTypeEnum } from '@/types/itemEffectTypeEnum';
 
 export type EffectType =
   SkillEffectType
-  | BankItemEffectType
   | QuestEffectType
-  | EquipItemEffectType
-  | QuantityItemEffectType
-  | RemoveItemEffectType
-  | NoteItemEffectType
-  | AddItemEffectType
+  | ItemEffectType
 ;
 
 type SkillEffectType = {
-  action?: 'Skill',
   category: EffectTypeEnum.Skill,
   data: {
     stepId: string,
@@ -23,7 +18,6 @@ type SkillEffectType = {
   }
 }
 type QuestEffectType = {
-  action?: 'Quest',
   category: EffectTypeEnum.Completion,
   data: {
     stepId: string,
@@ -31,52 +25,11 @@ type QuestEffectType = {
   }
 }
 
-type BankItemEffectType = {
-  action?: 'BankItem',
+type ItemEffectType = {
   category: EffectTypeEnum.Item,
   data: {
     stepId: string,
-    effect?: Effect,
-  }
-}
-
-type EquipItemEffectType = {
-  action?: 'EquipItem',
-  category: EffectTypeEnum.Item,
-  data: {
-    stepId: string,
-    effect?: Effect,
-  }
-}
-type QuantityItemEffectType = {
-  action?: 'QuantityItem',
-  category: EffectTypeEnum.Item,
-  data: {
-    stepId: string,
-    effect?: Effect,
-  }
-}
-type RemoveItemEffectType = {
-  action?: 'RemoveItem',
-  category: EffectTypeEnum.Item,
-  data: {
-    stepId: string,
-    effect?: Effect,
-  }
-}
-type NoteItemEffectType = {
-  action?: 'NoteItem',
-  category: EffectTypeEnum.Item,
-  data: {
-    stepId: string,
-    effect?: Effect,
-  }
-}
-type AddItemEffectType = {
-  action?: 'AddItem',
-  category: EffectTypeEnum.Item,
-  data: {
-    stepId: string,
+    action: ItemEffectTypeEnum,
     effect?: Effect,
   }
 }

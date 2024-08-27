@@ -20,8 +20,14 @@ export const useGlobalStore = defineStore('globalStore', {
 
     const effectState = {
       showEffects: ShowEffectTypes.showCurrent,
-      showModal: false,
-      effect: undefined as EffectType | undefined,
+      showModal: true,
+      effect: {
+        category: EffectTypeEnum.Item,
+        data: {
+          stepId: 'wololo'
+        }
+      } as EffectType | undefined,
+      // effect: undefined as EffectType | undefined,
     };
 
     const importExportState = {

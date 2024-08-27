@@ -5,7 +5,8 @@ import { computed, ref } from 'vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import type { ContainerItem } from '@/models/item/containerItem';
 import InventorySlotComponent from '@/components/InventorySlotComponent.vue';
-import type { EffectType } from '@/types/itemEffectTypes';
+import { EffectTypeEnum } from '@/models/effect';
+import { getItemEffectTypeOptions, ItemEffectTypeEnum } from '@/types/itemEffectTypeEnum';
 
 const store = useGlobalStore();
 
@@ -27,50 +28,41 @@ const items = ref();
 
 const selectedSkill = ref();
 const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
-  let test : EffectType = {
-    action: 'AddItem'
-  };
 
-  test.params;
-  let menuItems = [
-    {
-      ...test.params,
-      command: () => store.openEffectModal(currentStep.value?.id),
-    }
-  ];
+  let menuItems = [];
+  const options = getItemEffectTypeOptions(ItemEffectTypeEnum.Add);
+  menuItems.push({
+    label: options.label,
+    icon: options.icon,
+    command: () => store.openEffectModal({
+      category: EffectTypeEnum.Item,
+      data: {
+        stepId: currentStep.value.id,
+        action: ItemEffectTypeEnum.Add,
+      }
+    })
+  });
 
   if (inventorySlot) {
-    menuItems = [
-      {
-        label: 'Bank',
-        icon: 'pi pi-building-columns',
-        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
-      },
-      {
-        label: 'Equip',
-        icon: 'pi pi-sign-in',
-        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
-      },
-      {
-        label: 'Quantity',
-        icon: 'pi pi-pen-to-square',
-        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
-      },
-      {
-        label: 'Remove',
-        icon: 'pi pi-trash',
-        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
-      },
-      {
-        label: inventorySlot?.item.noted ? 'Un-note' : 'Note',
-        icon: 'pi pi-file',
-        command: () => store.openEffectModal(currentStep.value?.id, inventorySlot.item),
-      },
-      {
-        separator: true
-      },
-      ...menuItems
-    ];
+    menuItems.unshift({ 'separator': true });
+    for (const [key, value] of Object.entries(ItemEffectTypeEnum)) {
+      if (value === ItemEffectTypeEnum.Add)
+        continue;
+
+      const options = getItemEffectTypeOptions(value);
+      menuItems.unshift({
+        label: options.label,
+        icon: options.icon,
+        type: key,
+        command: () => store.openEffectModal({
+          category: EffectTypeEnum.Item,
+          data: {
+            stepId: currentStep.value.id,
+            action: value,
+          }
+        })
+      });
+    }
   }
 
   items.value = menuItems;
@@ -92,11 +84,10 @@ const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
     </div>
   </div>
 
-  <ContextMenu ref="menu" :model="items" @hide="selectedSkill = null">
+  <ContextMenu ref="menu" :model="items">
     <template #item="{ item, props }">
       <a v-ripple class="flex items-center" v-bind="props.action">
-        <span :class="item.icon" />
-        <img v-if="selectedSkill?.icon" :src="selectedSkill?.icon" :alt="selectedSkill?.type">
+        <font-awesome-icon :icon="item.icon" />
         <span class="ml-2">{{ item.label }}</span>
       </a>
     </template>
