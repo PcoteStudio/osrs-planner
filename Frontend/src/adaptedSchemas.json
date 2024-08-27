@@ -31,6 +31,30 @@
             },
             "type": "object"
         },
+        "AddItemEffectType": {
+            "properties": {
+                "action": {
+                    "const": "AddItem",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Item",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
         "Bank": {
             "properties": {
                 "items": {
@@ -46,6 +70,30 @@
                                 }
                             },
                             "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "BankItemEffectType": {
+            "properties": {
+                "action": {
+                    "const": "BankItem",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Item",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
+                            "type": "string"
                         }
                     },
                     "type": "object"
@@ -112,8 +160,221 @@
                 }
             ]
         },
+        "EffectCategory": {
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "EffectTypeEnum"
+                }
+            },
+            "type": "object"
+        },
         "EffectFactory": {
             "type": "object"
+        },
+        "EffectType": {
+            "anyOf": [
+                {
+                    "properties": {
+                        "action": {
+                            "const": "Skill",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Skill",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "skill": {
+                                    "$ref": "Skill"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "BankItem",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Item",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "Quest",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Completion",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "EquipItem",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Item",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "QuantityItem",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Item",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "RemoveItem",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Item",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "NoteItem",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Item",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                },
+                {
+                    "properties": {
+                        "action": {
+                            "const": "AddItem",
+                            "type": "string"
+                        },
+                        "category": {
+                            "const": "Item",
+                            "type": "string"
+                        },
+                        "data": {
+                            "properties": {
+                                "effect": {
+                                    "$ref": "Effect"
+                                },
+                                "stepId": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "type": "object"
+                }
+            ]
         },
         "EffectTypeEnum": {
             "enum": [
@@ -122,6 +383,30 @@
                 "Skill"
             ],
             "type": "string"
+        },
+        "EquipItemEffectType": {
+            "properties": {
+                "action": {
+                    "const": "EquipItem",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Item",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
         },
         "Equipment": {
             "properties": {
@@ -451,6 +736,30 @@
         "JsonHelper": {
             "type": "object"
         },
+        "NoteItemEffectType": {
+            "properties": {
+                "action": {
+                    "const": "NoteItem",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Item",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
         "Notification": {
             "anyOf": [
                 {
@@ -544,7 +853,7 @@
                     "$ref": "Inventory"
                 },
                 "skills": {
-                    "$ref": "{[x:string]:number|undefined;}"
+                    "$ref": "Skills"
                 },
                 "warnings": {
                     "default": [],
@@ -552,6 +861,54 @@
                         "$ref": "StateWarning"
                     },
                     "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "QuantityItemEffectType": {
+            "properties": {
+                "action": {
+                    "const": "QuantityItem",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Item",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "QuestEffectType": {
+            "properties": {
+                "action": {
+                    "const": "Quest",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Completion",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -568,6 +925,30 @@
                             "$ref": "Effect"
                         },
                         "stepLabel": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
+        "RemoveItemEffectType": {
+            "properties": {
+                "action": {
+                    "const": "RemoveItem",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Item",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "stepId": {
                             "type": "string"
                         }
                     },
@@ -699,7 +1080,10 @@
                     "type": "boolean"
                 },
                 "wiki_url": {
-                    "type": "string"
+                    "type": [
+                        "null",
+                        "string"
+                    ]
                 }
             },
             "type": "object"
@@ -749,6 +1133,33 @@
             },
             "type": "object"
         },
+        "SkillEffectType": {
+            "properties": {
+                "action": {
+                    "const": "Skill",
+                    "type": "string"
+                },
+                "category": {
+                    "const": "Skill",
+                    "type": "string"
+                },
+                "data": {
+                    "properties": {
+                        "effect": {
+                            "$ref": "Effect"
+                        },
+                        "skill": {
+                            "$ref": "Skill"
+                        },
+                        "stepId": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object"
+        },
         "SkillRequirement": {
             "properties": {
                 "experience": {
@@ -756,6 +1167,26 @@
                 },
                 "skill": {
                     "$ref": "SkillsEnum"
+                }
+            },
+            "type": "object"
+        },
+        "Skills": {
+            "properties": {
+                "maxExperience": {
+                    "default": 200000000,
+                    "type": "number"
+                },
+                "maxLevel": {
+                    "default": 99,
+                    "type": "number"
+                },
+                "maxVirtualLevel": {
+                    "default": 126,
+                    "type": "number"
+                },
+                "skills": {
+                    "$ref": "{[x:string]:number|undefined;}"
                 }
             },
             "type": "object"

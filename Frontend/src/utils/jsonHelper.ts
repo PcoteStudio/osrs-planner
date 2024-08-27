@@ -10,7 +10,7 @@ export class JsonHelper {
 
   static parseWithSchema<T>(schemaId: string, jsonObject: { [key: string]: unknown }): T {
     const valid = JsonHelper.ajv.validate(schemaId, jsonObject);
-    if (!valid) throw new Error(JsonHelper.ajv.errorsText(JsonHelper.ajv.errors));
+    if (!valid) throw new Error(`${JsonHelper.ajv.errorsText(JsonHelper.ajv.errors)}\n${JSON.stringify(jsonObject)}`);
     return jsonObject as T;
   }
 }

@@ -2,7 +2,6 @@ import { StateWarning } from '../stateWarning';
 import type { ContainerItem } from './containerItem';
 import { Item } from './item';
 import { ItemStore } from './itemStore';
-import randomItemsJson from'../../../tests/data/randomItems.json';
 
 export class Inventory {
   items: { [id: number]: ContainerItem } = {};
@@ -16,7 +15,6 @@ export class Inventory {
   }
 
   initializeSomeSlots(): void {
-    ItemStore.items = ItemStore.fromJSON(randomItemsJson);
     this.moveItem(ItemStore.items[11804], 2);
     this.moveItem(ItemStore.items[11805], 15);
     this.moveItem(ItemStore.items[11806], 1);

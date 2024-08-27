@@ -4,7 +4,7 @@ export type ScrapedItem = {
     id: number;
     name: string;
     bankable: boolean;
-    wiki_url: string;
+    wiki_url?: string | null;
     icon: string;
     cost: number;
     lowalch?: number | null;

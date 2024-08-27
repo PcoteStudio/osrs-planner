@@ -13,6 +13,8 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import Tooltip from 'primevue/tooltip';
 import ToastService from 'primevue/toastservice';
+import allItems from '../tests/data/items-complete.json';
+import { ItemStore } from './models/item/itemStore';
 
 import App from './App.vue';
 import router from './router';
@@ -51,5 +53,7 @@ app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 
 app.component('font-awesome-icon', FontAwesomeIcon);
+
+ItemStore.items = ItemStore.fromJSON(allItems);
 
 app.mount('#app');
