@@ -14,6 +14,7 @@ import Aura from '@primevue/themes/aura';
 import Tooltip from 'primevue/tooltip';
 import ToastService from 'primevue/toastservice';
 import allItems from '../tests/data/items-complete.json';
+import bannedItemIds from '../tests/data/bannedItemIds.json';
 import { ItemStore } from './models/item/itemStore';
 
 import App from './App.vue';
@@ -54,6 +55,6 @@ app.directive('ripple', Ripple);
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 
-ItemStore.items = ItemStore.fromJSON(allItems);
+ItemStore.items = ItemStore.fromJSON(allItems, bannedItemIds);
 
 app.mount('#app');
