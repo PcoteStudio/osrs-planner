@@ -9,8 +9,8 @@ import ContextMenu from 'primevue/contextmenu';
 const props = defineProps<{
   effect: Effect,
   removable?: boolean,
-  edit?: Function,
-  remove?: Function,
+  edit?: (event: Event) => void,
+  remove?: (event: Event) => void,
 }>();
 
 const content = computed(() => {

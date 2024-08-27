@@ -93,7 +93,6 @@ img {
 }
 
 .highlight-match {
-  color: black;
   font-weight: bold;
-  background-color: #fffa66;
+  background-color: darkblue;
 }

@@ -17,6 +17,8 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
+    'no-unused-vars': ["warn", { "argsIgnorePattern": "^_" }],
+    '@typescript-eslint/no-unused-vars': ["warn", { "argsIgnorePattern": "^_" }],
     'class-methods-use-this': 'error',
     'comma-dangle': ['error', 'only-multiline'],
     'eqeqeq': ['error', 'always'],

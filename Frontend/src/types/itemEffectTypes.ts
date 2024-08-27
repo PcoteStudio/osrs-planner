@@ -29,7 +29,7 @@ type ItemEffectType = {
   category: EffectTypeEnum.Item,
   data: {
     stepId: string,
-    action: ItemEffectTypeEnum,
+    action?: ItemEffectTypeEnum,
     effect?: Effect,
   }
 }

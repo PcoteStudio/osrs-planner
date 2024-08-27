@@ -3,11 +3,8 @@
 import { StepTreeNode } from '@/models/stepTreeNode';
 import { computed, ref, watch } from 'vue';
 import { useGlobalStore } from '@/stores/globalStore';
-import { EffectType } from '@/types/itemEffectTypes';
 import { EffectTypeEnum } from '@/models/effect';
 import { getItemEffectTypeOptions, ItemEffectTypeEnum } from '@/types/itemEffectTypeEnum';
-import { getSkillStyle, SkillsEnum } from '@/models/skill/skillsEnum';
-import { SkillEffect } from '@/models/skill/skillEffect';
 import SelectFuzzyComponent from '@/components/SelectFuzzyComponent.vue';
 
 const store = useGlobalStore();

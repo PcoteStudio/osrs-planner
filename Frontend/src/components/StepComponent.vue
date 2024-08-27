@@ -251,8 +251,8 @@ const dragLeave = (event: DragEvent, child?: boolean) => {
         <div v-if="!dragStore.isDragging" class="footer" :style="{ alignItems: editable ? 'flex-start' : 'flex-end' }">
           <div class="effects" :style="{ display: showEffects ? 'flex' : 'none' }">
             <EffectBadgeComponent
-              v-for="effect in step.effects"
-              :key="effect"
+              v-for="(effect, index) in step.effects"
+              :key="index"
               :effect="effect"
               :remove="() => removeEffect(effect)"
               :edit="() => editEffect(step.id, effect)"
