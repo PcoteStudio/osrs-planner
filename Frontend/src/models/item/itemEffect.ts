@@ -11,6 +11,7 @@ export class ItemEffect extends Effect {
 
   public apply(playerState: PlayerState): void {
     let movedItem: ContainerItem | undefined = undefined;
+    let movedItems: ContainerItem[]  = [];
     switch (this.action) {
       // From bank
       case ItemActions.Incinerate:
@@ -33,6 +34,11 @@ export class ItemEffect extends Effect {
         if(this.item.linkedItem)
           movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item.linkedItem, quantity: this.quantity };
         break;
+      case ItemActions.BankAll:
+      case ItemActions.DropAll:
+        movedItems = Object.values(playerState.inventory.items);
+        playerState.inventory.clear();
+        break;
       // From equipment
       case ItemActions.Unequip:
         movedItem = playerState.equipment.swapSlot(this.item.equipmentSlot, undefined);
@@ -50,6 +56,12 @@ export class ItemEffect extends Effect {
       // To bank
       case ItemActions.Bank:
         playerState.addWarnings(...playerState.bank.moveItem(itemToMove, quantityToMove));
+        break;
+      case ItemActions.BankAll:
+        for (const container of movedItems) {
+          if(container.quantity > 0)
+            playerState.addWarnings(...playerState.bank.moveItem(container.item, container.quantity));
+        } 
         break;
       // To inventory
       case ItemActions.Withdraw:

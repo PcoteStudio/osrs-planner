@@ -40,6 +40,11 @@ export class Bank {
   moveItem(item: Item, quantity: number): StateWarning[] {
     const warnings: StateWarning[] = [];
     if (quantity === 0) return warnings;
+    if(item.noted) {
+      if(!item.linkedItem)
+        throw new Error(`This item doesn't have a linked unnoted varation: ${item.toString(true)}`);
+      item = item.linkedItem;
+    }
     let { item : cItem, quantity : cQuantity } = this.getItemVariation(item) ?? { item, quantity: 0 };
     cQuantity += quantity;
     this.items[cItem.id] = { item: cItem, quantity: cQuantity };

@@ -39,41 +39,41 @@ This route planner is a powerfull website that will make much easier the process
 
 | Feature                                                        | Progress      |
 | -------------------------------------------------------------- | ------------- |
-| Display inventory panel                                        |               |
-| Match inventory items to selected step                         |               |
+| Display inventory panel                                        | _Done_        |
+| Match inventory items to selected step                         | _Done_        |
 | Highlight items were added on the selected step                |               |
 | Add inventory effect to selected step                          | _Implemented_ |
 | Remove inventory effect from selected step                     | _Implemented_ |
-| Merge similar item effects together                            | _Implemented_ |
+| Merge similar item effects together                            | _Done_        |
 | Add 'note' and 'unnote' inventory effects                      | _Implemented_ |
-| Add 'drop all' inventory effect                                |               |
-| Add 'bank all' inventory effect                                |               |
+| Add 'drop all' inventory effect                                | _Implemented_ |
+| Add 'bank all' inventory effect                                | _Implemented_ |
 | Add issue when missing item from inventory to apply an effect  | _Implemented_ |
 | Add issue when inventory is too full when appling an an effect | _Implemented_ |
 
 ### Equipment features
 
-| Feature                                                       | Progress |
-| ------------------------------------------------------------- | -------- |
-| Display equipment panel                                       | _Done_   |
-| Match equipped gear to selected step                          | _Done_   |
-| Highlight gear that was added on the selected step            |          |
-| Add equipment effect to selected step                         |          |
-| Remove equipment effect from selected step                    |          |
-| Merge similar equipment effects together                      |          |
-| Add issue when missing gear from equipment to apply an effect |          |
+| Feature                                                       | Progress      |
+| ------------------------------------------------------------- | ------------- |
+| Display equipment panel                                       | _Done_        |
+| Match equipped gear to selected step                          | _Done_        |
+| Highlight gear that was added on the selected step            |               |
+| Add equipment effect to selected step                         | _Implemented_ |
+| Remove equipment effect from selected step                    | _Implemented_ |
+| Merge similar equipment effects together                      |               |
+| Add issue when missing gear from equipment to apply an effect |               |
 
 ### Bank features
 
-| Feature                                                   | Progress |
-| --------------------------------------------------------- | -------- |
-| Display bank panel                                        |          |
-| Match bank items to selected step                         |          |
-| Highlight bank items that were added on the selected step |          |
-| Add bank effect to selected step                          |          |
-| Remove bank effect from selected step                     |          |
-| Merge similar bank effects together                       |          |
-| Add issue when missing item from bank to apply an effect  |          |
+| Feature                                                   | Progress      |
+| --------------------------------------------------------- | ------------- |
+| Display bank panel                                        |               |
+| Match bank items to selected step                         |               |
+| Highlight bank items that were added on the selected step |               |
+| Add bank effect to selected step                          | _Implemented_ |
+| Remove bank effect from selected step                     | _Implemented_ |
+| Merge similar bank effects together                       |               |
+| Add issue when missing item from bank to apply an effect  | _Implemented_ |
 
 ### Quest features
 
