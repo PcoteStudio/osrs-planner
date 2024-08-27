@@ -67,6 +67,21 @@ export class Route {
     const nodeIndex = node.parent.children.indexOf(node);
     node.parent.children.splice(nodeIndex, 1);
     this.updateChildrenLabel(node.parent);
+    // Make sure the current node is still in the tree
+    let currentNode = this.currentNode;
+    while (currentNode instanceof StepTreeNode) {
+      if (currentNode === node) {
+        if(node.parent.children.length) {
+          this.setCurrentNode(node.parent.children[nodeIndex >= node.parent.children.length ? nodeIndex - 1 : nodeIndex]);
+        } else {
+          this.setCurrentNode(node.parent as StepTreeNode);
+        }
+      }
+      if(currentNode.parent instanceof StepTreeNode)
+        currentNode = currentNode.parent;
+      else 
+        return;
+    }
   }
 
   static canMoveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): boolean {
@@ -248,7 +263,7 @@ export class Route {
      * @param step Once this step is executed, will return.
      */
   setCurrentNode(node: StepTreeNode) {
-    if (node?.step.resultingState) { // Load pre-processed step
+    if (node.step.resultingState) { // Load pre-processed step
       if (this.currentNode?.step)
         this.currentNode.step.resultingState = this.playerState.clone();
       this.playerState = node.step.resultingState;
