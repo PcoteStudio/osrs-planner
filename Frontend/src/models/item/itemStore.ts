@@ -39,7 +39,7 @@ export class ItemStore {
         item.linkedPlaceholder = items[item.linkedPlaceholderId];
     });
     for (const id of bannedItemIds)
-      this.removeItem(id);
+      delete items[id];
     return items;
   }
 }
