@@ -151,7 +151,7 @@ const clearFilter = (event: MouseEvent) => {
           {{ selectedItem?.name }}
         </span>
       </div>
-      <div class="right">
+      <div class="right-buttons">
         <div v-if="active" class="clear" @click="(e) => clearFilter(e)">
           <font-awesome-icon icon="x" class="label" />
         </div>
@@ -208,7 +208,7 @@ const clearFilter = (event: MouseEvent) => {
   }
 }
 
-.right {
+.right-buttons {
   position: absolute;
   top: 0;
   right: 0;
