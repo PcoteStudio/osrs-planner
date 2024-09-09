@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { ItemStore } from '@/models/item/itemStore';
 import * as fuzzySort from 'fuzzysort';
 import { Item } from '@/models/item/item';
@@ -21,10 +21,11 @@ const input = ref();
 const width = ref();
 const selectedItem = ref();
 const active = ref(false);
+const noted = ref(false);
 
 const data = computed(() => {
   return Object.values(ItemStore.items)
-    .filter(item => !item.duplicated || item.noted)
+    .filter(item => noted.value ? item.noted : !item.duplicated)
     .sort();
 });
 
@@ -40,7 +41,28 @@ const highlight = (result: KeysResult<Item>, key: string): HighlightResult => {
   return [_.get(result.obj, key)];
 };
 
-watchDebounced((filter), () => {
+watch(noted, () => {
+  if (!selectedItem.value)
+    return;
+
+  if (selectedItem.value.linkedNotedId) {
+    const notedItem = data.value.find(i => i.id === selectedItem.value.linkedNotedId);
+    if (!notedItem)
+      return;
+    setSelectedItem(notedItem);
+  }
+  else if (selectedItem.value.linkedItemId) {
+    const item = data.value.find(i => i.id === selectedItem.value.linkedItemId);
+    if (!item)
+      return;
+    setSelectedItem(item);
+  }
+  else {
+    setSelectedItem(undefined);
+  }
+});
+
+watchDebounced([filter, data], () => {
   let result: Array<SearchResultElement> = fuzzySort.go(
     filter.value,
     data.value,
@@ -65,15 +87,26 @@ const togglePopup = (event?: FocusEvent) => {
     width.value = input.value.$el.offsetWidth;
     op.value.show(event);
   }
+  else if (event?.type === 'focusout') {
+    filter.value = selectedItem.value?.name;
+    op.value?.hide(event);
+    active.value = false;
+  }
   else {
     op.value?.hide(event);
     active.value = false;
   }
 };
 
-const setSelectedItem = (item: Item) => {
+const setSelectedItem = (item: Item | undefined) => {
+  if (item) {
+    filter.value = item.name;
+  }
+  else {
+    filter.value = '';
+  }
+
   selectedItem.value = item;
-  filter.value = item.name;
   togglePopup();
 };
 
@@ -84,9 +117,10 @@ const setActive = () => {
   }, 0);
 };
 
-const clearFilter = () => {
+const clearFilter = (event: MouseEvent) => {
+  event.stopPropagation();
+
   filter.value = '';
-  console.log(filter.value);
   setTimeout(() => {
     input.value.$el.focus();
   }, 0);
@@ -103,7 +137,9 @@ const clearFilter = () => {
             v-model="filter"
             type="text"
             name="search-box"
+            autocomplete="off"
             @focusin="togglePopup"
+            @focusout="togglePopup"
         />
       </div>
       <div v-if="!active"
@@ -115,11 +151,20 @@ const clearFilter = () => {
           {{ selectedItem?.name }}
         </span>
       </div>
-      <div v-if="active" class="clear" @click="clearFilter">
-        <font-awesome-icon icon="x" class="label" />
-      </div>
-      <div v-else class="clear" @click="setActive">
-        <font-awesome-icon icon="chevron-down" class="label" />
+      <div class="right">
+        <div v-if="active" class="clear" @click="(e) => clearFilter(e)">
+          <font-awesome-icon icon="x" class="label" />
+        </div>
+        <div v-else class="clear" @click="setActive">
+          <font-awesome-icon icon="chevron-down" class="label" />
+        </div>
+        <Divider layout="vertical" :style="{ margin: 0 }" />
+        <ToggleButton
+          v-model="noted"
+          onLabel="Noted"
+          offLabel="Un-noted"
+          :style="{ fontSize: '0.9em', width: '5rem', padding: 0, backgroundColor: 'transparent', margin: '1px' }"
+        />
       </div>
       <label for="search-box">Item</label>
     </FloatLabel>
@@ -139,7 +184,9 @@ const clearFilter = () => {
               <span v-else class="highlight-match">{{result.match}}</span>
             </template>
           </div>
-          <span v-if="matchedResults.obj.id.toString() === filter" class="highlight-match">{{ matchedResults.obj.id }}</span>
+          <span v-if="matchedResults.obj.id.toString() === filter" class="highlight-match">
+            {{ matchedResults.obj.id }}
+          </span>
         </div>
         <div  v-if="filteredData.length === 0" class="item disabled">
           <font-awesome-icon icon="face-sad-cry" style="height: 20px" class="p-1"/>
@@ -161,16 +208,22 @@ const clearFilter = () => {
   }
 }
 
-.clear {
+.right {
   position: absolute;
   top: 0;
   right: 0;
   height: 100%;
   display: flex;
+  flex-direction: row
+}
+
+.clear {
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 1em;
+  padding-right: 0.75em;
   color: #a1a1aa;
 
   .label:hover {
