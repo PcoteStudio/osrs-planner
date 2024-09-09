@@ -31,11 +31,11 @@ export class ItemEffect extends Effect {
         break;
       case ItemActions.Note:
         if(this.item.linkedNoted)
-          movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item.linkedNoted, quantity: this.quantity };
+          movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item, quantity: this.quantity };
         break;
       case ItemActions.Unnote:
         if(this.item.linkedItem)
-          movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item.linkedItem, quantity: this.quantity };
+          movedItem = playerState.inventory.getItem(this.item) ?? { item: this.item, quantity: this.quantity };
         break;
       case ItemActions.BankAll:
       case ItemActions.DropAll:
@@ -67,6 +67,7 @@ export class ItemEffect extends Effect {
         } 
         break;
       // To inventory
+      case ItemActions.Pickup:
       case ItemActions.Withdraw:
         playerState.addWarnings(...playerState.inventory.moveItem(itemToMove, quantityToMove));
         break;
