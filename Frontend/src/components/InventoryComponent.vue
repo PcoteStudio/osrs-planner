@@ -30,7 +30,7 @@ const selectedSkill = ref();
 const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
 
   let menuItems = [];
-  const options = getItemEffectTypeOptions(ItemEffectTypeEnum.Add);
+  const options = getItemEffectTypeOptions(ItemEffectTypeEnum.Pickup);
   menuItems.push({
     label: options.label,
     icon: options.icon,
@@ -38,7 +38,7 @@ const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
       category: EffectTypeEnum.Item,
       data: {
         stepId: currentStep.value.id,
-        action: ItemEffectTypeEnum.Add,
+        action: ItemEffectTypeEnum.Pickup
       }
     })
   });
@@ -46,10 +46,13 @@ const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
   if (inventorySlot) {
     menuItems.unshift({ 'separator': true });
     for (const [key, value] of Object.entries(ItemEffectTypeEnum)) {
-      if (value === ItemEffectTypeEnum.Add)
+      if (value === ItemEffectTypeEnum.Pickup)
         continue;
 
       const options = getItemEffectTypeOptions(value);
+      if (options.category !== 'inventory')
+        continue;
+
       menuItems.unshift({
         label: options.label,
         icon: options.icon,
@@ -59,6 +62,7 @@ const openContextMenu = (event: MouseEvent, inventorySlot: ContainerItem) => {
           data: {
             stepId: currentStep.value.id,
             action: value,
+            item: inventorySlot.item
           }
         })
       });

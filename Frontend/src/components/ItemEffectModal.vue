@@ -6,6 +6,7 @@ import { useGlobalStore } from '@/stores/globalStore';
 import { EffectTypeEnum } from '@/models/effect';
 import { getItemEffectTypeOptions, ItemEffectTypeEnum } from '@/types/itemEffectTypeEnum';
 import SelectFuzzyComponent from '@/components/SelectFuzzyComponent.vue';
+import { ItemStore } from '@/models/item/itemStore';
 
 const store = useGlobalStore();
 
@@ -14,6 +15,8 @@ const props = defineProps<{
 }>();
 
 const selectedAction = ref();
+const selectedItem = ref();
+const quantity = ref(1);
 
 const availableActions = computed(() => {
   const actions = [];
@@ -22,10 +25,29 @@ const availableActions = computed(() => {
     actions.push({
       name: options.label,
       icon: options.icon,
+      category: options.category,
       type: key,
     });
   }
   return actions;
+});
+
+const filteredItems = computed(() => {
+  switch (selectedAction.value?.type) {
+    case ItemEffectTypeEnum.Bank:
+    case ItemEffectTypeEnum.Drop:
+    case ItemEffectTypeEnum.Note:
+      return store.getInventory.getUniqueItems();
+    case ItemEffectTypeEnum.Pickup:
+      return Object.values(ItemStore.items);
+    case ItemEffectTypeEnum.Withdraw:
+    case ItemEffectTypeEnum.Incinerate:
+      //TODO: Bank
+      break;
+    case ItemEffectTypeEnum.Equip:
+    case ItemEffectTypeEnum.Unequip:
+      return store.getEquipment.getUniqueItems();
+  }
 });
 
 watch(store.getEffectState, (state) => {
@@ -34,6 +56,8 @@ watch(store.getEffectState, (state) => {
 
     if (action)
       selectedAction.value = availableActions.value.find(s => s.type === action);
+
+    selectedItem.value = state.effect.data.item;
   }
 }, { immediate: true });
 
@@ -62,19 +86,36 @@ watch(store.getEffectState, (state) => {
           </span>
         </template>
         <template #option="slotProps">
-          <div class="flex items-center">
+          <div class="flex items-center w-full">
             <font-awesome-icon
                 :icon="slotProps.option.icon"
                 class="mr-2"
                 style="width: 18px"
             />
             <div>{{ slotProps.option.name }}</div>
+            <span class="ml-auto">
+              <font-awesome-icon v-if="slotProps.option.category === 'inventory'" icon="suitcase" class="text-gray-400"/>
+              <font-awesome-icon v-if="slotProps.option.category === 'bank'" icon="building-columns" class="text-gray-400" />
+              <font-awesome-icon v-if="slotProps.option.category === 'gear'" icon="shirt" class="text-gray-400" />
+            </span>
           </div>
         </template>
       </Select>
       <label for="effectTypes">Action</label>
     </FloatLabel>
-    <SelectFuzzyComponent />
+    <SelectFuzzyComponent v-if="selectedAction" v-model="selectedItem" :items="filteredItems" />
+    <FloatLabel v-if="selectedItem">
+      <InputNumber
+        v-model="quantity"
+        showButtons
+        inputId="quantity"
+        :min="0"
+        fluid
+      />
+      <label for="quantity">Quantity</label>
+    </FloatLabel>
+
+
 <!--    <div v-if="selectedSkill" class="w-full grid grid-cols-2 gap-2">-->
 <!--      <FloatLabel>-->
 <!--        <InputText v-model="experience" id="experience" type="number" class="w-full" />-->
@@ -96,10 +137,10 @@ watch(store.getEffectState, (state) => {
 <!--          :class="{ invalid: levelInvalid }">-->
 <!--      <a href="#" class="highlight" @click="addExperience(expUntilNextLevel)">{{ formatNumber(expUntilNextLevel) }} xp</a> left to reach level {{ nextLevel }}-->
 <!--    </span>-->
-<!--    <div class="flex justify-end gap-2">-->
-<!--      <Button type="button" label="Cancel" severity="secondary" @click="store.closeEffectModal" size="small" />-->
-<!--      <Button type="button" :label="currentAppliedEffect ? 'Edit effect' : 'Add effect'" @click="addEffect()" :disabled="invalidForm" size="small" />-->
-<!--    </div>-->
+    <div class="flex justify-end gap-2">
+      <Button type="button" label="Cancel" severity="secondary" @click="store.closeEffectModal" size="small" />
+      <Button type="button" :label="currentAppliedEffect ? 'Edit effect' : 'Add effect'" @click="addEffect()" :disabled="invalidForm" size="small" />
+    </div>
   </div>
 </template>
 

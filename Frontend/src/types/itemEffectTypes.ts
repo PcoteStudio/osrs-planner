@@ -2,6 +2,7 @@ import type { Skill } from '@/models/skill/skill';
 import type { EffectTypeEnum } from '@/models/effect';
 import { Effect } from '@/models/effect';
 import type { ItemEffectTypeEnum } from '@/types/itemEffectTypeEnum';
+import type { Item } from '@/models/item/item';
 
 export type EffectType =
   SkillEffectType
@@ -30,6 +31,7 @@ type ItemEffectType = {
   data: {
     stepId: string,
     action?: ItemEffectTypeEnum,
+    item?: Item,
     effect?: Effect,
   }
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores/globalStore';
-import { computed, ref, watch } from 'vue';
-import { ItemStore } from '@/models/item/itemStore';
+import { computed, onMounted, ref, watch } from 'vue';
 import * as fuzzySort from 'fuzzysort';
 import { Item } from '@/models/item/item';
 import KeysResult = Fuzzysort.KeysResult;
@@ -14,17 +13,25 @@ const store = useGlobalStore();
 type HighlightResult = Array<{match: string} | string>;
 type SearchResultElement = (KeysResult<Item> | {obj: Item}) & {highlightedName: HighlightResult}
 
+const model = defineModel();
+
+const props = defineProps<{
+  items: Item[]
+}>();
+
 const filter = ref('');
 const filteredData = ref();
 const op = ref();
 const input = ref();
 const width = ref();
 const selectedItem = ref();
+const focusedItem = ref();
 const active = ref(false);
 const noted = ref(false);
 
 const data = computed(() => {
-  return Object.values(ItemStore.items)
+  console.log(props.items);
+  return props.items
     .filter(item => noted.value ? item.noted : !item.duplicated)
     .sort();
 });
@@ -84,15 +91,18 @@ watchDebounced([filter, data], () => {
 
 const togglePopup = (event?: FocusEvent) => {
   if (event?.type === 'focusin') {
+    console.log('focusin');
     width.value = input.value.$el.offsetWidth;
     op.value.show(event);
   }
   else if (event?.type === 'focusout') {
+    console.log('focusout');
     filter.value = selectedItem.value?.name;
     op.value?.hide(event);
     active.value = false;
   }
   else {
+    console.log('click');
     op.value?.hide(event);
     active.value = false;
   }
@@ -107,6 +117,8 @@ const setSelectedItem = (item: Item | undefined) => {
   }
 
   selectedItem.value = item;
+  model.value = item;
+
   togglePopup();
 };
 
@@ -117,14 +129,59 @@ const setActive = () => {
   }, 0);
 };
 
-const clearFilter = (event: MouseEvent) => {
-  event.stopPropagation();
-
+const clearFilter = () => {
   filter.value = '';
-  setTimeout(() => {
-    input.value.$el.focus();
-  }, 0);
+  selectedItem.value = undefined;
 };
+
+const handleKeydown = (event: KeyboardEvent) => {
+  switch (event.key) {
+    case 'Escape':
+      togglePopup();
+      break;
+    case 'Enter':
+      setSelectedItem(focusedItem.value);
+      break;
+    case 'ArrowDown':
+      if (filteredData.value.length === 0)
+        return;
+
+      if (focusedItem.value) {
+        const index = filteredData.value.findIndex((i: SearchResultElement) => i.obj.id === focusedItem.value.id);
+        if (index + 1 < filteredData.value.length) {
+          focusedItem.value = filteredData.value[index + 1].obj;
+        }
+        else {
+          focusedItem.value = filteredData.value[0].obj;
+        }
+      }
+      else {
+        focusedItem.value = filteredData.value[0].obj;
+      }
+      break;
+    case 'ArrowUp':
+      if (filteredData.value.length === 0)
+        return;
+
+      if (focusedItem.value) {
+        const index = filteredData.value.findIndex((i: SearchResultElement) => i.obj.id === focusedItem.value.id);
+        if (index - 1 >= 0) {
+          focusedItem.value = filteredData.value[index - 1].obj;
+        }
+        else {
+          focusedItem.value = filteredData.value[filteredData.value.length - 1].obj;
+        }
+      }
+      else {
+        focusedItem.value = filteredData.value[filteredData.value.length - 1].obj;
+      }
+      break;
+  }
+};
+
+onMounted(() => {
+  setSelectedItem(model.value as Item | undefined);
+});
 </script>
 
 <template>
@@ -140,6 +197,7 @@ const clearFilter = (event: MouseEvent) => {
             autocomplete="off"
             @focusin="togglePopup"
             @focusout="togglePopup"
+            @keydown.stop="(e) => handleKeydown(e)"
         />
       </div>
       <div v-if="!active"
@@ -152,8 +210,8 @@ const clearFilter = (event: MouseEvent) => {
         </span>
       </div>
       <div class="right-buttons">
-        <div v-if="active" class="clear" @click="(e) => clearFilter(e)">
-          <font-awesome-icon icon="x" class="label" />
+        <div v-if="active" class="clear">
+          <font-awesome-icon icon="x" class="label" @mousedown.prevent="clearFilter" />
         </div>
         <div v-else class="clear" @click="setActive">
           <font-awesome-icon icon="chevron-down" class="label" />
@@ -175,7 +233,9 @@ const clearFilter = (event: MouseEvent) => {
             :key="index"
             class="item"
             @pointerdown.prevent
+            @mouseenter="focusedItem = matchedResults.obj"
             @click="() => setSelectedItem(matchedResults.obj)"
+            :class="{ selected: focusedItem?.id === matchedResults.obj.id }"
         >
           <img :src="matchedResults.obj.imageUrl"  :alt="matchedResults.obj.name"/>
           <div class="name">
@@ -198,6 +258,10 @@ const clearFilter = (event: MouseEvent) => {
 </template>
 
 <style scoped>
+.selected {
+  background-color: #27272a;
+}
+
 .select {
   position: relative;
   display: flex;
