@@ -11,10 +11,6 @@ export class PlayerState {
   bank: Bank = new Bank();
   warnings: StateWarning[] = [];
 
-  constructor() {
-
-  }
-
   addWarnings(...warnings: StateWarning[]) {
     if (!warnings || !warnings.length) return;
     this.warnings.push(...warnings);

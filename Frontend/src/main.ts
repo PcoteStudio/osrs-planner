@@ -53,7 +53,7 @@ app.use(PrimeVue, {
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 
-app.component('font-awesome-icon', FontAwesomeIcon);
+app.component('FontAwesomeIcon', FontAwesomeIcon);
 
 ItemStore.items = ItemStore.fromJSON(allItems, bannedItemIds);
 

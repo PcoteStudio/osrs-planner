@@ -1,0 +1,23 @@
+{
+  "name": "osrs-planner",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "typescript-eslint": "^8.5.0"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin-js": "^2.8.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "eslint": "^9.10.0",
+    "eslint-plugin-no-only-tests": "^3.3.0",
+    "eslint-plugin-vue": "^9.28.0",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.4.0",
+    "vue-eslint-parser": "^9.4.3"
+  }
+}

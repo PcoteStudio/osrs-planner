@@ -430,7 +430,7 @@ describe('Route', () => {
       createComplexRoute();
 
       const json = JSON.stringify(route);
-      const savedProperties: any = JSON.parse(json);
+      const savedProperties: Route = JSON.parse(json);
       expect(Object.keys(savedProperties).length).toStrictEqual(1);
       expect(savedProperties.rootNode).not.toBe(undefined);
     });

@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { readFileSync, writeFileSync } from 'node:fs';
 
 if(process.argv.length !== 4) {

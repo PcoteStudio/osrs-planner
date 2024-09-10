@@ -16,7 +16,6 @@ const props = defineProps<{
 const content = computed(() => {
   switch (props.effect.type) {
     case EffectTypeEnum.Skill:
-    // eslint-disable-next-line no-case-declarations
       const typedEffect = props.effect as SkillEffect;
       return {
         image: getSkillStyle(typedEffect.skill).icon,

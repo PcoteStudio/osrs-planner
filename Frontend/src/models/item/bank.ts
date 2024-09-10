@@ -5,8 +5,6 @@ import { Item } from './item';
 export class Bank {
   items: { [id: number]: ContainerItem } = {};
 
-  constructor() { }
-
   clone(): Bank {
     const bank = new Bank();
     bank.items = { ...this.items };
