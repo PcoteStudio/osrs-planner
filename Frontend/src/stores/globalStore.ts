@@ -104,6 +104,9 @@ export const useGlobalStore = defineStore('globalStore', {
     getInventory: (state) => {
       return state.currentRoute.getPlayerState().inventory;
     },
+    getEquipment: (state) => {
+      return state.currentRoute.getPlayerState().equipment;
+    }
   },
   actions: {
     setCurrentNode(nodeId: string) {
