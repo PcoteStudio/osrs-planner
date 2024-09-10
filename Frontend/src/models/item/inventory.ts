@@ -34,6 +34,10 @@ export class Inventory {
     return stacks;
   }
 
+  getUniqueItems(): Item[] {
+    return Object.values(this.items).map((ci : ContainerItem) => ci.item);
+  }
+
   getItem(item: Item): ContainerItem | undefined {
     return this.items[item.id];
   }
