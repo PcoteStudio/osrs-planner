@@ -2,13 +2,14 @@
   "name": "osrs-planner-api",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "main": "src/server.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon src/server.ts",
-    "build": "rm -rf build/ && prettier --write src/ && tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "serve": "node dist/index.js",
     "lint": "eslint .",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "yarn run lint -- --fix"
   },
   "dependencies": {
     "@types/axios": "^0.14.0",

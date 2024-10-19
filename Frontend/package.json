@@ -14,9 +14,9 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ignore-pattern .gitignore",
-    "lint:fix": "npm run lint -- --fix",
+    "lint:fix": "yarn run lint -- --fix",
     "format": "prettier --write src/",
-    "schemas:generate": "typescript-json-schema ./tsconfig.app.json * -o ./src/generatedSchemas.json --strictNullChecks && npm run schemas:fix",
+    "schemas:generate": "typescript-json-schema ./tsconfig.app.json * -o ./src/generatedSchemas.json --strictNullChecks && yarn run schemas:fix",
     "schemas:fix": "node ./scripts/schemaFixer.js ./src/generatedSchemas.json ./src/adaptedSchemas.json"
   },
   "dependencies": {
