@@ -10,7 +10,29 @@ on:
     branches: [ "master" ]
 
 jobs:
-  unit-test:
+  backend-test:
+    defaults:
+      run:
+        working-directory: ./Backend
+        
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+    - run: npm i -g yarn
+    - run: yarn install --frozen-lockfile
+    # - run: yarn run build --if-present
+    - run: yarn run test
+  frontend-unit-test:
     defaults:
       run:
         working-directory: ./Frontend
@@ -20,7 +42,6 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
