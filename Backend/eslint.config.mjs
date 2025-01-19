@@ -6,7 +6,8 @@ export default [
   prettierRecommended,
   {
     rules: {
-      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      'prettier/prettier': ['error', { endOfLine: 'auto', semi: true }],
+      'class-methods-use-this': 'off',
     },
   },
 ];
