@@ -3,4 +3,67 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="ChangeListManager">
+    <list default="true" id="def161cd-857e-490b-8878-51a72482e992" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/src/components/DebugComponent.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/components/DebugComponent.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/src/components/EffectBadgeComponent.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/components/EffectBadgeComponent.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/src/components/ItemEffectModal.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/components/ItemEffectModal.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/src/components/SelectFuzzyComponent.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/components/SelectFuzzyComponent.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/src/models/item/itemEffect.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/models/item/itemEffect.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/src/stores/globalStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/stores/globalStore.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\workspace\\OSRS Planner\\node_modules\\typescript\\lib&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="dev" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/Frontend/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
 </project>

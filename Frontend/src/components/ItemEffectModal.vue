@@ -7,6 +7,7 @@ import { EffectTypeEnum } from '@/models/effect';
 import { getItemEffectTypeOptions, ItemEffectTypeEnum } from '@/types/itemEffectTypeEnum';
 import SelectFuzzyComponent from '@/components/SelectFuzzyComponent.vue';
 import { ItemStore } from '@/models/item/itemStore';
+import { ItemEffect } from '@/models/item/itemEffect';
 
 const store = useGlobalStore();
 
@@ -50,6 +51,14 @@ const filteredItems = computed(() => {
   }
 });
 
+const qtyMin = computed(() => {
+  return 0;
+});
+
+const qtyMax = computed(() => {
+  return undefined;
+});
+
 watch(store.getEffectState, (state) => {
   if (state.effect?.category === EffectTypeEnum.Item) {
     const action = state.effect.data.action;
@@ -61,6 +70,45 @@ watch(store.getEffectState, (state) => {
   }
 }, { immediate: true });
 
+const currentAppliedEffect = computed(() => store.findEffect(props.node.step.id, EffectTypeEnum.Item, selectedItem.value?.name));
+const currentQuantity = computed(() => {
+  if (!selectedItem.value)
+    return 0;
+
+  if (currentAppliedEffect.value instanceof ItemEffect)
+    return currentAppliedEffect.value.quantity;
+
+  return 0;
+});
+
+const newQuantity = computed(() => currentQuantity.value + quantity.value);
+
+const invalidForm = computed(() => {
+  return quantity.value < 0;
+});
+
+const addEffect = () => {
+  if (!selectedItem.value && !quantity.value)
+    throw new Error(`selectedItem: ${selectedItem.value} and quantity ${quantity.value} need to be defined`);
+
+  let qty;
+  if (currentAppliedEffect.value instanceof ItemEffect) {
+    qty = Number(quantity.value) - Number(currentAppliedEffect.value.quantity);
+  }
+  else {
+    qty = Number(quantity.value);
+  }
+
+  const newEffect = new ItemEffect(selectedAction.value, selectedItem.value, qty);
+  store.addEffect({
+    category: EffectTypeEnum.Item,
+    data: {
+      stepId: props.node.step.id,
+    }
+  }, newEffect);
+
+  store.closeEffectModal();
+};
 </script>
 
 <template>
@@ -109,34 +157,16 @@ watch(store.getEffectState, (state) => {
         v-model="quantity"
         showButtons
         inputId="quantity"
-        :min="0"
+        :min="qtyMin"
+        :max="qtyMax"
         fluid
       />
       <label for="quantity">Quantity</label>
     </FloatLabel>
+    <span v-if="selectedItem && quantity"  class="w-full text-center" :class="{ invalid: invalidForm }">
+      {{ currentQuantity }} + <span class="highlight">{{ quantity }}</span> → <span class="highlight">{{ newQuantity }}</span>
+    </span>
 
-
-<!--    <div v-if="selectedSkill" class="w-full grid grid-cols-2 gap-2">-->
-<!--      <FloatLabel>-->
-<!--        <InputText v-model="experience" id="experience" type="number" class="w-full" />-->
-<!--        <label for="experience">Experience</label>-->
-<!--      </FloatLabel>-->
-<!--      <FloatLabel>-->
-<!--        <InputText v-model="level" id="level" type="number" class="w-full" />-->
-<!--        <label for="level">Target level</label>-->
-<!--      </FloatLabel>-->
-<!--      <span v-if="selectedSkill && experience" class="w-full text-center" :class="{ invalid: invalidForm }">-->
-<!--        {{ formatNumber(currentExp) }} <span class="highlight">+ {{ formatNumber(experience) }}</span> = <span class="highlight">{{ formatNumber(additionalExp) }}</span>-->
-<!--      </span>-->
-<!--      <span v-if="selectedSkill && experience"  class="w-full text-center" :class="{ invalid: invalidForm }">-->
-<!--        {{ currentLevel }} → <span class="highlight">{{ newLevel }}</span>-->
-<!--      </span>-->
-<!--    </div>-->
-<!--    <span v-if="selectedSkill && experience"-->
-<!--          class="w-full text-center" style="margin-top: -1rem"-->
-<!--          :class="{ invalid: levelInvalid }">-->
-<!--      <a href="#" class="highlight" @click="addExperience(expUntilNextLevel)">{{ formatNumber(expUntilNextLevel) }} xp</a> left to reach level {{ nextLevel }}-->
-<!--    </span>-->
     <div class="flex justify-end gap-2">
       <Button type="button" label="Cancel" severity="secondary" @click="store.closeEffectModal" size="small" />
       <Button type="button" :label="currentAppliedEffect ? 'Edit effect' : 'Add effect'" @click="addEffect()" :disabled="invalidForm" size="small" />
