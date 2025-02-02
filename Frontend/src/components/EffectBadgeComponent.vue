@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { getSkillStyle } from '@/models/skill/skillsEnum';
-import { formatShortNumbers, formatNumber } from '@/utils/formaters';
+import { formatNumber, formatShortNumbers } from '@/utils/formaters';
 import { Effect, EffectTypeEnum } from '@/models/effect';
 import { computed, ref } from 'vue';
 import type { SkillEffect } from '@/models/skill/skillEffect';
 import ContextMenu from 'primevue/contextmenu';
+import type { ItemEffect } from '@/models/item/itemEffect';
 
 const props = defineProps<{
   effect: Effect,
@@ -16,15 +17,22 @@ const props = defineProps<{
 const content = computed(() => {
   switch (props.effect.type) {
     case EffectTypeEnum.Skill:
-      const typedEffect = props.effect as SkillEffect;
+      const skillEffect = props.effect as SkillEffect;
       return {
-        image: getSkillStyle(typedEffect.skill).icon,
-        label: formatShortNumbers(typedEffect.experience),
-        tooltip: formatNumber(typedEffect.experience),
+        image: getSkillStyle(skillEffect.skill).icon,
+        label: formatShortNumbers(skillEffect.experience),
+        tooltip: formatNumber(skillEffect.experience),
         badgeStyle: {
-          backgroundColor: getSkillStyle(typedEffect.skill).bgColor,
-          color: getSkillStyle(typedEffect.skill).textColor,
+          backgroundColor: getSkillStyle(skillEffect.skill).bgColor,
+          color: getSkillStyle(skillEffect.skill).textColor,
         }
+      };
+    case EffectTypeEnum.Item:
+      let itemEffect = props.effect as ItemEffect;
+      return {
+        icon: itemEffect.action.icon,
+        label: `${itemEffect.action.name} - ${itemEffect.quantity} ${itemEffect.item.name}`,
+        tooltip: `${itemEffect.action.name} - ${itemEffect.quantity} ${itemEffect.item.name}`
       };
   }
   return {};
@@ -58,8 +66,6 @@ const openContextMenu = (event : MouseEvent) => items.value.length > 0 && menu.v
 
 <template>
   <Chip
-    :image="content.image"
-    :label="content.label"
     :removable="removable"
     v-tooltip.top="content.tooltip"
     :style="content.badgeStyle"
@@ -68,7 +74,11 @@ const openContextMenu = (event : MouseEvent) => items.value.length > 0 && menu.v
     @contextmenu="openContextMenu($event)"
     @click="openContextMenu($event)"
     @remove="remove"
-  />
+  >
+    <img v-if="content.image" :src="content.image" data-pc-section="image" class="p-chip-image" alt="Icon">
+    <font-awesome-icon v-if="content.icon" :icon="content.icon" />
+    <span class="color-gray">{{content.label}}</span>
+  </Chip>
   <ContextMenu ref="menu" :model="items">
     <template #item="{ item, props }">
       <a v-ripple class="flex items-center" v-bind="props.action">

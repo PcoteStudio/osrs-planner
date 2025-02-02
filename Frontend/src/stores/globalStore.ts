@@ -161,8 +161,13 @@ export const useGlobalStore = defineStore('globalStore', {
       const node = this.currentRoute.rootNode.findRequiredNodeById(effectType.data.stepId);
 
       const effect = this.getEffectState.effect;
-      if (effect?.category === EffectTypeEnum.Skill)
+      if (effect?.category === EffectTypeEnum.Skill) {
         effect.data.skill = undefined;
+      }
+      else if (effect?.category === EffectTypeEnum.Item) {
+        effect.data.action = undefined;
+        effect.data.item = undefined;
+      }
 
       this.currentRoute.addEffect(node, newEffect);
 

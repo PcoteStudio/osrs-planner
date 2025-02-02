@@ -30,7 +30,6 @@ const active = ref(false);
 const noted = ref(false);
 
 const data = computed(() => {
-  console.log(props.items);
   return props.items
     .filter(item => noted.value ? item.noted : !item.duplicated)
     .sort();
@@ -91,18 +90,15 @@ watchDebounced([filter, data], () => {
 
 const togglePopup = (event?: FocusEvent) => {
   if (event?.type === 'focusin') {
-    console.log('focusin');
     width.value = input.value.$el.offsetWidth;
     op.value.show(event);
   }
   else if (event?.type === 'focusout') {
-    console.log('focusout');
     filter.value = selectedItem.value?.name;
     op.value?.hide(event);
     active.value = false;
   }
   else {
-    console.log('click');
     op.value?.hide(event);
     active.value = false;
   }

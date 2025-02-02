@@ -124,7 +124,7 @@ export class ItemEffect extends Effect {
       case ItemActions.DropAll:
         return 'Drop all items';
       default:
-        return `${this.action} ${[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].includes(this.quantity) ? 'all' : this.quantity} ${this.item}`;
+        return `${this.action.name} ${[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].includes(this.quantity) ? 'all' : this.quantity} ${this.item}`;
     }
     
   }
