@@ -8,7 +8,7 @@ const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
 
 export class Step {
   id: string = nanoid();
-  label: string = '?';
+  upToDate: boolean = false;
   resultingState: PlayerState | undefined;
   description: string = '';
   effects: Effect[] = [];
@@ -16,6 +16,11 @@ export class Step {
 
   constructor(description: string = '') {
     this.description = description;
+  }
+
+  invalidate(): void {
+    this.upToDate = false;
+    this.resultingState = undefined;
   }
 
   addEffect(effect: Effect) {
@@ -54,8 +59,18 @@ export class Step {
       step.effects[i] = EffectFactory.fromJSON(step.effects[i]);   
     return step;
   }
-
-  public toString(): string {
-    return `${this.label}`;
-  }
 }
+
+export class LabeledStep extends Step {
+  label: string;
+  depth: number;
+  path: number[];
+
+  constructor(step: Step, path: number[]) {
+    super(step.description);
+    Object.assign(step, this);
+    this.path = path;
+    this.label = path.join('.');
+    this.depth = path.length - 1;
+  }
+};

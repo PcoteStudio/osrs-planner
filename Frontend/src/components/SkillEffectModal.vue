@@ -9,7 +9,7 @@ import { formatNumber } from '@/utils/formaters';
 import Button from 'primevue/button';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { XpHelper } from '@/models/skill/xpHelper';
-import { StepTreeNode } from '@/models/stepTreeNode';
+import { StepNode } from '@/models/stepTreeNode';
 import { EffectTypeEnum } from '@/models/effect';
 
 const store = useGlobalStore();
@@ -19,7 +19,7 @@ const selectedSkill = ref();
 const levelInvalid = ref(false);
 
 const props = defineProps<{
-  node: StepTreeNode
+  node: StepNode
 }>();
 
 const level = computed({

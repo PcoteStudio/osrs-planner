@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import StepListComponent from '@/components/StepListComponent.vue';
 import EffectBadgeComponent from '@/components/EffectBadgeComponent.vue';
-import type { StepTreeNode } from '@/models/stepTreeNode';
+import type { StepNode } from '@/models/stepTreeNode';
 import { useGlobalStore } from '@/stores/globalStore';
 import { computed, onMounted, ref, watch } from 'vue';
 import { type Effect, EffectTypeEnum } from '@/models/effect';
@@ -12,7 +12,7 @@ import { ShowEffectTypes } from '@/types/showEffectTypes';
 import type { EffectType } from '@/types/itemEffectTypes';
 
 const props = withDefaults(defineProps<{
-  node: StepTreeNode;
+  node: StepNode;
   editable: boolean;
 }>(), {
   editable: false,

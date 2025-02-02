@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { StepTreeNode } from '@/models/stepTreeNode';
+import { StepNode } from '@/models/stepTreeNode';
 
 const props = defineProps<{
-  node: StepTreeNode
+  node: StepNode
 }>();
 </script>
 

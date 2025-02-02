@@ -1,289 +1,216 @@
 import { PlayerState } from './playerState';
-import { SkillEffect } from './skill/skillEffect';
-import { SkillsEnum } from './skill/skillsEnum';
-import { AbstractStepTreeNode, type BaseStepTreeNode, RootStepTreeNode, StepTreeNode } from './stepTreeNode';
+import { type BaseStepNode, RootStepNode, StepNode } from './stepTreeNode';
 import { Step } from './step';
 import { JsonHelper } from '@/utils/jsonHelper';
 import type { Effect } from './effect';
-import { InvalidNodeMoveAfter } from '@/errors/invalidNodeMoveAfter';
+import { InvalidNodeMove } from '@/errors/invalidNodeMoveAfter';
+import { getSpecificNodes, isAfter, isAncestorOf, isUnder } from '../utils/routePathUtils';
 
 export class Route {
   playerState: PlayerState = new PlayerState();
-  rootNode: RootStepTreeNode = new RootStepTreeNode(-1);
-  currentNode: StepTreeNode; // Current step is considered already executed
+  rootNode: RootStepNode = new RootStepNode();
+  currentNode: StepNode; // Current step is considered already executed
 
   constructor() {
-    this.addStep(new Step('Initial step'));
-    this.currentNode = this.getFirstNode();
+    const firstNode = this.addStep(new Step('Initial step'), [1]);
+    this.currentNode = firstNode;
   }
 
-  addEffect(node: StepTreeNode, effect: Effect) {
-    if (!node?.step) throw new Error('Cannot assign effect to undefined step');
-    node.step.addEffect(effect);
-    this.invalidateNextNodes(node);
+  getStepNode(path: number[]): StepNode {
+    const node = this.getNode(path);
+    if(node instanceof RootStepNode)
+      throw new Error('This operation cannot be performed on the root node');
+    return node as StepNode;
+  }
+
+  getNode(path: number[]): BaseStepNode {
+    let currentPath = path;
+    let currentNode: BaseStepNode = this.rootNode;
+    while (currentPath.length) {
+      const index = currentPath[0] - 1;
+      currentPath = currentPath.slice(1);
+      currentNode = currentNode.children[index];
+    }
+    return currentNode;
+  }
+
+  invalidateFollowingNodes(path: number[]) {
+    const nextNodes = getSpecificNodes(this.rootNode, path, isAfter);
+    for (const node of nextNodes)
+      node.step.invalidate();
+  }
+
+  completeNode(path: number[]) {
+    const node = this.getStepNode(path);
+    node.step.completed = true;
+    
+    const childNodes = getSpecificNodes(this.rootNode, path, isUnder);
+    for (const childNode of childNodes)
+      childNode.step.completed = true;
+  }
+
+  uncompleteNode(path: number[]) {
+    const node = this.getStepNode(path);
+    node.step.completed = false;
+
+    const parentNodes = getSpecificNodes(this.rootNode, path, isAncestorOf);
+    for (const parentNode of parentNodes)
+      parentNode.step.completed = false;
+  }
+
+  addEffect(path: number[], effect: Effect) {
+    const node = this.getStepNode(path);
+    node.step.addEffect(effect); 
+    this.invalidateFollowingNodes(path);
     this.setCurrentNode(this.currentNode);
   }
 
-  removeEffect(node: StepTreeNode, effect: Effect) {
-    if (!node?.step) throw new Error('Cannot remove effect from undefined step');
+  removeEffect(path: number[], effect: Effect) {
+    const node = this.getStepNode(path);
     node.step.removeEffect(effect);
-    this.invalidateNextNodes(node);
+    this.invalidateFollowingNodes(path);
     this.setCurrentNode(this.currentNode);
   }
 
-  addStep(newStep: Step, previousNode?: StepTreeNode): StepTreeNode {
-    let newNode: StepTreeNode;
-    if (previousNode) {
-      newNode = new StepTreeNode(previousNode.parent.depth + 1, newStep, previousNode.parent);
-      if (!previousNode.parent) throw new Error('previousNode doesn\'t have a parent');
-      const previousNodeIndex = previousNode.parent.children.indexOf(previousNode);
-      previousNode.parent.children.splice(previousNodeIndex + 1, 0, newNode);
-      newNode.parent = previousNode.parent;
-    } else {
-      newNode = new StepTreeNode(0, newStep, this.rootNode);
-      this.rootNode.children = [newNode, ...this.rootNode.children];
-    }
-    newNode.depth = newNode.parent.depth + 1;
-    this.updateChildrenLabel(newNode.parent);
-    this.invalidateNextNodes(newNode);
+  addStep(newStep: Step, path: number[]): StepNode {
+    if (path.length === 0) throw new Error('The path cannot be empty');
+
+    const parentPath = path.slice(0, -1);
+    const parentNode = this.getNode(parentPath);
+    const index = path.slice(-1)[0] - 1;
+    if (parentNode.children.length > index || index < 0) throw new Error(`Cannot add a step with an invalid path: ${path.join('.')}`);
+    
+    const newNode = new StepNode(newStep);
+    parentNode.addChildAt(newNode, index);
+    this.invalidateFollowingNodes(path);
     return newNode;
   }
 
-  addSubStep(newStep: Step, parentNode: BaseStepTreeNode): StepTreeNode {
-    const newNode = new StepTreeNode(parentNode.depth + 1, newStep, parentNode);
-    parentNode.children.splice(0, 0, newNode);
-    this.updateChildrenLabel(newNode.parent);
-    this.invalidateNextNodes(newNode);
-    return newNode;
+  /**
+   * Check if a node can be removed.
+   * A node cannot be removed if it's the last child of the root node.
+   * @param node Node to check.
+   * @returns `true` if the node can be removed, `false` otherwise.
+   */
+  private canRemoveNode(path: number[]): boolean {
+    return (path.length > 1 || this.rootNode.children.length > 1);
   }
 
-  static canRemoveNode(node: StepTreeNode) {
-    return Route.getPreviousNode(node) || Route.getNextNode(node);
-  }
+  removeNode(path: number[]) {
+    if (!this.canRemoveNode(path)) throw new Error('Cannot remove the only node');
 
-  removeNode(node: StepTreeNode) {
-    if (!Route.canRemoveNode(node)) throw new Error('Cannot remove the only node');
-    this.invalidateNextNodes(node);
-    const nodeIndex = node.parent.children.indexOf(node);
-    node.parent.children.splice(nodeIndex, 1);
-    this.updateChildrenLabel(node.parent);
-    // Make sure the current node is still in the tree
-    let currentNode = this.currentNode;
-    while (currentNode instanceof StepTreeNode) {
-      if (currentNode === node) {
-        if(node.parent.children.length) {
-          this.setCurrentNode(node.parent.children[nodeIndex >= node.parent.children.length ? nodeIndex - 1 : nodeIndex]);
+    const parentPath = path.slice(0, -1);
+    const parentNode = this.getNode(parentPath);
+    const removedNode = this.getNode(path);
+    const index = path.slice(-1)[0] - 1;
+    this.invalidateFollowingNodes(path);
+    parentNode.removeChildAt(index);
+
+    const currentNode = this.currentNode;
+    while (currentNode instanceof StepNode) {
+      if (currentNode === removedNode) {
+        if (index > 0 && parentNode.children.length) {
+          // Current node becomes a lower index sibling of the removed node
+          this.setCurrentNode(parentNode.children[index >= parentNode.children.length ? index - 1 : index]);
         } else {
-          this.setCurrentNode(node.parent as StepTreeNode);
+          // Current node becomes the parent of the removed node
+          this.setCurrentNode(parentNode as StepNode);
         }
-      }
-      if(currentNode.parent instanceof StepTreeNode)
-        currentNode = currentNode.parent;
-      else 
         return;
+      } else {
+        // TODO Make sure the current node is still in the tree
+        this.setCurrentNode(this.getFirstNode());
+      }
     }
   }
 
-  static canMoveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): boolean {
-    if(nodeToMove === previousNode) return false;
-    let currentNode : StepTreeNode = previousNode;
-    while (currentNode.parent) {
-      if(currentNode.parent === nodeToMove) return false;
-      if(currentNode.parent instanceof StepTreeNode)
-        currentNode = currentNode.parent;
-      else return true;
+  /**
+   * Check if a node can moved from one branch to another.
+   * A node cannot be moved to a lower node on the same branch to avoid cyclic relationships.
+   * @param initialPath Path of the node to move.
+   * @param finalPath Expected path of the node after the move.
+   * @returns `true` if the node can be moved, `false` otherwise.
+   */
+  static canMoveNode(initialPath: number[], finalPath: number[]): boolean {
+    if (initialPath.length === 0 || finalPath.length === 0) 
+      return false;
+    for (const [index, value] of finalPath.entries()) {
+      if (index >= initialPath.length || value !== initialPath[index])
+        return true;
     }
-    return true;
+    return false;
   }
 
-  moveAfterNode(nodeToMove: StepTreeNode, previousNode: StepTreeNode): StepTreeNode {
-    if (!Route.canMoveAfterNode(nodeToMove, previousNode))
-      throw new InvalidNodeMoveAfter(nodeToMove, previousNode);
-    this.invalidateNextNodes(nodeToMove);
-    const previousParent = nodeToMove.parent;
-    nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step?.id !== nodeToMove.step?.id);
-    nodeToMove.parent = previousNode?.parent;
-    nodeToMove.parent.children.splice(nodeToMove.parent.children.indexOf(previousNode) + 1, 0, nodeToMove);
-    this.updateChildrenDepth(nodeToMove);
-    this.updateChildrenLabel(previousParent);
-    this.updateChildrenLabel(nodeToMove.parent);
-    this.invalidateNextNodes(nodeToMove);
-    this.setCurrentNode(this.currentNode);
-    return nodeToMove;
+  moveNode(initialPath: number[], finalPath: number[]): StepNode {
+    if (!Route.canMoveNode(initialPath, finalPath))
+      throw new InvalidNodeMove(initialPath, finalPath);
+
+    const nodeToMove = this.getNode(initialPath) as StepNode;
+    const finalNode = this.addStep(nodeToMove.step, finalPath);
+    finalNode.children = nodeToMove.children;
+    this.invalidateFollowingNodes(finalPath);
+    this.removeNode(initialPath);
+
+    if (this.currentNode === nodeToMove)
+      this.setCurrentNode(finalNode);
+    else
+      this.setCurrentNode(this.currentNode);
+    return finalNode;
   }
 
-  static canMoveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): boolean {
-    if(!(parentNode instanceof StepTreeNode)) // Previous node is root node
-      return true;
-    return Route.canMoveAfterNode(nodeToMove, parentNode);
+  private stepUntil(toNode: StepNode): StepNode {
+    this.playerState = new PlayerState();
+    const foundNode = this.stepInChildrenUntil(this.rootNode, toNode);
+    if(!foundNode) throw new Error('The node was unreachable');
+    return foundNode;
   }
 
-  moveToSubNode(nodeToMove: StepTreeNode, parentNode: BaseStepTreeNode): StepTreeNode {
-    if (!Route.canMoveToSubNode(nodeToMove, parentNode))
-      throw new Error('These nodes cannot be moved after one another');
-    nodeToMove.parent.children = nodeToMove.parent.children.filter(node => node.step.id !== nodeToMove.step.id);
-    nodeToMove.parent = parentNode;
-    parentNode.children.splice(0, 0, nodeToMove);
-    this.updateChildrenDepth(nodeToMove);
-    this.updateChildrenLabel(this.rootNode);
-    this.invalidateNextNodes(this.getFirstNode());
-    this.setCurrentNode(this.currentNode);
-    return nodeToMove;
-  }
+  private stepInChildrenUntil(parentNode: BaseStepNode, toNode: StepNode): StepNode | undefined {
+    for (const child of parentNode.children) {
+      const foundNode = this.stepInChildrenUntil(child, toNode);
+      if(foundNode) return foundNode;
 
-  updateChildrenDepth(parentNode: StepTreeNode) {
-    parentNode.depth = (parentNode?.parent?.depth || 0) + 1;
-    for (const childNode of parentNode.children)
-      this.updateChildrenDepth(childNode);
-  }
-
-  updateChildrenParent(parentNode: StepTreeNode) {
-    for (const childNode of parentNode.children) {
-      childNode.parent = parentNode;
-      this.updateChildrenParent(childNode);
-    }
-  }
-
-  updateChildrenLabel(parentNode: BaseStepTreeNode) {
-    let baseLabel: string;
-    if (parentNode instanceof StepTreeNode) {
-      baseLabel = `${parentNode.step.label}.`;
-    } else {
-      baseLabel = '';
-    }
-    for (let i = 0; i < parentNode.children.length; i++) {
-      const childNode = parentNode.children[i];
-      if (childNode.step)
-        childNode.step.label = baseLabel + (i + 1);
-      this.updateChildrenLabel(childNode);
-    }
-  }
-
-  static getPreviousNode(node: StepTreeNode): StepTreeNode | undefined {
-    if (node.children.length) // The node has a child
-      return node.children[node.children.length - 1];
-    while (node.parent) { // The node has a parent
-      const nodeIndex = node.parent.children.indexOf(node);
-      if (nodeIndex > 0) // The node has an immediate brother
-        return node.parent.children[nodeIndex - 1];
-      if (node.parent instanceof RootStepTreeNode)
-        break;
-      node = node.parent;
+      this.stepInNode(child);
+      if(child === toNode) return child;
     }
     return undefined;
   }
 
-  executeOnNextNodes(node: StepTreeNode, func: (node: StepTreeNode) => void) {
-    func(node);
-    const nextNode = Route.getNextNode(node);
-    if (nextNode)
-      this.executeOnNextNodes(nextNode, func);
-  }
-
-  static getNextNode(node: AbstractStepTreeNode): StepTreeNode | undefined {
-    let currentNode = node;
-    if (currentNode instanceof StepTreeNode) {
-      const currentNodeIndex = currentNode.parent.children.indexOf(currentNode);
-      if (currentNode.parent.children.length > currentNodeIndex + 1) {
-        currentNode = currentNode.parent.children[currentNodeIndex + 1];
-        while (currentNode.children.length) {
-          currentNode = currentNode.children[0];
-        }
-      } else {
-        if (currentNode.parent instanceof RootStepTreeNode)
-          return undefined;
-        currentNode = currentNode.parent;
-      }
-    } else {
-      while (currentNode.children.length) {
-        currentNode = currentNode.children[0];
-      }
-    }
-    return (currentNode !== node) ? currentNode as StepTreeNode : undefined;
-  }
-
-  invalidateNextNodes(node: StepTreeNode | undefined) {
-    if (!node)
-      return;
-    this.executeOnNextNodes(node, (node: StepTreeNode) => { node.step.resultingState = undefined; });
-  }
-
-  /**
-     * Applies the next step.
-     * @returns `true` if a another step was executed or `false` otherwise.
-     */
-  stepOnce(): boolean {
-    if (this.currentNode?.step)
+  private stepInNode(node:StepNode) {
+    // Save previous node resulting state
+    if(!this.currentNode.step.upToDate || !this.currentNode.step.resultingState) {
       this.currentNode.step.resultingState = this.playerState.clone();
-
-    const nextNode = Route.getNextNode(this.currentNode ?? this.rootNode);
-    if (!nextNode) return false;
-    this.currentNode = nextNode;
-    this.currentNode.step.applyEffects(this.playerState);
-    return true;
-  }
-
-  completeNode(node: StepTreeNode) {
-    node.step.completed = true;
-    // if (node?.parent) { // Complete all previous brothers recursively
-    //     const nodeIndex = node.parent.children.indexOf(node);
-    //     if (nodeIndex > 0)
-    //         this.completeNode(node.parent.children[nodeIndex - 1]);
-    // }
-    if (node?.children?.length) { // Complete all children recursively
-      for (const childNode of node.children) {
-        this.completeNode(childNode);
-      }
     }
-  }
 
-  uncompleteNode(node: StepTreeNode) {
-    node.step.completed = false;
-
-    let parentNode = node.parent;
-    while (parentNode instanceof StepTreeNode && parentNode.step.completed) { // Uncomplete the direct parent and grand-parents
-      parentNode.step.completed = false;
-      parentNode = node.parent;
+    // Apply effects of new node
+    this.currentNode = node;
+    if(node.step.upToDate && node.step.resultingState) {
+      this.playerState = node.step.resultingState;
+    } else {
+      node.step.applyEffects(this.playerState);
     }
-    if (node.children.length) { // Uncomplete all children recursively
-      for (const childNode of node.children)
-        this.uncompleteNode(childNode);
-    }
-  }
-
-  toggleNodeCompletion(node: StepTreeNode) {
-    if (node.step.completed === true)
-      this.uncompleteNode(node);
-    else if (node.step.completed === false)
-      this.completeNode(node);
   }
 
   /**
-     * Applies the next steps until the specified step is applied or until the last step.
-     * @param step Once this step is executed, will return.
-     */
-  setCurrentNode(node: StepTreeNode) {
-    if (node.step.resultingState) { // Load pre-processed step
-      if (this.currentNode?.step)
-        this.currentNode.step.resultingState = this.playerState.clone();
+   * Applies the next steps until the specified step is applied or until the last step.
+   * @param step Once this step is executed, will return.
+   */
+  setCurrentNode(node: StepNode) {
+    // Save state of current node
+    this.currentNode.step.resultingState = this.playerState.clone();
+      
+    // Load valid saved state if exists
+    if (node.step.upToDate && node.step.resultingState) {
       this.playerState = node.step.resultingState;
       this.currentNode = node;
       return;
     }
 
-    if (!this.getCurrentStep()?.resultingState) { // Re-process all steps
-      this.playerState = new PlayerState();
-      this.currentNode = this.getFirstNode();
-      this.currentNode.step.applyEffects(this.playerState);
-    }
-
-    let wasStepExecuted = true;
-    while (node?.step.id !== this.getCurrentStep()?.id && wasStepExecuted) {
-      wasStepExecuted = this.stepOnce();
-    }
+    // Re-process all steps from the root
+    this.stepUntil(node);
   }
 
-  getStepCount(fromNode: BaseStepTreeNode, filter?: (node: StepTreeNode) => boolean): number {
+  getStepCount(fromNode: BaseStepNode, filter?: (node: StepNode) => boolean): number {
     let total = 0;
     for (const node of fromNode.children) {
       total += ((filter?.(node) ?? true) ? 1 : 0) + this.getStepCount(node, filter);
@@ -291,53 +218,16 @@ export class Route {
     return total;
   }
 
-  getFirstNode(): StepTreeNode {
-    return Route.getNextNode(this.rootNode) as StepTreeNode;
+  getFirstNode(): StepNode {
+    let node = this.rootNode.children[0];
+    while (node.children.length > 0) {
+      node = node.children[0];
+    }
+    return node;
   }
 
-  getLastNode(): StepTreeNode {
+  getLastNode(): StepNode {
     return this.rootNode.children[this.rootNode.children.length - 1];
-  }
-
-  getFirstStep(): Step {
-    return this.getFirstNode().step;
-  }
-
-  getCurrentStep(): Step {
-    return this.currentNode.step;
-  }
-
-  getLastStep(): Step {
-    return this.getLastNode().step;
-  }
-
-  getPlayerState(): PlayerState {
-    return this.playerState;
-  }
-
-  toString(): string {
-    return Route.toString(this.rootNode);
-  }
-
-  static toString(node: BaseStepTreeNode): string {
-    let result: string = '';
-    if (node instanceof StepTreeNode) {
-      result += `${node.step.label} ${node.step.description}`
-                + `, depth:${node.depth}`
-                + `${node.step.effects.length ? `, ${node.step.effects.length} effects` : ''}`
-                + `${node.step.completed ? ', completed' : ''}`
-                + `${node.step.resultingState ? ', generated' : ''}`;
-    } else {
-      result += 'root';
-    }
-    for (const childNode of node.children) {
-      const isLastChild = node.children[node.children.length - 1] === childNode;
-      result += `\n  ${'│  '.repeat(childNode.depth > 0 ? 1 : 0)}`
-                + `${'│  '.repeat(childNode.depth * 0.5)}`
-                + `${' '.repeat(childNode.depth * 0.5)}`
-                + `${isLastChild ? '└' : '├'}─ ${this.toString(childNode)}`;
-    }
-    return result;
   }
 
   toJSON() {
@@ -347,14 +237,13 @@ export class Route {
   static fromJSON(jsonObject: { [key: string]: any }): Route {
     JsonHelper.parseWithSchema<Route>('Route', jsonObject);
     const route: Route = new Route();
-    route.rootNode = RootStepTreeNode.fromJSON(jsonObject.rootNode);
-    route.updateChildrenLabel(route.rootNode);
+    route.rootNode = RootStepNode.fromJSON(jsonObject.rootNode);
     route.setCurrentNode(route.getFirstNode());
     return route;
   }
 
-  static findNodeById(node: BaseStepTreeNode, id: string): StepTreeNode | undefined {
-    if (node instanceof StepTreeNode && node.step?.id === id )
+  static findNodeById(node: BaseStepNode, id: string): StepNode | undefined {
+    if (node instanceof StepNode && node.step?.id === id )
       return node;
     for (const childNode of node.children) {
       const foundNode = Route.findNodeById(childNode, id);
@@ -362,87 +251,4 @@ export class Route {
     }
     return undefined;
   };
-
-  initializeSomeSteps() {
-    let step = new Step('Vu la restriction que nous constatons, je n\'exclus pas de caractériser systématiquement les décisions évidentes, parce que la nature a horreur du vide. Si vous voulez mon avis concernant cette rigueur contextuelle, nous sommes contraints de prendre en considération la plus grande partie des synergies déclinables, pour longtemps.');
-    step.addEffect(new SkillEffect(SkillsEnum.Agility, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Attack, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Construction, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Cooking, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Crafting, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Defence, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Farming, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Firemaking, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Fishing, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Fletching, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Herblore, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Hitpoints, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Hunter, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Magic, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Mining, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Prayer, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Ranged, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Runecraft, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Slayer, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Smithing, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Strength, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Thieving, 100));
-    step.addEffect(new SkillEffect(SkillsEnum.Woodcutting, 100));
-    step.completed = true;
-    const node1 = this.addStep(step, this.rootNode.children[0]);
-
-    step = new Step('I am another top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Herblore, 300));
-    const node2 = this.addStep(step, node1);
-
-    step = new Step('En ce qui concerne la restriction actuelle, on ne peut se passer d\'imaginer chacune des modalités opportunes, à court terme.');
-    step.addEffect(new SkillEffect(SkillsEnum.Attack, 2000));
-    const node21 = this.addSubStep(step, node2);
-
-    step = new Step('I am another child step');
-    step.addEffect(new SkillEffect(SkillsEnum.Defence, 1500));
-    const node22 = this.addStep(step, node21);
-
-    step = new Step('I am a grand-child step');
-    step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
-    const node221 = this.addSubStep(step, node22);
-
-    step = new Step('I am a grand-child step');
-    step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
-    const node222 = this.addStep(step, node221);
-
-    step = new Step('I am a grand-child step');
-    step.addEffect(new SkillEffect(SkillsEnum.Fishing, 30000));
-    this.addStep(step, node222);
-
-    step = new Step('I am a just a child step');
-    step.addEffect(new SkillEffect(SkillsEnum.Mining, 2000));
-    this.addStep(step, node22);
-
-    step = new Step('I am a but a meager top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Farming, 50000));
-    const node3 = this.addStep(step, node2);
-
-    step = new Step('I am the last top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-    const node4 = this.addStep(step, node3);
-
-    step = new Step('I am the last top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-    const node5 = this.addStep(step, node4);
-
-    step = new Step('I am the last top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-    const node6 = this.addStep(step, node5);
-
-    step = new Step('I am the last top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-    const node7 = this.addStep(step, node6);
-
-    step = new Step('I am the last top step');
-    step.addEffect(new SkillEffect(SkillsEnum.Smithing, 500));
-    this.addStep(step, node7);
-
-    this.stepOnce();
-  }
 }

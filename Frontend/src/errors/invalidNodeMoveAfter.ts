@@ -1,11 +1,8 @@
-import { StepTreeNode } from '@/models/stepTreeNode';
-
-export class InvalidNodeMoveAfter extends Error {
+export class InvalidNodeMove extends Error {
   constructor(
-        public readonly nodeToMove: StepTreeNode,
-        public readonly previousNode: StepTreeNode
+        public readonly initialPath: number[],
+        public readonly finalPath: number[]
   ) {
-    super('These nodes cannot be moved after one another');
-    Object.setPrototypeOf(this, InvalidNodeMoveAfter.prototype);
+    super(`A node can\'t be moved from ${initialPath.join('.')} to ${finalPath.join('.')}.`);
   }
 }

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { RootStepTreeNode, StepTreeNode } from '@/models/stepTreeNode';
+import { RootStepNode, StepNode } from '@/models/stepTreeNode';
 import { Route } from '@/models/route';
 import { PlayerState } from '@/models/playerState';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
@@ -59,14 +59,14 @@ export const useGlobalStore = defineStore('globalStore', {
     getCurrentRoute: (state) => {
       return state.currentRoute;
     },
-    getNodeList: (state): StepTreeNode[] => {
-      return state.currentRoute.rootNode.toFlatList();
+    getNodeList: (state): StepNode[] => {
+      return state.currentRoute.rootNode.toArray();
     },
-    getNodeTree: (state): StepTreeNode[] => {
-      return state.currentRoute.rootNode.children as StepTreeNode[];
+    getNodeTree: (state): StepNode[] => {
+      return state.currentRoute.rootNode.children as StepNode[];
     },
     getNodeById: (state) => {
-      return (nodeId?: string): StepTreeNode | undefined => {
+      return (nodeId?: string): StepNode | undefined => {
         if (!nodeId)
           return undefined;
         return state.currentRoute.rootNode.findNodeById(nodeId);
@@ -98,7 +98,7 @@ export const useGlobalStore = defineStore('globalStore', {
       return (nodeId: string): number => {
         const node = state.currentRoute.rootNode.findRequiredNodeById(nodeId);
 
-        return node.toFlatList().length;
+        return node.toArray().length;
       };
     },
     getInventory: (state) => {
@@ -117,7 +117,7 @@ export const useGlobalStore = defineStore('globalStore', {
       this.currentRoute = newRoute;
       this.currentRoute.setCurrentNode(this.currentRoute.getFirstNode());
 
-      const nbSteps = newRoute.getStepCount(this.currentRoute.rootNode as RootStepTreeNode);
+      const nbSteps = newRoute.getStepCount(this.currentRoute.rootNode as RootStepNode);
 
       this.addNotification({
         action: 'setCurrentRoute',
@@ -240,7 +240,7 @@ export const useGlobalStore = defineStore('globalStore', {
         this.getCurrentRoute.moveToSubNode(nodeToMove, previousNode);
       }
       else {
-        this.getCurrentRoute.moveAfterNode(nodeToMove, previousNode);
+        this.getCurrentRoute.moveNode(nodeToMove, previousNode);
       }
     },
     canMoveAfterNode(nodeIdToMove?: string, previousNodeId?: string, child?: boolean) {
@@ -253,7 +253,7 @@ export const useGlobalStore = defineStore('globalStore', {
       if (child) {
         return Route.canMoveToSubNode(nodeToMove, previousNode);
       }
-      return Route.canMoveAfterNode(nodeToMove, previousNode);
+      return Route.canMoveNode(nodeToMove, previousNode);
     },
     toggleEffects() {
       if (this.effectState.showEffects === ShowEffectTypes.showCurrent)

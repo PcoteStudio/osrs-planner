@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import StepComponent from '@/components/StepComponent.vue';
-import { StepTreeNode } from '@/models/stepTreeNode';
+import { StepNode } from '@/models/stepTreeNode';
 
 const props = withDefaults(defineProps<{
-  nodes: StepTreeNode[];
+  nodes: StepNode[];
   editable?: boolean;
 }>(), {
   editable: false,

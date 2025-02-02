@@ -1,60 +1,62 @@
 import { JsonHelper } from '@/utils/jsonHelper';
 import { Step } from './step';
+import { LabeledStep } from './step';
 
+export type BaseStepNode = StepNode | RootStepNode;
 
-export type BaseStepTreeNode = StepTreeNode | RootStepTreeNode;
-
-export abstract class AbstractStepTreeNode {
-  depth: number;
-  children: StepTreeNode[] = [];
-
-  constructor(depth: number) {
-    this.depth = depth;
-  }
+export abstract class AbstractStepNode {
+  children: StepNode[] = [];
 
   toJSON(): object {
-    return { depth: this.depth, children: this.children.map(c => c.toJSON()) };
+    return { children: this.children.map(c => c.toJSON()) };
   }
 
-  public toFlatList() {
-    const list: StepTreeNode[] = [];
-    for (const child of this.children) {
-      this.toFlatListRec(child, list);
+  toArray() {
+    const list: LabeledStep[] = [];
+    for (const [index, child] of this.children.entries()) {
+      this.toArrayRecursive(child, list, [index + 1]);
     }
     return list;
   };
 
-  private toFlatListRec(node: StepTreeNode, list: StepTreeNode[]) {
-    list.push(node);
-    for (const child of node.children) {
-      this.toFlatListRec(child, list);
+  private toArrayRecursive(node: StepNode, list: LabeledStep[], path: number[]) {
+    list.push(new LabeledStep(node.step, path));
+    for (const [index, child] of this.children.entries()) {
+      this.toArrayRecursive(child, list, [...path, index + 1]);
     }
   };
+  
+  addChildAt(node: StepNode, i: number) {
+    this.children.splice(i, 0, node);
+  }
 
-  public findRequiredNodeById(id: string): StepTreeNode {
+  removeChildAt(i: number): StepNode {
+    return this.children.splice(i, 1)[0];
+  }
+
+  public findRequiredNodeById(id: string): StepNode {
     const node = this.findNodeById(id);
     if (!node)
       throw new Error(`Step node with id ${id} was not found`);
     return node;
   };
 
-    public abstract findNodeById(id: string): StepTreeNode | undefined;
+  public abstract findNodeById(id: string): StepNode | undefined;
 }
 
+export class RootStepNode extends AbstractStepNode {
 
-export class RootStepTreeNode extends AbstractStepTreeNode {
-
-  static fromJSON(jsonObject: Record<string, any>): RootStepTreeNode {
-    const parsedNode = JsonHelper.parseWithSchema<RootStepTreeNode>('RootStepTreeNode', jsonObject);
-    const rootNode = new RootStepTreeNode(parsedNode.depth);
+  static fromJSON(jsonObject: Record<string, any>): RootStepNode {
+    const parsedNode = JsonHelper.parseWithSchema<RootStepNode>('RootStepNode', jsonObject);
+    const rootNode = new RootStepNode();
     for (const child of parsedNode.children) {
-      const childNode = StepTreeNode.fromJSON(child, rootNode);
+      const childNode = StepNode.fromJSON(child);
       rootNode.children.push(childNode);
     }
     return rootNode;
   }
 
-  public findNodeById(id: string): StepTreeNode | undefined {
+  public findNodeById(id: string): StepNode | undefined {
     for (const child of this.children) {
       const node = child.findNodeById(id);
       if (node)
@@ -63,16 +65,13 @@ export class RootStepTreeNode extends AbstractStepTreeNode {
   }
 }
 
-export class StepTreeNode extends AbstractStepTreeNode {
-  constructor(
-    depth: number,
-        public step: Step,
-        public parent: BaseStepTreeNode
-  ) {
-    super(depth);
+export class StepNode extends AbstractStepNode {
+
+  constructor(public step: Step) {
+    super();
   };
 
-  public findNodeById(id: string): StepTreeNode | undefined {
+  public findNodeById(id: string): StepNode | undefined {
     if (this.step.id === id)
       return this;
 
@@ -83,18 +82,15 @@ export class StepTreeNode extends AbstractStepTreeNode {
     }
   }
 
-  /**
-     * @override
-     */
   toJSON(): object {
     return { ...super.toJSON(), step: this.step.toJSON() };
   }
 
-  static fromJSON(jsonObject: Record<string, any>, parent: BaseStepTreeNode): StepTreeNode {
-    const parsedNode = JsonHelper.parseWithSchema<StepTreeNode>('StepTreeNode', jsonObject);
-    const node = new StepTreeNode(parsedNode.depth, Step.fromJSON(parsedNode.step), parent);
+  static fromJSON(jsonObject: Record<string, any>): StepNode {
+    const parsedNode = JsonHelper.parseWithSchema<StepNode>('StepNode', jsonObject);
+    const node = new StepNode(Step.fromJSON(parsedNode.step));
     for (const child of parsedNode.children) {
-      const childNode = StepTreeNode.fromJSON(child, node);
+      const childNode = StepNode.fromJSON(child);
       node.children.push(childNode);
     }
     return node;

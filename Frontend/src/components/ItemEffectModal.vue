@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { StepTreeNode } from '@/models/stepTreeNode';
+import { StepNode } from '@/models/stepTreeNode';
 import { computed, ref, watch } from 'vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { EffectTypeEnum } from '@/models/effect';
@@ -11,7 +11,7 @@ import { ItemStore } from '@/models/item/itemStore';
 const store = useGlobalStore();
 
 const props = defineProps<{
-  node: StepTreeNode
+  node: StepNode
 }>();
 
 const selectedAction = ref();
