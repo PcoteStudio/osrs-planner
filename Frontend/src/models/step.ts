@@ -51,7 +51,7 @@ export class Step {
     return { description: this.description, effects: this.effects.map(e => e.toJSON()), completed: this.completed };
   }
 
-  static fromJSON(jsonObject: { [key: string]: any }): Step {
+  static fromJSON(jsonObject: Record<string, any>): Step {
     const parsedStep = JsonHelper.parseWithSchema<Step>('Step', jsonObject);
     const step = new Step(parsedStep.description);
     Object.assign(step, parsedStep);

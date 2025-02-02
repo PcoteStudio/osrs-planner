@@ -234,7 +234,7 @@ export class Route {
     return { rootNode: this.rootNode.toJSON() };
   }
 
-  static fromJSON(jsonObject: { [key: string]: any }): Route {
+  static fromJSON(jsonObject: Record<string, any>): Route {
     JsonHelper.parseWithSchema<Route>('Route', jsonObject);
     const route: Route = new Route();
     route.rootNode = RootStepNode.fromJSON(jsonObject.rootNode);

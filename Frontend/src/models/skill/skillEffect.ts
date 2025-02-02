@@ -33,7 +33,7 @@ export class SkillEffect extends Effect {
     return { ...super.toJSON(), skill: this.skill, experience: this.experience };
   }
 
-  public static fromJSON(jsonObject: { [key: string]: any }): SkillEffect {
+  public static fromJSON(jsonObject: Record<string, any>): SkillEffect {
     const parsedSkillEffect = JsonHelper.parseWithSchema<SkillEffect>('SkillEffect', jsonObject);
     return new SkillEffect(parsedSkillEffect.skill, parsedSkillEffect.experience);
   }

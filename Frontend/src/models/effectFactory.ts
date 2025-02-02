@@ -3,7 +3,7 @@ import { EffectTypeEnum, type Effect } from './effect';
 import { SkillEffect } from './skill/skillEffect';
 
 export class EffectFactory {
-  static fromJSON(jsonObject: { [key: string]: any }): Effect {
+  static fromJSON(jsonObject: Record<string, any>): Effect {
     const effect = JsonHelper.parseWithSchema<Effect>('Effect', jsonObject);
     switch (effect.type) {
       case EffectTypeEnum.Skill:

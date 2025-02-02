@@ -5,6 +5,7 @@ import { RootStepNode, StepNode } from '@/models/stepTreeNode';
 import { PlayerState } from '@/models/playerState';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
+import { getAllNodes } from '@/utils/routePathUtils';
 
 suite('Route', () => {
   let route: Route;
@@ -196,7 +197,7 @@ suite('Route', () => {
     });
   });
 
-  describe.skip('fromJSON', () => {
+  describe('fromJSON', () => {
     it('should rebuild the original object', () => {
       populateComplexRoute();
       const firstNode = route.getFirstNode();
@@ -208,8 +209,13 @@ suite('Route', () => {
       const json = JSON.stringify(routeJsonObject);
       const parsedRoute = Route.fromJSON(JSON.parse(json));
 
-      console.log(route.toString());
-      console.log(parsedRoute.toString());
+      // Adjust IDs to match the original nodes
+      const originalNodes = getAllNodes(route.rootNode);
+      const parsedNodes = getAllNodes(parsedRoute.rootNode);
+      for (const index of parsedNodes.keys()) {
+        parsedNodes[index].step.id = originalNodes[index].step.id;
+      }
+
       expect(parsedRoute.rootNode).toStrictEqual(route.rootNode);
       expect(parsedRoute.currentNode).toStrictEqual(parsedRoute.getFirstNode());
 

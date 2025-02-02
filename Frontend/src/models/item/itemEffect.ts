@@ -109,7 +109,7 @@ export class ItemEffect extends Effect {
     return { ...super.toJSON(), action: this.action, itemId: this.item.id, quantity: this.quantity };
   }
 
-  public static fromJSON(jsonObject: { [key: string]: any }): ItemEffect {
+  public static fromJSON(jsonObject: Record<string, any>): ItemEffect {
     const parsedItemEffect = JsonHelper.parseWithSchema<ItemEffectEntity>('ItemEffectEntity', jsonObject);
     const existingItem = ItemStore.getItem(parsedItemEffect.itemId);
     if(!existingItem)

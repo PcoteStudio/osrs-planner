@@ -17,6 +17,12 @@ function visitNode(context: VisitNodeContext, node: BaseStepNode, path: number[]
   }
 }
 
+export function getAllNodes(rootNode: BaseStepNode): StepNode[] {
+  const foundNodes: StepNode[] = [];
+  visitNode({ test: () => true, foundNodes, initialPath: [] }, rootNode, []);
+  return foundNodes;
+}
+
 export function getSpecificNodes(rootNode: BaseStepNode, initialPath: number[], test: RoutePathTest): StepNode[] {
   const foundNodes: StepNode[] = [];
   visitNode({ test, foundNodes, initialPath }, rootNode, []);

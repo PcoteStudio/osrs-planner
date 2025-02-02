@@ -1,13 +1,13 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "AbstractStepTreeNode": {
+        "AbstractStepNode": {
             "oneOf": [
                 {
-                    "$ref": "#/definitions/RootStepTreeNode"
+                    "$ref": "#/definitions/RootStepNode"
                 },
                 {
-                    "$ref": "#/definitions/StepTreeNode"
+                    "$ref": "#/definitions/StepNode"
                 }
             ]
         },
@@ -112,13 +112,13 @@
             },
             "type": "object"
         },
-        "BaseStepTreeNode": {
+        "BaseStepNode": {
             "anyOf": [
                 {
-                    "$ref": "#/definitions/StepTreeNode"
+                    "$ref": "#/definitions/StepNode"
                 },
                 {
-                    "$ref": "#/definitions/RootStepTreeNode"
+                    "$ref": "#/definitions/RootStepNode"
                 }
             ]
         },
@@ -483,10 +483,10 @@
                     "type": "string"
                 },
                 "nodeToMove": {
-                    "$ref": "#/definitions/StepTreeNode"
+                    "$ref": "#/definitions/StepNode"
                 },
                 "previousNode": {
-                    "$ref": "#/definitions/StepTreeNode"
+                    "$ref": "#/definitions/StepNode"
                 },
                 "stack": {
                     "type": "string"
@@ -1003,12 +1003,12 @@
                 }
             ]
         },
-        "RootStepTreeNode": {
+        "RootStepNode": {
             "properties": {
                 "children": {
                     "default": [],
                     "items": {
-                        "$ref": "#/definitions/StepTreeNode"
+                        "$ref": "#/definitions/StepNode"
                     },
                     "type": "array"
                 },
@@ -1021,13 +1021,13 @@
         "Route": {
             "properties": {
                 "currentNode": {
-                    "$ref": "#/definitions/StepTreeNode"
+                    "$ref": "#/definitions/StepNode"
                 },
                 "playerState": {
                     "$ref": "#/definitions/PlayerState"
                 },
                 "rootNode": {
-                    "$ref": "#/definitions/RootStepTreeNode"
+                    "$ref": "#/definitions/RootStepNode"
                 }
             },
             "type": "object"
@@ -1324,12 +1324,12 @@
             },
             "type": "object"
         },
-        "StepTreeNode": {
+        "StepNode": {
             "properties": {
                 "children": {
                     "default": [],
                     "items": {
-                        "$ref": "#/definitions/StepTreeNode"
+                        "$ref": "#/definitions/StepNode"
                     },
                     "type": "array"
                 },
@@ -1337,7 +1337,7 @@
                     "type": "number"
                 },
                 "parent": {
-                    "$ref": "#/definitions/BaseStepTreeNode"
+                    "$ref": "#/definitions/BaseStepNode"
                 },
                 "step": {
                     "$ref": "#/definitions/Step"
@@ -1455,4 +1455,3 @@
         }
     }
 }
-

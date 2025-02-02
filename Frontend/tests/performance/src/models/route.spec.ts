@@ -3,12 +3,12 @@ import { Route } from '@/models/route';
 import { Step } from '@/models/step';
 import { SkillEffect } from '@/models/skill/skillEffect';
 import { SkillsEnum } from '@/models/skill/skillsEnum';
-import type { StepTreeNode } from '@/models/stepTreeNode';
+import type { StepNode } from '@/models/stepTreeNode';
 
 describe('Route performance test', () => {
   it('generate and execute massive route with 200 000 steps', () => {
     const route = new Route();
-    let lastNode: StepTreeNode | undefined;
+    let lastNode: StepNode | undefined;
     const timestampStart = performance.now();
     for (let i = 0; i < 200_000; i++) {
       const step = new Step(i.toString());
